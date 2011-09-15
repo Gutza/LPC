@@ -23,6 +23,11 @@ class LPC_HTML_list extends LPC_HTML_widget
 	public $totalEntries=NULL;
 	public $totalPages=0;
 
+	/**
+	* An associative array which lists the header labels for each key
+	*/
+	public $labelMapping=array();
+
 	protected $table=NULL;
 
 	public $defaultOrder=array('sort'=>null,'order'=>0); // 0 is ASC, 1 is DESC
@@ -196,15 +201,19 @@ class LPC_HTML_list extends LPC_HTML_widget
 					$newOrder=1;
 				}
 			}
+			if (isset($this->labelMapping[$key]))
+				$labelText=$this->labelMapping[$key];
+			else
+				$labelText=$key;
 			if (in_array($key,$this->legalSortKeys)) {
 				$url=LPC_Url::add_GET_var($_SERVER['REQUEST_URI'],$sortParam,$key);
 				$url=LPC_Url::add_GET_var($url,$orderParam,$newOrder);
 				$label=new LPC_HTML_node("A");
 				$label->setAttr('href',htmlspecialchars($url));
-				$label->content=$key;
+				$label->content=$labelText;
 			} else {
 				$label=new LPC_HTML_node("SPAN");
-				$label->content=$key;
+				$label->content=$labelText;
 			}
 			$cell->a($label,'label');
 			if ($icon) {
