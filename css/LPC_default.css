@@ -1,0 +1,185 @@
+@charset "UTF-8";
+
+body {
+	margin: 0px;
+	padding: 0px;
+	background-position: top center;
+	background-repeat: repeat-y;
+	background-color: #f8f8f4;
+	font: 10pt arial, helvetica, sans-serif;
+	color: black;
+}
+
+div.header {
+	background-color:	#555;
+	padding-top:		45px;
+	background-image:	url("images/LPC_top_bg.jpg");
+	margin-bottom:		5px;
+}
+
+div.error, div.confirm {
+	font-weight:bold;
+	border: 1px solid black;
+	padding:10px;
+	margin: 10px 0px;
+}
+
+div.error {
+	color:#500;
+	background-color: #fdd;
+	border-color: #faa;
+}
+
+div.confirm {
+	color: #050;
+	background-color: #dfd;
+	border-color: #9e9;
+}
+
+.login_form {
+	width:100%;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+a {
+	color: black;
+}
+
+div.content {
+	width: 833px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.footer, div.footer a {
+	color: #9b8b5e;
+}
+
+a img {
+	border:0px;
+}
+
+h1, h2, h3 {
+	font-family: georgia, times new roman, serif;
+	color: #9e9d95;
+	border-bottom: 1px dotted #e0e0b0;
+	margin-bottom: 15px;
+}
+
+h1 {
+	padding-bottom: 3px;
+	font-size: 14pt;
+	font-weight: bold;
+}
+
+h2 {
+	padding-bottom: 1px;
+	font-size: 12pt;
+	font-weight: normal;
+}
+
+h3 {
+	padding-bottom: 1px;
+	font-size: 10pt;
+	font-weight: normal;
+	font-style: italic;
+}
+
+table.vertical th {
+	text-align: right;
+}
+
+div.copyright {
+	text-align: center;
+	border-top: 1px dotted #e0e0d0;
+	font-size: 80%;
+	margin-top: 20px;
+	color: #9e9d95;
+	clear: both;
+}
+
+div.copyright a {
+	text-decoration: none;
+}
+
+table.default {
+	width:100%;
+	border-collapse: collapse;
+}
+
+table.default, table.default td, table.default th {
+	border: 1px solid #e0e0d8;
+}
+
+table.default td, table.default th {
+	padding:5px;
+}
+
+table.default th {
+	font-weight: bold;
+	background-color: #eaeae8;
+}
+
+table.spaced {
+	margin-bottom:10px;
+}
+
+.th-explain {
+	font-weight: normal;
+	font-size: 80%;
+}
+
+table.default th.simple {
+	font-weight: normal;
+}
+
+table.numeric td, td.numeric, th.numeric {
+	text-align: right;
+}
+
+div.list_paginator {
+	font-size: 80%;
+	margin: 5px 0px;
+}
+
+div.scaffold-type {
+	float:right;
+	width:60px;
+	color:black;
+	background-color:#e8e8e8;
+	text-align:center;
+	padding:2px;
+	font-size: 80%;
+}
+
+div.error_message {
+	border: 1px solid red;
+	color: red;
+	font-weight: bold;
+	background-color: #fff0f0;
+	padding: 5px;
+	margin: 10px 0px;
+}
+
+/* Busy */
+#busyLayer
+{
+	background-color: white;
+	z-index: 20;
+	height: 100%;
+	width: 100%;
+	background-image: url(images/rotatingclock-fast2.gif);
+	background-repeat:no-repeat;
+	background-position:center;
+	position:fixed;
+	top: 30px;
+	left: 0px;
+
+	filter:alpha(opacity=50); /* IE */
+	opacity: 0.5; /* Safari, Opera */
+	-moz-opacity:0.50; /* FireFox */
+
+	display:none;
+}
+/* /Busy */

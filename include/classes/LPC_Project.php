@@ -1,0 +1,145 @@
+<?php
+
+abstract class LPC_Project extends LPC_Base
+{
+
+	var $user_fields=array(
+		'name'=>'name'
+	);
+
+	var $project_GET_var='project';
+	var $label_select_project="Please select a project";
+	var $label_no_projects="You don't have access to any projects";
+	var $default_project_name="Default project";
+
+	static private $currentInstance;
+
+	public static function setCurrent($object=null,$persistent=true)
+	{
+		if ($object===null) {
+			self::$currentInstance=null;
+			if ($persistent)
+				unset($_SESSION['LPC']['current_project_id']);
+			return null;
+		}
+
+		self::$currentInstance=$object;
+		if ($persistent)
+			$_SESSION['LPC']['current_project_id']=$object->id;
+
+		return true;
+	}
+
+	/**
+	* Returns the current project, or forces the user to select one.
+	*
+	* @param bool $info if true, the user is NOT forced to select a project;
+	*	instead, NULL is returned if no project is currently set.
+	*/
+	public static function getCurrent($info=false)
+	{
+		if (isset(self::$currentInstance))
+			return self::$currentInstance;
+
+		if (!defined("LPC_project_class")) {
+			self::setCurrent(new LPC_Dummy_project());
+			return self::$currentInstance;
+		}
+
+		$class=self::getProjectClass($info);
+		if (!$class && $info)
+			return NULL;
+		if (isset($_SESSION['LPC']['current_project_id'])) {
+			$p=new $class($_SESSION['LPC']['current_project_id']);
+			if ($p->probe()) {
+				self::setCurrent($p);
+				return self::$currentInstance;
+			}
+		}
+
+		// Show list; if a single one, select it automatically; if none, create one and select it
+		$project=new $class();
+		$cproject=$project->returnCurrent($info);
+		if (!$cproject) {
+			if ($info)
+				return NULL;
+			throw new RuntimeException("Unexpected condition: $class::returnCurrent(false) returned without a project!");
+		}
+		$showingList=false;
+		self::setCurrent($cproject);
+		return self::$currentInstance;
+	}
+
+	public function getProjectClass($info=false)
+	{
+		if (!defined("LPC_project_class") || !strlen(LPC_project_class)) {
+			if ($info)
+				return false;
+			throw new RuntimeException("Please define constant LPC_project_class if you want to use projects.");
+		}
+		return LPC_project_class;
+	}
+
+	public function returnCurrent($info=false)
+	{
+		$class=get_class($this);
+		// No project in session; maybe there is a project in GET?
+		if (isset($_GET[$this->project_GET_var])) {
+			$p=new $class((int) abs($_GET[$this->project_GET_var]));
+			if ($p->probe() && $this->canUse($p->id)) {
+				self::setCurrent($p);
+				header("Location: ".LPC_Url::remove_GET_var($_SERVER['REQUEST_URI'],$this->project_GET_var));
+				exit;
+			}
+		}
+		$projects=$this->search(NULL,NULL,$this->user_fields['name']);
+		if (!$projects) {
+			$p=new $class();
+			$p->setAttr($this->user_fields['name'],$this->default_project_name);
+			$p->save();
+			return $p;
+		}
+
+		if (count($projects)==1)
+			return $projects[0];
+
+		if ($info)
+			return NULL;
+
+		$this->renderList($projects);
+	}
+
+	public function canUse($projectID=0)
+	{
+		if ($u=LPC_User::getCurrent(true))
+			return (bool) $u->getAllPermissions($projectID);
+		return true;
+	}
+
+	public function renderList($projects)
+	{
+		$p=LPC_Page::getCurrent();
+		$p->clear();
+
+		$p->title=$this->label_select_project;
+		$p->st();
+		$p->a("<ul>");
+		$any_project=false;
+		foreach($projects as $project) {
+			if (!$this->canUse($project->id))
+				continue;
+			$any_project=true;
+			$url=LPC_Url::add_GET_var($_SERVER['REQUEST_URI'],$this->project_GET_var,$project->id);
+			$p->a("<li><a href='".$url."'>".$project->getAttrH($this->user_fields['name'])."</a></li>");
+		}
+		$p->a("</ul>");
+
+		if (!$any_project) {
+			$p->clear();
+			$p->title=$this->label_no_projects;
+			$p->st();
+		}
+		$p->show();
+		exit();
+	}
+}

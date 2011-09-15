@@ -1,0 +1,248 @@
+
+	LPC Deployment Manual
+	Bogdan Stancescu <bogdan@moongate.ro>
+	2010-05-25
+
+==================
+INITIAL DEPLOYMENT
+==================
+
+Get your hands on the LPC code and deploy it.
+
+Seeing as you're reading this, you probably already have the code.
+
+We recommend placing the LPC code in a directory *outside* your document root
+(your document root is usually /var/www/html). We recommend /var/www/LPC,
+but it's your choice; however, the rest of this document will assume you chose
+this specific directory; replace as necessary.
+
+Make sure the user Apache is running as has the necessary rights to read that
+directory. We'll call this directory the "LPC repository".
+
+======================
+USING LPC IN A PROJECT
+======================
+
+1. Create a directory for your project, if you don't already have it.
+
+This typically resides *inside* your document root,
+e.g. /var/www/html/myProject. We'll use this directory throughout this document,
+replace as necessary.
+--------------------------------------------------------------------------------
+2. Create a database for your project, if you don't already have it; configure
+LPC to use it.
+
+Note 1: LPC is known to work with MySQL, using php-mysql and php-mysqli.
+LPC uses ADOdb for database abstraction, so *theoretically*
+most of the code should work with other DMBS's, but YMMV.
+
+Note 2: Make sure you have a username and a password associated with the
+specific database you created (i.e. don't connect to the database as root).
+
+Copy file include/LPC_db.sample.php from the LPC repository into your
+project. Rename it "LPC_db.php", just so you know it's not a sample.
+We'll assume you copied it to /var/www/html/myProject/include/LPC_db.php
+
+Edit the file and fill in your stuff. Make sure to change and
+remember the "key" (or keys) you fill in as the first parameter
+for LPC_DB::registerKey() (in the sample file "sample_db_key") -- you will need
+to specify it/them below.
+
+Note 3: You *MAY* use multiple databases if you wish -- you just need one
+base class for each database (see below).
+--------------------------------------------------------------------------------
+3. Configure LPC for your project.
+
+Copy file include/LPC_config.sample.php from your LPC repository into your
+project. Rename it "LPC_config.php", just so you know it's not a sample.
+We'll assume you copied it to /var/www/html/myProject/include/LPC_config.php
+
+Edit the file and fill in your stuff. Don't forget to tell LPC where it
+can find the files for your classes, by filling in one or more paths
+in the $LPC_extra_class_dirs array
+(e.g. "/var/www/html/myProject/include/classes"). You only need to do this
+if you want to use classes outside the default LPC classes directory
+(most projects end up needing that, but you don't need it for experiments).
+--------------------------------------------------------------------------------
+4. Configure your project to use LPC.
+
+You can do this is several ways, take your pick:
+................................................................................
+4.1. Using LPC's own mechanisms
+
+Use mod_env for Apache, or any other mechanism, to set environment variable
+LPC_config to the full path of the configuration file
+("/var/www/html/myProject/include/LPC_config.php").
+
+If you're using Apache's mod_env, the directive looks like so:
+SetEnv LPC_config /var/www/html/myProject/include/LPC_config.php
+
+Use your web server's mechanisms to execute include/LPC_pre.php (in the LPC
+repository) before any PHP script, and include/LPC_post.php after any PHP
+script.
+
+For Apache, using the paths above, the configuration directives would be
+
+php_value auto_prepend_file "/var/www/LPC/include/LPC_pre.php"
+php_value auto_append_file "/var/www/LPC/include/LPC_post.php"
+
+Note 1: You only need the append script if you intend to use the GUI module.
+
+Note 2: If you're using Apache, all directives above can be included in any of
+the usual places (.htaccess, httpd.conf, a directory, a virtual host etc).
+................................................................................
+4.2. Using your own prepend/append scripts
+
+If your project already uses prepend/append scripts, then all you need to do
+is set the environment variable from within PHP as above, and then simply
+include the prepend/append scripts in your own prepend/append code.
+Also see the note above.
+................................................................................
+4.3. Using in CLI
+
+For CLI, you only need to include the actual LPC library.
+
+Just set the environment variable as above, and then simply include
+/var/www/LPC/include/LPC_lib.php before trying to use your LPC objects.
+--------------------------------------------------------------------------------
+5. Create the classes for your tables.
+
+If you're using MySQL, LPC can create the classes for you. This involves running
+a CLI script, so first you need to set up your environment variable. There are
+two ways to accomplish this in Linux.
+................................................................................
+5.1. Using exec.sh
+
+Copy file /var/www/LPC/maintenance/exec.sh to the directory where you saved
+your own LPC_config.php (e.g. /var/www/html/myProject/include/). You can now
+execute all LPC specific scripts through exec.sh, like so:
+> /var/www/html/myProject/include/exec.sh php /var/www/LPC/maintenance/generate_classes.php
+
+Execute the script above and follow the indications in the help message to
+proceed.
+................................................................................
+5.2. Manually
+
+Manually export the environment variable every time you need it, like so:
+> export LPC_config=/var/www/html/myProject/include/LPC_config.php
+
+Now you can execute the script; type the following in a console:
+> php /var/www/LPC/maintenance/generate_classes.php
+
+Follow the indications in the help message to proceed.
+................................................................................
+Notes
+
+Note 1: dbKey is the "key" you defined in step 2 above.
+
+Note 2: If you need more than one database, you will have to generate the
+classes for each database (i.e. you have to repeat this step as many times as
+there are databases in your project).
+
+Note 3: The "path" parameter is the path to your objects, and is typically
+one of the paths specified in $LPC_extra_class_dirs. If you don't specify any,
+the files are placed in LPC's own include/classes directory (not recommended).
+
+Note 4: Once a class file exists, generate_classes.php will NOT overwrite
+it, even if it's pristine. As such, you should only create your LPC objects
+once the database structure is final -- otherwise you either have to delete
+the class files, or update them manually. Adding new tables does work as
+expected, however.
+--------------------------------------------------------------------------------
+6. (Optional) Set up the GUI module
+
+If you intend to use LPC's GUI module, you need to set it up first.
+
+Copy include/classes/LPC_Page.sample.php in the LPC repository to
+include/classes/LPC_Page.php in your project (or any other directory that's
+registered in $LPC_extra_class_dirs). Edit the file to suit your needs
+(it works out of the box, but you'll certainly want to change some strings
+and settings).
+
+Copy LPC/css/LPC_default.css from the repository to the CSS directory of your
+project (as defined in LPC_config.php; by default
+/var/www/html/myProject/css/LPC_default.css) -- LPC_Page uses the styles in there.
+Of course, feel free to tweak it as you please.
+
+Edit LPC_config.php and enable the GUI module.
+--------------------------------------------------------------------------------
+7. (Optional) Set up the scaffolding module
+
+If you want to use LPC's scaffolding module, you need to copy a few files
+from the repository to your installation (these are files the client needs to
+access directly).
+
+7.1. Copy the JavaScript files from LPC/js to your installation's js directory
+(as defined in the LPC_js constant, in LPC_config.php).
+
+7.2. Copy the content of LPC/css to your installation's css directory
+(as defined in the LPC_css constant, in LPC_config.php).
+
+7.3. Copy file LPC/deployment/scaffolding.php somewhere in your document root.
+--------------------------------------------------------------------------------
+8. (Optional) Set up a database for LPC proper
+
+Several features of LPC require LPC classes to connect directly to a database.
+In order to use those features, you need to tell LPC which database to use.
+................................................................................
+If you plan on using your project's database (which should be perfectly safe, as
+all LPC tables are prepended with "LPC_"), then all you have to do is create
+an empty class called LPC_Base that extends your project's base class.
+Save the new class in your project's include/classes/LPC_Base.php, or some
+other class include directory, as defined at (3). The new class should look
+like this:
+
+abstract class LPC_Base extends PROJECT_Base {}
+
+(Replace PROJECT_Base with the actual name of your project's base class.)
+................................................................................
+If you plan on using a distinct database specifically for LPC, then register
+a new key (as you did at (2)), copy your project's base class in the same
+directory under the name LPC_Base.php, edit it and change the following:
+* Change the name of the class to LPC_Base
+* Change the database key to the newly created database key.
+--------------------------------------------------------------------------------
+9. (Optional) Set up LPC authentication (requires GUI, LPC database setup)
+
+If you want to use LPC's native mechanisms for user authentication and user
+management, you have to do the following:
+
+9.1. Create a table and a class that contains at least the following fields:
+- id (i.e. a primary key)
+- username (or some other public user identifier)
+- password (will be populated with SHA1 hashes)
+
+9.2. Alter your class to extend LPC_User instead of your project's base class.
+
+9.3. Specify the name of your class in LPC_config.php.
+
+9.4. If necessary, overwrite $user_fields in your class to indicate the proper
+field mappings (find its structure in LPC/include/classes/LPC_User.php).
+................................................................................
+Authentication is automatically triggered when your code tries to use the
+current user (using LPC_User::getCurrent()).
+--------------------------------------------------------------------------------
+10. (Optional) Set up projects (requires GUI, LPC database setup)
+
+10.1. Create a table and a class that contains at least the following fields:
+- id (i.e. a primary key)
+- name (a name for the project)
+
+10.2. Alter your class to extend LPC_Project instead of your project's base
+class.
+
+10.3. Specify the name of your class in LPC_config.php.
+
+10.4. If necessary, overwrite $user_fields in your class to indicate the proper
+field mappings (find its structure in LPC/include/classes/LPC_Project.php).
+................................................................................
+Project selection is triggered automatically when your code tries to use the
+current project (using LPC_Project::getCurrent()).
+--------------------------------------------------------------------------------
+You're done -- you should now be able to use LPC in all its glory
+
+If you want to check out a few GUI features, copy LPC_hello_world.php from
+the LPC repository to your project, and use a browser to access that page
+(via web server, obviously).
+
+Make sure to look at that file's source for a few extra tweaks.

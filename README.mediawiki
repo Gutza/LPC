@@ -1,0 +1,2 @@
+LPC is a PHP library that provides ORM and more.
+
