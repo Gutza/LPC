@@ -1,7 +1,11 @@
 <?php
 
+// Include your own project's library (which presumably registers the proper
+// SPL autoloaders for your classes)
+// require dirname(dirname(dirname(__FILE__)))."/include/MY_lib.php";
+
 // Change this to the web path to your project
-define('LPC_url','/myProject');
+define('LPC_url','/myProject/LPC');
 
 // Change this to reflect the full URL of your project; note the path above
 define('LPC_full_url','http://www.example.com'.LPC_url);
