@@ -57,8 +57,10 @@ abstract class LPC_Menu extends LPC_HTML_widget
 
 			if (isset($atom['anchor']))
 				$node->a($atom['anchor']);
-			else
+			elseif (isset($atom['url']))
 				$node->a("<a href='".$atom['url']."'>".$atom['label']."</a>");
+			else
+				$node->a("<a href='#' onClick='return false'>".$atom['label']."</a>");
 
 			if (isset($atom['children'])) {
 				$children=new LPC_HTML_node("UL");
