@@ -26,7 +26,11 @@ class LPC_HTML_document extends LPC_HTML_node
 	{
 		$this->doctype=LPC_HTML_doctype::HTML4S;
 		$this->head=new LPC_HTML_node('HEAD');
+		$this->head->ownerDocument=$this;
+		$this->head->parentNode=$this;
 		$this->body=new LPC_HTML_node('BODY');
+		$this->body->ownerDocument=$this;
+		$this->body->parentNode=$this;
 		$this->content=array(
 			'head'=>&$this->head,
 			'body'=>&$this->body
@@ -54,6 +58,7 @@ class LPC_HTML_document extends LPC_HTML_node
 
 	public function render($indent=0)
 	{
+		$this->prepareContent($this->content);
 		if ($this->doctype & LPC_HTML_doctype::type_XHTML1)
 			$this->setAttr("xmlns","http://www.w3.org/1999/xhtml");
 		if (!$this->body->content || $this->renderMode=='none')
@@ -80,6 +85,7 @@ class LPC_HTML_document extends LPC_HTML_node
 
 		$content=$this->output(LPC_HTML_doctype::$doctypes[$this->doctype],$indent); // <!DOCTYPE...>
 		$content.=parent::render($indent);
+//mail("bogdan@moongate.ro","render",print_r($this->content['head'],1));
 		$this->onRender($indent);
 		return $content;
 	}
