@@ -25,12 +25,10 @@ class LPC_HTML_node extends LPC_HTML_base
 	{
 		parent::render();
 
-		if (!$this->doctype) {
-			$p=LPC_Page::getCurrent();
-			$this->doctype=$p->doctype;
-		}
+		if (!$this->doctype)
+			$this->doctype=$this->ownerDocument->doctype;
 
-		$short=$this->determineTagEnd() && $this->shortTag && !$this->content;
+		$short=$this->shortTag && !$this->content && $this->determineTagEnd();
 		$result=$this->renderTagStart($short);
 		if ($short)
 			return $result;
@@ -41,7 +39,7 @@ class LPC_HTML_node extends LPC_HTML_base
 				return $result;
 		}
 
-		$result.=$this->renderItem($this->content);
+		$result.=$this->renderContent();
 		if ($this->endTagAllowed)
 			$result.=$this->renderTagEnd();
 		return $result;
