@@ -213,7 +213,7 @@ EOJS;
 
 		$cacheDate=$cache->getU("permissions_date",$userID);
 		if (!$projectID)
-			$projectID=LPC_Project::getCurrent(true)->id;
+			$projectID=@LPC_Project::getCurrent(true)->id;
 
 		if ($projectID)
 			$cacheDate=min($cacheDate,$cache->getUP("permissions_date",$userID,$projectID));
