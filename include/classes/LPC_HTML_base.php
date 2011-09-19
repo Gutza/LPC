@@ -10,6 +10,8 @@ abstract class LPC_HTML_base implements iLPC_HTML
 	public $indent_count=0;
 
 	public $doctype;
+	public $parentNode=NULL;
+	public $ownerDocument=NULL;
 
 	public function show()
 	{
@@ -25,12 +27,31 @@ abstract class LPC_HTML_base implements iLPC_HTML
 		$this->compact=$this->compact || $this->compactParent;
 	}
 
+	public function updateOwner($od)
+	{
+		$this->ownerDocument=$od;
+		if (is_array($this->content))
+			foreach($this->content as $element) {
+				if (is_object($element))
+					$element->updateOwner($od);
+			}
+		elseif (is_object($this->content))
+			$this->content->updateOwner($od);
+	}
+
 	public function append($element,$key=NULL)
 	{
 		if (is_string($element) && !strlen(trim($element)))
 			return null;
 		if (!is_array($this->content))
 			$this->content=array($this->content);
+		if (is_object($element)) {
+			$element->parentNode=&$this;
+			if ($this->ownerDocument===NULL)
+				$element->updateOwner($this);
+			else
+				$element->updateOwner($this->ownerDocument);
+		}
 		if ($key===NULL)
 			$this->content[]=$element;
 		else
@@ -59,8 +80,29 @@ abstract class LPC_HTML_base implements iLPC_HTML
 		return $this->prepend($element,$key);
 	}
 
+	public function prepareContent($content)
+	{
+		if (is_string($content))
+			return;
+
+		if ($content instanceof LPC_HTML_widget)
+			$content->pre_prepare();
+		if ($content instanceof LPC_HTML_base) {
+			$this->prepareContent($content->content);
+			return;
+		}
+
+		if (!is_array($content))
+			return;
+
+		foreach($content as $atom)
+			$this->prepareContent($atom);
+	}
+
 	public function renderContent()
 	{
+		if ($this->ownerDocument==$this)
+			$this->prepareContent($this->content);
 		return $this->renderItem($this->content);
 	}
 
