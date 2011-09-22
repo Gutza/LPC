@@ -52,6 +52,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 
 	public $legalSortKeys=array();
 	public $msgEmptyList="This list is empty.";
+	public $msgEditFilters="You might want to edit your filters:";
 
 	/**
 	* This will be a LPC_HTML_fragment in which you're supposed to append
@@ -86,10 +87,8 @@ class LPC_HTML_list extends LPC_HTML_widget
 			throw new RuntimeException("The query must be an array formatted for LPC_Query_Builder. (property sql)");
 
 		$rs=$this->queryObject->query($this->processSQL());
-		if ($rs->EOF) {
-			$this->a($this->msgEmptyList);
-			return null;
-		}
+		if ($rs->EOF)
+			return $this->prepareEmpty();
 
 		$this->setAttr('id','list_'.$this->id);
 		$this->table=new LPC_HTML_node('table');
@@ -105,6 +104,22 @@ class LPC_HTML_list extends LPC_HTML_widget
 		}
 
 		$this->populatePaginating();
+	}
+
+	function prepareEmpty()
+	{
+		$this->a($this->msgEmptyList);
+		if (!$this->filters->content)
+			return;
+		$this->a($this->msgEditFilters);
+		foreach($this->filters->content as $key=>$filter) {
+			if (isset($this->labelMapping[$key]))
+				$label=$this->labelMapping[$key];
+			else
+				$label=$key;
+			$this->a("<div><b>".$label."</b></div>");
+			$this->a($filter);
+		}
 	}
 
 	function populatePaginating()
@@ -189,6 +204,8 @@ class LPC_HTML_list extends LPC_HTML_widget
 		$filterBase=$this->getParam('f');
 		$filterWhere=array();
 		foreach($this->filters->content as $key=>$filter) {
+			if (!$filter instanceof LPC_HTML_list_filter)
+				throw new RuntimeException("List filters MUST be descendants of LPC_HTML_list_filter!");
 			if (!isset($filter->GET_key))
 				$filter->GET_key=$filterBase.'_'.$key;
 			$filter->list_key=$key;

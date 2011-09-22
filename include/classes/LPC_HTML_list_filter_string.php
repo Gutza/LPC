@@ -19,13 +19,18 @@ class LPC_HTML_list_filter_string extends LPC_HTML_list_filter
 		$form=new LPC_HTML_form(false,'get');
 		$this->a($form);
 
+		$this->ownerDocument->content['head']->content['LPC list filter CSS']=new LPC_HTML_link('stylesheet','text/css',LPC_css."/LPC_list_filter.css");
+
 		foreach($_GET as $key=>$value) {
 			if ($key==$this->GET_key)
 				continue;
 			$form->a("<input type='hidden' name='$key' value=\"".addslashes($value)."\">");
 		}
-		$form->a("<input type='text' name='".$this->GET_key."' value=\"".$default."\" id='".$this->GET_key."'>");
+		$form->a("<table class='table_filter'><tr><td class='table_filter' style='width:100%'>");
+		$form->a("<input type='text' name='".$this->GET_key."' value=\"".$default."\" style='width:100%'>");
+		$form->a("</td><td class='table_filter'>");
 		$form->a("<input type='image' src='".LPC_ICON_MAGNIFIER."' alt='Filtrează'>");
+		$form->a("</td></tr></table>");
 	}
 
 	function getSQL()

@@ -1,0 +1,6 @@
+table.default table.table_filter {
+}
+table.default td.table_filter {
+	border: 0px;
+	padding: 2px;
+}
