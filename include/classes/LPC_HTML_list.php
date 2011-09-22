@@ -53,9 +53,17 @@ class LPC_HTML_list extends LPC_HTML_widget
 	public $legalSortKeys=array();
 	public $msgEmptyList="This list is empty.";
 
+	/**
+	* This will be a LPC_HTML_fragment in which you're supposed to append
+	* LPC_HTML_list_filter descendants under keys corresponding to the
+	* respective list keys.
+	*/
+	public $filters=NULL;
+
 	function __construct()
 	{
 		$this->processParameters();
+		$this->filters=new LPC_HTML_fragment();
 	}
 
 	function processParameters()
@@ -150,6 +158,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 		$sql=$this->sql;
 		$sql=$this->processOrder($sql);
 		$sql=$this->processLimit($sql);
+		$sql=$this->processFilters($sql);
 		return $sql;
 	}
 
@@ -175,11 +184,53 @@ class LPC_HTML_list extends LPC_HTML_widget
 		return $sql;
 	}
 
+	function processFilters($sql)
+	{
+		$filterBase=$this->getParam('f');
+		$filterWhere=array();
+		foreach($this->filters->content as $key=>$filter) {
+			if (!isset($filter->GET_key))
+				$filter->GET_key=$filterBase.'_'.$key;
+			$filter->list_key=$key;
+			$filter->listObject=$this;
+			$thisFilter=$filter->getSQL();
+			if (!$thisFilter)
+				continue;
+			$filterWhere[]=$thisFilter;
+		}
+		if (!$filterWhere)
+			return $sql;
+		if (!isset($sql['where'])) {
+			$sql['where']=array(
+				'type'=>'and',
+				'conditions'=>$filterWhere
+			);
+			return $sql;
+		}
+		if (strtoupper($sql['where']['type'])=='AND') {
+			$sql['where']['conditions']=array_merge(
+				$sql['where']['conditions'],
+				$filterWhere
+			);
+			return $sql;
+		}
+		$origWhere=$sql['where'];
+		$sql['where']=array(
+			'type'=>'AND',
+			'conditions'=>array_merge(
+				array($origWhere),
+				$filterWhere
+			)
+		);
+		return $sql;
+	}
+
 	function populateHeader($keys)
 	{
 		$sortInfo=$this->getSortInfo();
 		$sortParam=$this->getParam('s');
 		$orderParam=$this->getParam('o');
+		$filterBase=$this->getParam('f');
 
 		$row=new LPC_HTML_node("TR");
 		foreach($keys as $key) {
@@ -220,6 +271,8 @@ class LPC_HTML_list extends LPC_HTML_widget
 				$cell->a(" ");
 				$cell->a($icon,'sortIcon');
 			}
+			if (isset($this->filters->content[$key]))
+				$cell->a($this->filters->content[$key]);
 			if ($this->onProcessHeaderCell($key,$cell))
 				$row->a($cell);
 		}
@@ -311,6 +364,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 		if (isset($this->totalEntries))
 			return $this->totalEntries;
 		$sql=$this->sql;
+		$sql=$this->processFilters($sql);
 		$sql['select']=array('1');
 		unset($sql['order']);
 		$rs=$this->queryObject->query($sql);
