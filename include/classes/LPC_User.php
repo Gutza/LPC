@@ -269,7 +269,7 @@ EOJS;
 		$groupIDs=array();
 		while(!$rs->EOF) {
 			$groupIDs[]=$rs->fields[0];
-			$groupIDs=array_merge($groupIDs,$group->getAllMemberGroupIDs($rs->fields[0]));
+			$groupIDs=array_merge($groupIDs,$group->getAllMembershipGroupIDs($rs->fields[0]));
 			$rs->MoveNext();
 		}
 		$groupIDs=array_unique($groupIDs);

@@ -146,4 +146,46 @@ class LPC_Group extends LPC_Base
 	{
 		return $this->instantiate($this->getAllMemberUserIDs($project,$id),'LPC_User');
 	}
+
+	function getMembershipGroupIDs($id=0)
+	{
+		$group=&$this->defaultObject($id);
+		if (!$group->id)
+			throw new RuntimeException("LPC_Group::getMembershipGroupIDs() needs either an explicit or an implicit group ID. Neither was provided.");
+		$rs=$this->query("
+			SELECT member_to
+			FROM LPC_group_membership
+			WHERE
+				group_member=".$group->id
+		);
+		$result=array();
+		while(!$rs->EOF) {
+			$result[]=$rs->fields[0];
+			$rs->MoveNext();
+		}
+		return $result;
+	}
+
+	function getMembershipGroups($id=0)
+	{
+		return $this->instantiate($this->getMembershipGroupIDs($id));
+	}
+
+	function getAllMembershipGroupIDs($id=0,$history=array())
+	{
+		$kids=$this->getMembershipGroupIDs($id);
+		$grandkids=array();
+		foreach($kids as $kid) {
+			if (in_array($kid,$history))
+				continue;
+			$history=array_unique(array_merge($kids,$grandkids));
+			$grandkids=array_merge($grandkids,$this->getAllMembershipGroupIDs($kid,$history));
+		}
+		return array_unique(array_merge($kids,$grandkids));
+	}
+
+	function getAllMembershipGroups($id=0)
+	{
+		return $this->instantiate($this->getAllMembershipGroupIDs($id));
+	}
 }
