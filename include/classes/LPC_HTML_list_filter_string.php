@@ -27,6 +27,7 @@ class LPC_HTML_list_filter_string extends LPC_HTML_list_filter
 			$form->a("<input type='hidden' name='$key' value=\"".addslashes($value)."\">");
 		}
 		$form->a("<table class='table_filter'><tr><td class='table_filter' style='width:100%'>");
+		$form->a("<input type='hidden' name='".$this->listObject->getParam('p')."' value='1'>");
 		$form->a("<input type='text' name='".$this->GET_key."' value=\"".$default."\" style='width:100%'>");
 		$form->a("</td><td class='table_filter'>");
 		$form->a("<input type='image' src='".LPC_ICON_MAGNIFIER."' alt='Filtrează'>");
@@ -35,7 +36,7 @@ class LPC_HTML_list_filter_string extends LPC_HTML_list_filter
 
 	function getSQL()
 	{
-		if (!isset($_REQUEST[$this->GET_key]))
+		if (!isset($_REQUEST[$this->GET_key]) || !strlen($_REQUEST[$this->GET_key]))
 			return NULL;
 		$filterVal=$this->listObject->queryObject->db->qstr('%'.$_REQUEST[$this->GET_key].'%');
 		if (isset($this->SQL_key))
