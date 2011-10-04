@@ -85,7 +85,7 @@ abstract class LPC_HTML_base implements iLPC_HTML
 		if (is_string($content))
 			return;
 
-		if ($content instanceof LPC_HTML_widget)
+		if ($content instanceof iLPC_HTML_widget)
 			$content->pre_prepare();
 		if ($content instanceof LPC_HTML_base) {
 			$this->prepareContent($content->content);

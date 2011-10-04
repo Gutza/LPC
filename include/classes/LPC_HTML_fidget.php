@@ -1,8 +1,13 @@
 <?php
 
-abstract class LPC_HTML_widget extends LPC_HTML_node implements iLPC_HTML_widget
-{
+/**
+* A widget which contains an arbitrary HTML fragment.
+* @author Bogdan Stancescu <bogdan@moongate.ro>
+* @copyright Copyright (c) October 2011, Bogdan Stancescu
+*/
 
+abstract class LPC_HTML_fidget extends LPC_HTML_fragment implements iLPC_HTML_widget
+{
 	protected $unconditional_preparation=false;
 	private $pre_prepared=false;
 
@@ -20,5 +25,5 @@ abstract class LPC_HTML_widget extends LPC_HTML_node implements iLPC_HTML_widget
 		$this->prepare();
 		$this->pre_prepared=true;
 	}
-
 }
+
