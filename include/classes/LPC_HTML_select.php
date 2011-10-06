@@ -13,6 +13,15 @@ class LPC_HTML_select extends LPC_HTML_widget
 
 	var $unconditional_preparation=true;
 
+	/**
+	* Constructor.
+	*
+	* @param string $name the name of the HTML <select> node
+	* @param mixed $key the key in $array which contains the current value of this <select>;
+	*	provide boolean true if you want to use $name
+	* @param array $array the array which contains the value of this <select>;
+	*	if not specified, $_REQUEST is used.
+	*/
 	function __construct($name=NULL,$key=NULL,$array=NULL)
 	{
 		if ($name===NULL)
@@ -30,9 +39,11 @@ class LPC_HTML_select extends LPC_HTML_widget
 		$this->fromKey($array,$key);
 	}
 
-	function addOption($label,$value="",$selected=false)
+	function addOption($label,$value=NULL,$selected=false)
 	{
 		$o=new LPC_HTML_node('option');
+		if ($value===NULL)
+			$value=$label;
 		$o->setAttr('value',$value);
 		$o->content=$label;
 		$this->a($o);
