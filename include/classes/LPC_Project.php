@@ -84,13 +84,16 @@ abstract class LPC_Project extends LPC_Base
 	{
 		$class=get_class($this);
 		// No project in session; maybe there is a project in GET?
-		if (isset($_GET[$this->project_GET_var])) {
+		static $nowSetting=false;
+		if (!$nowSetting && isset($_GET[$this->project_GET_var])) {
+			$nowSetting=true;
 			$p=new $class((int) abs($_GET[$this->project_GET_var]));
 			if ($p->probe() && $this->canUse($p->id)) {
 				self::setCurrent($p);
 				header("Location: ".LPC_Url::remove_GET_var($_SERVER['REQUEST_URI'],$this->project_GET_var));
 				exit;
 			}
+			$nowSetting=false;
 		}
 		$projects=$this->search(NULL,NULL,$this->user_fields['name']);
 		if (!$projects) {
