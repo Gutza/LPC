@@ -244,50 +244,54 @@ EOJS;
 		return false;
 	}
 
+	function getAllGroups($project=0,$id=0)
+	{
+		$userID=$this->defaultID($id);
+		$projectID=$this->defaultProject($project)->id;
+
+		$sql="
+			SELECT ug.member_to
+			FROM LPC_user_membership AS ug
+			LEFT JOIN LPC_group AS g ON g.id=ug.member_to
+			WHERE
+				ug.project IN (0,".$projectID.") AND
+				user_member=".$userID." AND
+				g.project IN (0,".$projectID.")
+		";
+		$rs=$this->query($sql);
+		$group=new LPC_Group();
+		$groupIDs=array();
+		while(!$rs->EOF) {
+			$groupIDs[]=$rs->fields[0];
+			$groupIDs=array_merge($groupIDs,$group->getAllMembershipGroupIDs($rs->fields[0],$projectID));
+			$rs->MoveNext();
+		}
+		return $groupIDs;
+	}
+
 	function getAllPermissions($project=0,$id=0)
 	{
 		$userID=$this->defaultID($id);
-		$projectID=&$this->defaultProject($project)->id;
+		$projectID=$this->defaultProject($project)->id;
+
 		$cache=LPC_Cache::getCurrent();
 		$groups=$cache->getUP("permissions",$userID,$projectID);
 		if ($groups!==false && $this->validatePermissionsCache($projectID,$userID))
 			return $groups;
 
-		$rs=$this->query("
-			SELECT member_to
-			FROM LPC_user_membership
-			WHERE
-				project IN (0,".$projectID.") AND
-				user_member=".$userID
-		);
-
-		if ($rs->EOF) {
+		$groupIDs=$this->getAllGroups($projectID,$userID);
+		if (!$groupIDs) {
 			$cache->setUP("permissions",array(),$userID,$projectID);
 			return array();
 		}
+
 		$group=new LPC_Group();
-		$groupIDs=array();
-		while(!$rs->EOF) {
-			$groupIDs[]=$rs->fields[0];
-			$groupIDs=array_merge($groupIDs,$group->getAllMembershipGroupIDs($rs->fields[0]));
-			$rs->MoveNext();
-		}
-		$groupIDs=array_unique($groupIDs);
-
-		$rs=$this->query("
-			SELECT name
-			FROM LPC_group
-			WHERE
-				id IN (".implode(",",$groupIDs).") AND
-				type='permission'
-		");
-		$groups=array();
-		while(!$rs->EOF) {
-			$groups[]=$rs->fields[0];
-			$rs->MoveNext();
-		}
-
-		$cache->setUP("permissions",$groups,$userID,$projectID);
+		$cache->setUP(
+			"permissions",
+			$group->filterGroupsByType($groupIDs,'permission','name'),
+			$userID,
+			$projectID
+		);
 
 		return $groups;
 	}
@@ -355,12 +359,32 @@ EOJS;
 	/*
 		Specify project 0 if you want global membership; by default, the current project is used.
 	*/
-	function addToGroup($groupName,$project=false)
+	function addToGroupByName($groupName,$project=false)
 	{
-		$gs=new LPC_Group();
-		$gs=$gs->search("name",$groupName);
-		if (!$gs)
+		$group=new LPC_Group();
+		$groups=$group->getGroupByName($groupName,$project);
+		if (!$groups)
 			throw new RuntimeException("Group \"".$groupName."\" was not found!");
+		if (count($groups)>1)
+			trigger_error(
+				"LPC_User::addToGroupByName(\"".$groupName."\",".$project."): ".
+				"multiple groups matched! Adding to group #".$groups[0]->id,
+				E_USER_WARNING
+			);
+		return $this->addToGroup($groups[0],$project);
+	}
+
+	/*
+		Specify project 0 if you want global membership; by default, the current project is used.
+	*/
+	function addToGroup($group,$project=false)
+	{
+		if (is_integer($group))
+			$groupID=$group;
+		elseif ($group instanceof LPC_Group)
+			$groupID=$group->id;
+		else
+			throw new RuntimeException("Unknown parameter \$group type! Expecting an integer or a LPC_Group instance.");
 
 		if ($project===false)
 			$projectID=LPC_Project::getCurrent()->id;
@@ -374,7 +398,7 @@ EOJS;
 			FROM LPC_user_membership
 			WHERE
 				user_member=".$this->id." AND
-				member_to=".$gs[0]->id." AND
+				member_to=".$groupID." AND
 				project=$projectID
 		");
 		if ($rs->fields[0])
@@ -383,7 +407,7 @@ EOJS;
 		return (bool) $this->query("
 			INSERT INTO LPC_user_membership
 				(user_member, member_to, project)
-				VALUES (".$this->id.", ".$gs[0]->id.", $projectID)
+				VALUES (".$this->id.", ".$groupID.", $projectID)
 		");
 	}
 }
