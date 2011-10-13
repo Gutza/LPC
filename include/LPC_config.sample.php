@@ -57,6 +57,10 @@ $LPC_extra_class_dirs=array();
 //		* it's not available for CLI (technically it is available
 //		  if you enable it with apc.enable_cli = 1, but it's typically
 //		  useless for CLI because every new thread uses a new cache).
+//		* as a corollary, if you use APC you will need to perform
+//		  all permissions-related actions from within the interface
+//		  (i.e. not from CLI), because otherwise your cache will
+//		  be unaffected by the changes.
 define('LPC_CACHE_TYPE','session');
 
 // The host to use for memcache cache; not needed otherwise

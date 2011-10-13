@@ -273,12 +273,18 @@ EOJS;
 		return false;
 	}
 
-	function getNow()
+	public static function getNow()
 	{
 		return microtime(true);
 	}
 
-	private function ensureCacheExpiration($projectID,$userID)
+	/**
+	* Fill in all cache expiration keys, if needed.
+	*
+	* Please note this is a static method -- both parameters
+	* are mandatory, since they can't be implicit.
+	*/
+	private static function ensureCacheExpiration($projectID,$userID)
 	{
 		static $ensured=array();
 		if (isset($ensured[$projectID]) && isset($ensured[$projectID][$userID]))
@@ -297,6 +303,30 @@ EOJS;
 			$cache->setP(self::PE_KEY,$now,$projectID);
 		if (!$cache->getG(self::PE_KEY))
 			$cache->setG(self::PE_KEY,$now);
+	}
+
+	/**
+	* Intelligent cache expiration.
+	*
+	* Depending on the parameters, it expires the
+	* user cache only, the project cache only, the
+	* user/project cache or the global cache.
+	*
+	* Please note this is a static method -- both parameters
+	* are mandatory, since they can't be implicit.
+	*/
+	public static function expireCache($projectID,$userID)
+	{
+		$cache=LPC_Cache::getCurrent();
+		if ($userID) {
+			if ($projectID)
+				$cache->setUP(self::PE_KEY,self::getNow(),$userID,$projectID);
+			else
+				$cache->setU(self::PE_KEY,self::getNow(),$userID);
+		} elseif ($projectID)
+			$cache->setP(self::PE_KEY,self::getNow(),$projectID);
+		else
+			$cache->setG(self::PE_KEY,self::getNow());
 	}
 
 	function getAllGroups($project=0,$id=0)
@@ -357,7 +387,7 @@ EOJS;
 		$group=new LPC_Group();
 		$cache->setUP(
 			self::P_KEY,
-			$group->filterGroupsByType($groupIDs,'permission','name'),
+			$groups=$group->filterGroupsByType($groupIDs,'permission','name'),
 			$userID,
 			$projectID
 		);
@@ -458,10 +488,12 @@ EOJS;
 
 		if ($project===false)
 			$projectID=LPC_Project::getCurrent()->id;
-		elseif (is_object($project))
+		elseif (is_integer($group))
+			$projectID=$project;
+		elseif ($project instanceof LPC_Project)
 			$projectID=$project->id;
 		else
-			$projectID=$project;
+			throw new RuntimeException("Unknown parameter \$project type! Expecting boolean false, an integer or a LPC_Project instance.");
 
 		$rs=$this->query("
 			SELECT COUNT(*)
@@ -469,15 +501,98 @@ EOJS;
 			WHERE
 				user_member=".$this->id." AND
 				member_to=".$groupID." AND
-				project=$projectID
+				project IN (0,".$projectID.")
 		");
 		if ($rs->fields[0])
 			return NULL;
+
+		$expireProjectID=$projectID;
+		if (!$expireProjectID) {
+			$group=new LPC_Group($groupID);
+			$expireProjectID=$group->getAttr('project');
+		}
+		self::expireCache($expireProjectID,$this->id);
 
 		return (bool) $this->query("
 			INSERT INTO LPC_user_membership
 				(user_member, member_to, project)
 				VALUES (".$this->id.", ".$groupID.", $projectID)
 		");
+	}
+
+	/*
+		Specify project 0 if you want global membership; by default, the current project is used.
+	*/
+	function removeFromGroupByName($groupName,$project=false)
+	{
+		$group=new LPC_Group();
+		$groups=$group->getGroupByName($groupName,$project);
+		if (!$groups)
+			return NULL;
+
+		$linkCount=0;
+		foreach($groups as $grp)
+			$linkCount+=$this->removeFromGroup($grp,$project);
+
+		return $linkCount;
+	}
+
+	/*
+	* Removes ALL DIRECT memberships to that group within the context of this project.
+	*
+	* Specify project 0 if you only want to remove global memberships; by default,
+	* global AND local relationships to this project are deleted.
+	*
+	* @return mixed false on error or the number of relationships that were deleted
+	*   (typically 0, 1 or 2 if both a local and a global relationship were deleted)
+	*/
+	function removeFromGroup($group,$project=false)
+	{
+		if (is_integer($group))
+			$groupID=$group;
+		elseif ($group instanceof LPC_Group)
+			$groupID=$group->id;
+		else
+			throw new RuntimeException("Unknown parameter \$group type! Expecting an integer or a LPC_Group instance.");
+
+		if ($project===false)
+			$projectID=LPC_Project::getCurrent()->id;
+		elseif (is_integer($group))
+			$projectID=$project;
+		elseif ($project instanceof LPC_Project)
+			$projectID=$project->id;
+		else
+			throw new RuntimeException("Unknown parameter \$project type! Expecting boolean false, an integer or a LPC_Project instance.");
+
+		$rs=$this->query("
+			SELECT project
+			FROM LPC_user_membership
+			WHERE
+				user_member=".$this->id." AND
+				member_to=".$groupID." AND
+				project IN (0,".$projectID.")
+		");
+		$projectIDs=array();
+		while(!$rs->EOF) {
+			$projectIDs[]=$rs->fields['project'];
+			$rs->MoveNext();
+		}
+		$linkCount=count($projectIDs);
+		$projectIDs=array_unique($project_IDs);
+		foreach($projectIDs as $prjID)
+			self::expireCache($prjID,$this->id);
+
+		$rs=$this->query("
+			DELETE
+			FROM LPC_user_membership
+			WHERE
+				user_member=".$this->id." AND
+				member_to=".$groupID." AND
+				project IN (0,".$projectID.")
+		");
+		if (!$rs)
+			return false;
+
+		return $linkCount;
 	}
 }

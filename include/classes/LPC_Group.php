@@ -2,6 +2,8 @@
 
 class LPC_Group extends LPC_Base
 {
+	private $cacheData=array();
+
 	function registerDataStructure()
 	{
 		$fields=array(
@@ -38,8 +40,46 @@ class LPC_Group extends LPC_Base
 		);
 	}
 
-	function onDelete($id)
+	protected function ensureCacheData($grp=false)
 	{
+		if (!$this->id)
+			throw RuntimeException("Need an id!");
+		if (isset($this->cacheData['id']) && $this->cacheData['id']==$this->id)
+			return;
+
+		if (!$grp)
+			$grp=new LPC_Group($this->id);
+
+		$this->cacheData=array(
+			'id'=>$this->id,
+			'name'=>$grp->getAttr('name'),
+			'isPermission'=>$grp->getAttr('type')=='permission',
+			'project'=>$grp->getAttr('project'),
+		);
+	}
+
+	protected function onLoad()
+	{
+		$this->ensureCacheData($this);
+	}
+
+	protected function beforeDelete($id)
+	{
+		$this->ensureCacheData();
+		return true;
+	}
+
+	protected function onDelete($id)
+	{
+		if (
+			!$this->cacheData ||
+			!isset($this->cacheData['id']) ||
+			$this->cacheData['id']!=$id
+		)
+			throw new RuntimeException("You failed to ensure the cache data before deleting this object! This should NEVER happen.");
+
+		LPC_User::expireCache($this->cacheData['project'],0);
+
 		$this->query("
 			DELETE
 			FROM LPC_group_membership
@@ -53,6 +93,26 @@ class LPC_Group extends LPC_Base
 			WHERE
 				member_to=$id
 		");
+	}
+
+	protected function beforeSave($new, $id, $force)
+	{
+		$this->ensureCacheData();
+	}
+
+	protected function onSave($new)
+	{
+		if ($new)
+			return;
+		$isPermission='permission'==$this->getAttr('type');
+		if (
+			$isPermission!=$this->cacheData['isPermission'] ||
+			(
+				$isPermission &&
+				$this->getAttr('name')!=$this->cacheData['name']
+			)
+		)
+			LPC_User::expireCache($this->cacheData['id'],0);
 	}
 
 	/**
@@ -323,9 +383,10 @@ class LPC_Group extends LPC_Base
 	*/
 	function addToGroup($group)
 	{
-		if (is_integer($group))
+		if (is_integer($group)) {
 			$groupID=$group;
-		elseif ($group instanceof LPC_Group)
+			$group=new LPC_Group($groupID);
+		} elseif ($group instanceof LPC_Group)
 			$groupID=$group->id;
 		else
 			throw new RuntimeException("Unknown parameter type! Expecting an integer or a LPC_Group instance.");
@@ -340,10 +401,57 @@ class LPC_Group extends LPC_Base
 		if ($rs->fields[0])
 			return NULL;
 
-		return (bool) $this->query("
+		if (
+			$this->getAttr('project') &&
+			$group->getAttr('project') &&
+			$this->getAttr('project')!=$group->getAttr('project')
+		)
+			throw new RuntimeException("Local groups can't be members into each other unless they are local to the same project!");
+
+		$success=(bool) $this->query("
 			INSERT INTO LPC_group_membership
 				(group_member, member_to)
 				VALUES (".$this->id.", ".$groupID.")
 		");
+		if (!$success)
+			return false;
+
+		LPC_User::expireCache(min($this->getAttr('project'),$grp->getAttr('project')),0);
+		return true;
+	}
+
+	function removeFromGroupByName($groupName,$project)
+	{
+		$groups=$this->getGroupByName($groupName,$project);
+		if (!$groups)
+			return NULL;
+
+		$linkCount=0;
+		foreach($grous as $grp)
+			$linkCount+=$this->removeFromGroup($grp);
+
+		return $linkCount;
+	}
+
+	function removeFromGroup($group)
+	{
+		if (is_integer($group)) {
+			$groupID=$group;
+			$group=new LPC_Group($groupID);
+		} elseif ($group instanceof LPC_Group)
+			$groupID=$group->id;
+		else
+			throw new RuntimeException("Unknown parameter type! Expecting an integer or a LPC_Group instance.");
+
+		LPC_User::expireCache($this->getAttr('project'),0);
+
+		$rs=$this->query("
+			DELETE
+			FROM LPC_group_membership
+			WHERE
+				group_member=".$this->id." AND
+				member_to=".$groupID
+		);
+		return $rs->Affected_Rows;
 	}
 }
