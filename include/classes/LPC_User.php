@@ -12,6 +12,12 @@ abstract class LPC_User extends LPC_Base
 		'password'=>'password'	// char(40), since this contains a SHA1 checksum
 	);
 
+	const HU_KEY='perm_H'; // Cache key for whether this guy's a hyperuser
+	const SU_KEY='perm_S'; // Cache key for whether this guy's a superuser in the current project
+	const PD_KEY='perm_date'; // Cache key for the permissions date last read to cache
+	const PE_KEY='perm_exp'; // Cache key for the permissions date last write
+	const P_KEY='perms'; // Cache key which stores the permissions
+
 	function onDelete($id)
 	{
 		$this->query("
@@ -198,50 +204,99 @@ EOJS;
 	function flushPermissionsCache($projectID=0,$userID=0)
 	{
 		$userID=$this->defaultID($userID);
-		$projectID=&$this->defaultProject($projectID)->id;
-		$cache=LPC_Cache::getCurrent();
+		$projectID=$this->defaultProject($projectID)->id;
 
-		$cache->deleteUP("permissions_date",$userID,$projectID);
-		$cache->deleteUP("superuser",$userID,$projectID);
-		$cache->deleteUP("permissions",$userID,$projectID);
+		$cache=LPC_Cache::getCurrent();
+		$cache->deleteUP(self::P_KEY,$userID,$projectID); // actual permissions cache
+		$cache->deleteUP(self::PD_KEY,$userID,$projectID); // permissions date
+		$cache->deleteUP(self::SU_KEY,$userID,$projectID); // superuser
+		$cache->deleteU(self::HU_KEY,$userID); // hyperuser
 	}
 
+	/**
+	* Validates the permissions cache for this user in this project.
+	* Here's how the permission cache works. The permissions cache
+	* contains all permissions (and only permissions!) a user has
+	* within a project. When the permissions cache is saved
+	* (in method {@link getAllPermissions()}), it's saved with setUP().
+	* At the same time, the date is recorded with setUP(self::PD_KEY).
+	* Note how this is only related to READING the permissions.
+	* 
+	* On the other hand, there are four types of permission expiration dates:
+	* - getUP(self::PE_KEY)
+	* - getU(self::PE_KEY)
+	* - getP(self::PE_KEY)
+	* - getG(self::PE_KEY)
+	* These are updated whenever the user's permissions are changed within a project,
+	* a user's global permissions are changed, a group is changed within a project or
+	* global groups or group relationships are changed. Method validatePermissionsCache()
+	* validates the permission date against all of these expiration dates. If the permission
+	* date is LATER than ALL expiration dates, the cache is valid (whatever changed, it changed
+	* before the last permissions read); if the permissions cache is EARLIER than
+	* ANY expiration date then the permissions are stale and the cache is cleared.
+	*
+	* @return mixed true if valid, false if not, NULL if no cache date was found.
+	*/
 	function validatePermissionsCache($projectID=0,$userID=0)
 	{
 		$userID=$this->defaultID($userID);
+		$projectID=$this->defaultProject($projectID)->id;
+
 		$cache=LPC_Cache::getCurrent();
-
-		$cacheDate=$cache->getU("permissions_date",$userID);
-		if (!$projectID)
-			$projectID=@LPC_Project::getCurrent(true)->id;
-
-		if ($projectID)
-			$cacheDate=min($cacheDate,$cache->getUP("permissions_date",$userID,$projectID));
-
+		$cacheDate=$cache->getUP(self::PD_KEY,$userID,$projectID);
 		if (!$cacheDate)
 			return NULL;
 
-		if ($projectID)
-			$projectDate=$cache->getP("premissions_expiration",$projectID);
-		else
-			$projectDate=false;
+		$upDate=$cache->getUP(self::PE_KEY,$userID,$projectID);
+		$uDate=$cache->getU(self::PE_KEY,$userID);
+		$pDate=$cache->getP(self::PE_KEY,$projectID);
+		$gDate=$cache->getG(self::PE_KEY);
 
-		$globalDate=$cache->getG("permissions_expiration");
 		if (
-			$projectDate &&
-			$globalDate &&
-			$cacheDate>$projectDate &&
-			$cacheDate>$globalDate
+			$upDate &&
+			$cacheDate>$upDate &&
+
+			$uDate &&
+			$cacheDate>$uDate &&
+
+			$pDate &&
+			$cacheDate>$pDate &&
+
+			$gDate &&
+			$cacheDate>$gDate
 		)
 			return true; // all is well
 
-		// All is not well -- flushing all relevant caches
-		if ($projectID)
-			$this->flushPermissionsCache($userID,$projectID);
+		// Flushing all relevant caches
+		$this->flushPermissionsCache($projectID,$userID);
 
-		$cache->deleteU("permissions_date",$userID);
-		$cache->deleteU("hyperuser",$userID);
 		return false;
+	}
+
+	function getNow()
+	{
+		return microtime(true);
+	}
+
+	private function ensureCacheExpiration($projectID,$userID)
+	{
+		static $ensured=array();
+		if (isset($ensured[$projectID]) && isset($ensured[$projectID][$userID]))
+			return;
+
+		$ensured[$projectID][$userID]=1;
+
+		$cache=LPC_Cache::getCurrent();
+		$now=self::getNow();
+
+		if (!$cache->getUP(self::PE_KEY,$userID,$projectID))
+			$cache->setUP(self::PE_KEY,$now,$userID,$projectID);
+		if (!$cache->getU(self::PE_KEY,$userID))
+			$cache->setU(self::PE_KEY,$now,$userID);
+		if (!$cache->getP(self::PE_KEY,$projectID))
+			$cache->setP(self::PE_KEY,$now,$projectID);
+		if (!$cache->getG(self::PE_KEY))
+			$cache->setG(self::PE_KEY,$now);
 	}
 
 	function getAllGroups($project=0,$id=0)
@@ -269,25 +324,39 @@ EOJS;
 		return $groupIDs;
 	}
 
-	function getAllPermissions($project=0,$id=0)
+	/**
+	* Retrieves all permissions this user has in the current project.
+	* Notes:
+	* - this method returns the names of all groups with type='permission'
+	*   this user is a member of
+	* - there's no way to explicitly ask for the global permissions.
+	*   If the user hasn't selected a project, you get the global permissions
+	*   only. If the user has selected a project, you get the global
+	*   permissions AND the local permissions mangled together.
+	*
+	* @return array indexed array of permission names
+	*/
+	function getAllPermissions($projectID=0,$userID=0)
 	{
-		$userID=$this->defaultID($id);
-		$projectID=$this->defaultProject($project)->id;
+		$userID=$this->defaultID($userID);
+		$projectID=$this->defaultProject($projectID)->id;
 
 		$cache=LPC_Cache::getCurrent();
-		$groups=$cache->getUP("permissions",$userID,$projectID);
+		$groups=$cache->getUP(self::P_KEY,$userID,$projectID);
 		if ($groups!==false && $this->validatePermissionsCache($projectID,$userID))
 			return $groups;
 
+		self::ensureCacheExpiration($projectID,$userID);
+		$cache->setUP(self::PD_KEY,self::getNow(),$userID,$projectID);
 		$groupIDs=$this->getAllGroups($projectID,$userID);
 		if (!$groupIDs) {
-			$cache->setUP("permissions",array(),$userID,$projectID);
+			$cache->setUP(self::P_KEY,array(),$userID,$projectID);
 			return array();
 		}
 
 		$group=new LPC_Group();
 		$cache->setUP(
-			"permissions",
+			self::P_KEY,
 			$group->filterGroupsByType($groupIDs,'permission','name'),
 			$userID,
 			$projectID
@@ -312,7 +381,7 @@ EOJS;
 		$projectID=$this->defaultProject($project)->id;
 
 		$cache=LPC_Cache::getCurrent();
-		$super=$cache->getUP('superuser',$userID,$projectID);
+		$super=$cache->getUP(self::SU_KEY,$userID,$projectID);
 		if ($super!==false && $this->validatePermissionsCache($projectID,$userID))
 			return (bool) $super;
 
@@ -326,9 +395,9 @@ EOJS;
 		");
 		$result=!$rs->EOF;
 
-		$cache->setUP('superuser',(int) $result,$userID,$projectID);
+		$cache->setUP(self::SU_KEY,(int) $result,$userID,$projectID);
 		// We only need to set this here because isSuperuser() is always the first one to run in projects
-		$cache->setUP("permissions_date",time(),$userID,$projectID);
+		$cache->setUP(self::PE_KEY,time(),$userID,$projectID);
 
 		return $result;
 	}
@@ -337,9 +406,12 @@ EOJS;
 	{
 		$userID=$this->defaultID($id);
 		$cache=LPC_Cache::getCurrent();
-		$hyper=$cache->getU('hyperuser',$userID);
+		$hyper=$cache->getU(self::HU_KEY,$userID);
 		if ($hyper!==false && $this->validatePermissionsCache(0,$userID))
 			return (bool) $hyper;
+
+		// We only need to set this here because isHyperuser() is always the first one to run
+		$cache->setU(self::PD_KEY,time(),$userID);
 
 		$rs=$this->query("
 			SELECT member_to
@@ -350,9 +422,7 @@ EOJS;
 				member_to=1
 		");
 		$result=!$rs->EOF;
-		$cache->setU('hyperuser',(int) $result,$userID);
-		// We only need to set this here because isHyperuser() is always the first one to run
-		$cache->setU("permissions_date",time(),$userID);
+		$cache->setU(self::HU_KEY,(int) $result,$userID);
 		return $result;
 	}
 
