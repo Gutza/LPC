@@ -1,6 +1,6 @@
 <?php
 
-class LPC_Cache_apc extends LPC_Cache_global implements iLPC_Cache
+class LPC_Cache_apc extends LPC_Cache_global
 {
 
 	function __construct()

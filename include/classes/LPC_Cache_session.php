@@ -1,6 +1,6 @@
 <?php
 
-class LPC_Cache_session implements iLPC_Cache
+class LPC_Cache_session extends LPC_Cache_base
 {
 
 	public function __construct()

@@ -1,6 +1,6 @@
 <?php
 
-abstract class LPC_Cache_global extends LPC_Cache_base implements iLPC_Cache
+abstract class LPC_Cache_global extends LPC_Cache_base
 {
 
 	// USER ---------------------------------------------------------------

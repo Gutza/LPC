@@ -1,6 +1,6 @@
 <?php
 
-class LPC_Cache_none implements iLPC_Cache
+class LPC_Cache_none extends LPC_Cache_base
 {
 	// Get, set and delete in the global cache
 	public function getG($name)

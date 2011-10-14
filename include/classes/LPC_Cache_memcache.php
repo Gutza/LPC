@@ -1,6 +1,6 @@
 <?php
 
-class LPC_Cache_memcache extends LPC_Cache_global implements iLPC_Cache
+class LPC_Cache_memcache extends LPC_Cache_global
 {
 
 	private static $mcO; // memcache object

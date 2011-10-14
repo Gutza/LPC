@@ -1,6 +1,6 @@
 <?php
 
-class LPC_Cache_database extends LPC_Base implements iLPC_Cache
+class LPC_Cache_database extends LPC_Cache_base
 {
 	public $lastDate; // specific to LPC_Cache_database, this is the date of the last value retrieved from the database
 
