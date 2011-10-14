@@ -6,7 +6,16 @@ abstract class LPC_Menu extends LPC_HTML_widget
 	var $attributes=array("class"=>"sf-menu-container");
 
 	var $structure=array();
-	var $noPermMessage="You do not have the necessary permissions to access this resource.";
+	var $noPermMessage="
+<html>
+	<head>
+		<title>Forbidden</title>
+	</head>
+	<body>
+		<h1>Forbidden</h1>
+		<p>You do not have the necessary permissions to access this resource.</p>
+	</body>
+</html>";
 
 	function __construct($page)
 	{
@@ -172,6 +181,7 @@ abstract class LPC_Menu extends LPC_HTML_widget
 
 	function noPermission($atom)
 	{
+		header('HTTP/1.1 403 Forbidden');
 		echo $this->noPermMessage;
 		trigger_error("LPC: Access denied",E_USER_WARNING);
 		exit;
