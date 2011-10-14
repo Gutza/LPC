@@ -112,7 +112,22 @@ class LPC_Group extends LPC_Base
 				$this->getAttr('name')!=$this->cacheData['name']
 			)
 		)
-			LPC_User::expireCache($this->cacheData['id'],0);
+			// Now permission, old permission no more, or perm name change
+			LPC_User::expireCache(0,0);
+		elseif ($this->cacheData['project']!=$this->getAttr('project')) {
+			// Project change
+			if (
+				$this->cacheData['project']==0 ||
+				$this->getAttr('project')==0
+			)
+				// Added or removed from global scope
+				LPC_User::expireCache(0,0);
+			else {
+				// Moved from one project to another
+				LPC_User::expireCache($this->cacheData['project'],0);
+				LPC_User::expireCache($this->getAttr('project'),0);
+			}
+		}
 	}
 
 	/**
