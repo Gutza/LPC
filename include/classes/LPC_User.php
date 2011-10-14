@@ -201,18 +201,6 @@ for(var i in inputs) {
 EOJS;
 	}
 
-	function flushPermissionsCache($projectID=0,$userID=0)
-	{
-		$userID=$this->defaultID($userID);
-		$projectID=$this->defaultProject($projectID)->id;
-
-		$cache=LPC_Cache::getCurrent();
-		$cache->deleteUP(self::P_KEY,$userID,$projectID); // actual permissions cache
-		$cache->deleteUP(self::PD_KEY,$userID,$projectID); // permissions date
-		$cache->deleteUP(self::SU_KEY,$userID,$projectID); // superuser
-		$cache->deleteU(self::HU_KEY,$userID); // hyperuser
-	}
-
 	/**
 	* Validates the permissions cache for this user in this project.
 	* Here's how the permission cache works. The permissions cache
@@ -239,36 +227,40 @@ EOJS;
 	*/
 	function validatePermissionsCache($projectID=0,$userID=0)
 	{
+		static $validated=array(); // $validates[$projectID][$userID]
+		$cache=LPC_Cache::getCurrent();
+
+		if (!isset($validated[$userID]))
+			$validated[$userID]=array();
+		if (!empty($validated[$userID][$projectID]))
+			return true;
+
 		$userID=$this->defaultID($userID);
 		$projectID=$this->defaultProject($projectID)->id;
-
-		$cache=LPC_Cache::getCurrent();
-		$cacheDate=$cache->getUP(self::PD_KEY,$userID,$projectID);
+		$cacheDate=$cache->getUPf(self::PD_KEY,$userID,$projectID);
 		if (!$cacheDate)
 			return NULL;
 
-		$upDate=$cache->getUP(self::PE_KEY,$userID,$projectID);
-		$uDate=$cache->getU(self::PE_KEY,$userID);
-		$pDate=$cache->getP(self::PE_KEY,$projectID);
-		$gDate=$cache->getG(self::PE_KEY);
+		// !!! DO NOT REPLACE THE FOUR STATEMENTS BELOW WITH A SINGLE $cache->getUPf() !!!
+		// (Any of the cache expiration dates MUST expire the cache!
 
-		if (
-			$upDate &&
-			$cacheDate>$upDate &&
+		// Validate global
+		if ($cacheDate<=$cache->getG(self::PE_KEY))
+			return false;
 
-			$uDate &&
-			$cacheDate>$uDate &&
+		// Validate user
+		if ($cacheDate<=$cache->getU(self::PE_KEY,$userID))
+			return false;
 
-			$pDate &&
-			$cacheDate>$pDate &&
+		// Validate project, if available
+		if ($projectID && $cacheDate<=$cache->getP(self::PE_KEY,$projectID))
+			return false;
 
-			$gDate &&
-			$cacheDate>$gDate
-		)
-			return true; // all is well
+		// Validate user/project, if available
+		if ($userID && $projectID && $cacheDate<=$cache->getUP(self::PE_KEY,$userID,$projectID))
+			return false;
 
-		// Flushing all relevant caches
-		$this->flushPermissionsCache($projectID,$userID);
+		$validated[$userID][$projectID]=true;
 
 		return false;
 	}
@@ -310,7 +302,7 @@ EOJS;
 
 		if (!$projectID)
 			return;
-		$$ensured[$userID][$projectID]=true;
+		$ensured[$userID][$projectID]=true;
 
 		// Ensure project and user/project cache expiration date
 		if (!$cache->getP(self::PE_KEY,$projectID))
@@ -411,7 +403,7 @@ EOJS;
 
 	function hasPerm($permission,$project=0,$id=0)
 	{
-		if ($this->isSuperuser($project))
+		if ($this->isSuperuser($project,$id))
 			return true;
 
 		return in_array($permission,$this->getAllPermissions($project,$id));
@@ -419,23 +411,30 @@ EOJS;
 
 	function isSuperuser($project=0,$id=0)
 	{
+		if ($this->isHyperuser($userID))
+			return true;
+
 		static $local_cache=array(); // A local cache, used just for runtime
 		$userID=$this->defaultID($id);
 		if (!isset($local_cache[$userID]))
 			$local_cache[$userID]=array();
-		if (!isset($local_cache[$userID][0])) // Local hyperuser cache
-			$local_cache[$userID][0]=$this->isHyperuser($userID);
-		if ($local_cache[$userID][0])
-			return true;
 
 		$projectID=$this->defaultProject($project)->id;
+		if (!$projectID)
+			return false; // You'd be a hyperuser
+
 		if (isset($local_cache[$userID][$projectID])) // Local superuser cache
 			return $local_cache[$userID][$projectID];
 
 		$cache=LPC_Cache::getCurrent();
 		$super=$cache->getUP(self::SU_KEY,$userID,$projectID);
-		if ($super!==false && $this->validatePermissionsCache($projectID,$userID))
-			return (bool) $super;
+		if ($super!==false && $this->validatePermissionsCache($projectID,$userID)) {
+			$local_cache[$userID][$projectID]=(bool) $super;
+			return $local_cache[$userID][$projectID];
+		}
+
+		// We only need to set this here because isSuperuser() is always the first one to run in projects
+		$cache->setUP(self::PE_KEY,time(),$userID,$projectID);
 
 		$rs=$this->query("
 			SELECT member_to
@@ -448,32 +447,24 @@ EOJS;
 		$local_cache[$userID][$projectID]=$result=!$rs->EOF;
 
 		$cache->setUP(self::SU_KEY,(int) $result,$userID,$projectID);
-		// We only need to set this here because isSuperuser() is always the first one to run in projects
-		$cache->setUP(self::PE_KEY,time(),$userID,$projectID);
 
 		return $result;
 	}
 
 	function isHyperuser($id=0)
 	{
-		/*
-		isHyperuser() is the only permissions-related method which is project-independent;
-		as such, we'll use custom code to handle this cache, independent from the other
-		methods.
-		*/
+		static $local_cache=array(); // A local cache, used just for runtime
 		$userID=$this->defaultID($id);
+		if (isset($local_cache[$userID]))
+			return $local_cache[$userID];
+
 		$cache=LPC_Cache::getCurrent();
 
 		$hyper=$cache->getU(self::HU_KEY,$userID);
-		if (
-			$hyper!==false &&
-			$cacheDate=$cache->getU(self::PD_KEY) &&
-			$uDate=$cache->getU(self::PE_KEY) &&
-			$cacheDate>$uDate &&
-			$gDate=$cache->getG(self::PE_KEY) &&
-			$cacheDate>$gDate
-		)
-			return (bool) $hyper;
+		if ($hyper!==false && $this->validatePermissionsCache(0,$userID)) {
+			$local_cache[$userID]=(bool) $hyper;
+			return $local_cache[$userID];
+		}
 
 		self::ensureCacheExpiration($userID,0);
 
@@ -488,8 +479,9 @@ EOJS;
 				user_member=".$userID." AND
 				member_to=1
 		");
-		$result=!$rs->EOF;
+		$result=$local_cache[$userID]=!$rs->EOF;
 		$cache->setU(self::HU_KEY,(int) $result,$userID);
+
 		return $result;
 	}
 
