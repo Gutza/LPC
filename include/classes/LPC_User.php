@@ -284,25 +284,39 @@ EOJS;
 	* Please note this is a static method -- both parameters
 	* are mandatory, since they can't be implicit.
 	*/
-	private static function ensureCacheExpiration($projectID,$userID)
+	private static function ensureCacheExpiration($userID,$projectID)
 	{
-		static $ensured=array();
-		if (isset($ensured[$projectID]) && isset($ensured[$projectID][$userID]))
-			return;
-
-		$ensured[$projectID][$userID]=1;
-
+		static $ensured=array(); // $ensured[$projectID][$userID]
 		$cache=LPC_Cache::getCurrent();
 		$now=self::getNow();
 
+		// Ensure global cache expiration date
+		if (empty($ensured[0])) {
+			$ensured[0]=true;
+			if (!$cache->getG(self::PE_KEY))
+				$cache->setG(self::PE_KEY,$now);
+		}
+
+		if (!isset($ensured[$userID]))
+			$ensured[$userID]=array();
+		$ens=&$ensured[$userID];
+
+		// Ensure user cache expiration date
+		if (empty($ensured[$userID][0])) {
+			$ensured[$userID][0]=true;
+			if (!$cache->getU(self::PE_KEY,$userID))
+				$cache->setU(self::PE_KEY,$now,$userID);
+		}
+
+		if (!$projectID)
+			return;
+		$$ensured[$userID][$projectID]=true;
+
+		// Ensure project and user/project cache expiration date
+		if (!$cache->getP(self::PE_KEY,$projectID))
+				$cache->setP(self::PE_KEY,$now,$projectID);
 		if (!$cache->getUP(self::PE_KEY,$userID,$projectID))
 			$cache->setUP(self::PE_KEY,$now,$userID,$projectID);
-		if (!$cache->getU(self::PE_KEY,$userID))
-			$cache->setU(self::PE_KEY,$now,$userID);
-		if (!$cache->getP(self::PE_KEY,$projectID))
-			$cache->setP(self::PE_KEY,$now,$projectID);
-		if (!$cache->getG(self::PE_KEY))
-			$cache->setG(self::PE_KEY,$now);
 	}
 
 	/**
@@ -372,20 +386,20 @@ EOJS;
 		$projectID=$this->defaultProject($projectID)->id;
 
 		$cache=LPC_Cache::getCurrent();
-		$groups=$cache->getUP(self::P_KEY,$userID,$projectID);
+		$groups=$cache->getUPf(self::P_KEY,$userID,$projectID);
 		if ($groups!==false && $this->validatePermissionsCache($projectID,$userID))
 			return $groups;
 
-		self::ensureCacheExpiration($projectID,$userID);
-		$cache->setUP(self::PD_KEY,self::getNow(),$userID,$projectID);
+		self::ensureCacheExpiration($userID,$projectID);
+		$cache->setUPf(self::PD_KEY,self::getNow(),$userID,$projectID);
 		$groupIDs=$this->getAllGroups($projectID,$userID);
 		if (!$groupIDs) {
-			$cache->setUP(self::P_KEY,array(),$userID,$projectID);
+			$cache->setUPf(self::P_KEY,array(),$userID,$projectID);
 			return array();
 		}
 
 		$group=new LPC_Group();
-		$cache->setUP(
+		$cache->setUPf(
 			self::P_KEY,
 			$groups=$group->filterGroupsByType($groupIDs,'permission','name'),
 			$userID,
@@ -405,10 +419,18 @@ EOJS;
 
 	function isSuperuser($project=0,$id=0)
 	{
-		if ($this->isHyperuser($id))
-			return true;
+		static $local_cache=array(); // A local cache, used just for runtime
 		$userID=$this->defaultID($id);
+		if (!isset($local_cache[$userID]))
+			$local_cache[$userID]=array();
+		if (!isset($local_cache[$userID][0])) // Local hyperuser cache
+			$local_cache[$userID][0]=$this->isHyperuser($userID);
+		if ($local_cache[$userID][0])
+			return true;
+
 		$projectID=$this->defaultProject($project)->id;
+		if (isset($local_cache[$userID][$projectID])) // Local superuser cache
+			return $local_cache[$userID][$projectID];
 
 		$cache=LPC_Cache::getCurrent();
 		$super=$cache->getUP(self::SU_KEY,$userID,$projectID);
@@ -423,7 +445,7 @@ EOJS;
 				user_member=".$userID." AND
 				member_to=1
 		");
-		$result=!$rs->EOF;
+		$local_cache[$userID][$projectID]=$result=!$rs->EOF;
 
 		$cache->setUP(self::SU_KEY,(int) $result,$userID,$projectID);
 		// We only need to set this here because isSuperuser() is always the first one to run in projects
@@ -434,11 +456,26 @@ EOJS;
 
 	function isHyperuser($id=0)
 	{
+		/*
+		isHyperuser() is the only permissions-related method which is project-independent;
+		as such, we'll use custom code to handle this cache, independent from the other
+		methods.
+		*/
 		$userID=$this->defaultID($id);
 		$cache=LPC_Cache::getCurrent();
+
 		$hyper=$cache->getU(self::HU_KEY,$userID);
-		if ($hyper!==false && $this->validatePermissionsCache(0,$userID))
+		if (
+			$hyper!==false &&
+			$cacheDate=$cache->getU(self::PD_KEY) &&
+			$uDate=$cache->getU(self::PE_KEY) &&
+			$cacheDate>$uDate &&
+			$gDate=$cache->getG(self::PE_KEY) &&
+			$cacheDate>$gDate
+		)
 			return (bool) $hyper;
+
+		self::ensureCacheExpiration($userID,0);
 
 		// We only need to set this here because isHyperuser() is always the first one to run
 		$cache->setU(self::PD_KEY,time(),$userID);
