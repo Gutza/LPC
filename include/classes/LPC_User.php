@@ -335,7 +335,11 @@ EOJS;
 			$cache->setG(self::PE_KEY,self::getNow());
 	}
 
-	function getAllGroups($project=0,$id=0)
+	/**
+	* Returns the IDs of all groups in which this user is a DIRECT member.
+	* Similar to {@link getGroups()}, except this returns IDs.
+	*/
+	function getGroupIDs($project=0,$id=0)
 	{
 		$userID=$this->defaultID($id);
 		$projectID=$this->defaultProject($project)->id;
@@ -350,14 +354,46 @@ EOJS;
 				g.project IN (0,".$projectID.")
 		";
 		$rs=$this->query($sql);
-		$group=new LPC_Group();
 		$groupIDs=array();
 		while(!$rs->EOF) {
 			$groupIDs[]=$rs->fields[0];
-			$groupIDs=array_merge($groupIDs,$group->getAllMembershipGroupIDs($rs->fields[0],$projectID));
 			$rs->MoveNext();
 		}
 		return $groupIDs;
+	}
+
+	/**
+	* Returns the groups in which this user is a DIRECT member.
+	* Similar to {@link getGroupIDs()}, except this returns instantiated objects.
+	*/
+	function getGroups($project=0,$id=0)
+	{
+		$group=new LPC_Group();
+		return $group->instantiate($this->getGroupIDs($project,$id));
+	}
+
+	/**
+	* Returns the IDs of ALL groups this user is a member to, recursively.
+	* Similar to {@link getAllGroups()}, except this returns IDs.
+	*/
+	function getAllGroupIDs($project=0,$id=0)
+	{
+		$group=new LPC_Group();
+		$groupIDs=$this->getGroupIDs($project,$id);
+		$indirectIDs=array();
+		foreach($groupIDs as $groupID)
+			$indirectIDs=array_merge($indirectIDs,$group->getAllMembershipGroupIDs($groupID,$project));
+		return array_unique(array_merge($groupIDs,$indirectIDs));
+	}
+
+	/**
+	* Returns ALL groups this user is a member to, recursively.
+	* Similar to {@link getAllGroupIDs()}, except this returns instantiated objects.
+	*/
+	function getAllGroups($project=0,$id=0)
+	{
+		$group=new LPC_Group();
+		return $group->instantiate($this->getAllGroupIDs($project,$id));
 	}
 
 	/**
@@ -384,7 +420,7 @@ EOJS;
 
 		self::ensureCacheExpiration($userID,$projectID);
 		$cache->setUPf(self::PD_KEY,self::getNow(),$userID,$projectID);
-		$groupIDs=$this->getAllGroups($projectID,$userID);
+		$groupIDs=$this->getAllGroupIDs($projectID,$userID);
 		if (!$groupIDs) {
 			$cache->setUPf(self::P_KEY,array(),$userID,$projectID);
 			return array();
@@ -508,7 +544,7 @@ EOJS;
 	*/
 	function addToGroup($group,$project=false)
 	{
-		if (is_integer($group))
+		if (is_numeric($group))
 			$groupID=$group;
 		elseif ($group instanceof LPC_Group)
 			$groupID=$group->id;
@@ -517,12 +553,12 @@ EOJS;
 
 		if ($project===false)
 			$projectID=LPC_Project::getCurrent()->id;
-		elseif (is_integer($group))
+		elseif (is_numeric($project))
 			$projectID=$project;
 		elseif ($project instanceof LPC_Project)
 			$projectID=$project->id;
 		else
-			throw new RuntimeException("Unknown parameter \$project type! Expecting boolean false, an integer or a LPC_Project instance.");
+			throw new RuntimeException("Unknown parameter \$project type! Expecting boolean false, an integer or a LPC_Project instance; received ".print_r($project,1));
 
 		$rs=$this->query("
 			SELECT COUNT(*)

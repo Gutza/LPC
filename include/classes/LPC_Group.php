@@ -43,7 +43,7 @@ class LPC_Group extends LPC_Base
 	protected function ensureCacheData($grp=false)
 	{
 		if (!$this->id)
-			throw RuntimeException("Need an id!");
+			throw new RuntimeException("Need an id!");
 		if (isset($this->cacheData['id']) && $this->cacheData['id']==$this->id)
 			return;
 
@@ -97,7 +97,10 @@ class LPC_Group extends LPC_Base
 
 	protected function beforeSave($new, $id, $force)
 	{
+		if ($new)
+			return true;
 		$this->ensureCacheData();
+		return true;
 	}
 
 	protected function onSave($new)
@@ -141,18 +144,27 @@ class LPC_Group extends LPC_Base
 	*/
 	function getMemberUserIDs($project=0,$id=0)
 	{
-		$project=$this->defaultProject($project);
-		if ($this->getAttr('project')!=0 && $this->getAttr('project')!=$projectID)
-			return array();
-
 		$groupID=$this->defaultID($id);
-		$rs=$this->query("
-			SELECT user_member
-			FROM LPC_user_membership
-			WHERE
-				project IN (0,".$project->id.") AND
-				member_to=".$group->id
-		);
+		if ($project===false) {
+			$rs=$this->query("
+				SELECT user_member
+				FROM LPC_user_membership
+				WHERE
+					member_to=".$groupID
+			);
+		} else {
+			$project=$this->defaultProject($project);
+			if ($this->getAttr('project')!=0 && $this->getAttr('project')!=$projectID)
+				return array();
+
+			$rs=$this->query("
+				SELECT user_member
+				FROM LPC_user_membership
+				WHERE
+					project IN (0,".$project->id.") AND
+					member_to=".$groupID
+			);
+		}
 		$result=array();
 		while(!$rs->EOF) {
 			$result[]=$rs->fields[0];
@@ -183,15 +195,24 @@ class LPC_Group extends LPC_Base
 		$group=$this->defaultObject($id);
 		if (!$group->id)
 			throw new RuntimeException("LPC_Group::getMemberGroupIDs() needs either an explicit or an implicit group ID. Neither was provided.");
-		$projectID=$this->defaultProject($project)->id;
-		$rs=$this->query("
-			SELECT gg.group_member
-			FROM LPC_group_membership AS gg
-			LEFT JOIN LPC_group AS g ON g.id=gg.group_member
-			WHERE
-				gg.member_to=".$group->id." AND
-				g.project IN (0,".$projectID.")
-		");
+		if ($project===false) {
+			$rs=$this->query("
+				SELECT gg.group_member
+				FROM LPC_group_membership AS gg
+				WHERE
+					gg.member_to=".$group->id."
+			");
+		} else {
+			$projectID=$this->defaultProject($project)->id;
+			$rs=$this->query("
+				SELECT gg.group_member
+				FROM LPC_group_membership AS gg
+				LEFT JOIN LPC_group AS g ON g.id=gg.group_member
+				WHERE
+					gg.member_to=".$group->id." AND
+					g.project IN (0,".$projectID.")
+			");
+		}
 		$result=array();
 		while(!$rs->EOF) {
 			$result[]=$rs->fields[0];
@@ -230,7 +251,7 @@ class LPC_Group extends LPC_Base
 	* Returns ALL member groups, recursively.
 	* Similar to {@link getAllMemberGroupIDs()}, only this returns instantiated objects.
 	*/
-	function getAllMemberGroups($id=0,$project=0)
+	function getAllMemberGroups($project=0,$id=0)
 	{
 		return $this->instantiate($this->getAllMemberGroupIDs($id,$project));
 	}
@@ -241,7 +262,9 @@ class LPC_Group extends LPC_Base
 	*/
 	function getAllMemberUserIDs($project=0,$id=0)
 	{
-		$groups=$this->getAllMemberGroupIDs($id);
+		$groupID=$this->defaultID($id);
+		$groups=$this->getAllMemberGroupIDs($groupID,$project);
+		$groups[]=$groupID;
 		$users=array();
 
 		foreach($groups as $group)
@@ -404,7 +427,7 @@ class LPC_Group extends LPC_Base
 		} elseif ($group instanceof LPC_Group)
 			$groupID=$group->id;
 		else
-			throw new RuntimeException("Unknown parameter type! Expecting an integer or a LPC_Group instance.");
+			throw new RuntimeException("Unknown parameter type! Expecting an integer or a LPC_Group instance. Received ".print_r($group,1));
 
 		$rs=$this->query("
 			SELECT COUNT(*)
@@ -431,7 +454,7 @@ class LPC_Group extends LPC_Base
 		if (!$success)
 			return false;
 
-		LPC_User::expireCache(min($this->getAttr('project'),$grp->getAttr('project')),0);
+		LPC_User::expireCache(min($this->getAttr('project'),$group->getAttr('project')),0);
 		return true;
 	}
 

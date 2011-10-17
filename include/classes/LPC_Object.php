@@ -939,7 +939,7 @@ if (count(debug_backtrace())>200)
 
 			return $project;
 		}
-		throw new InvalidArgumentException("Unknown entity type ".gettype($project));
+		throw new InvalidArgumentException("Unknown entity type: ".gettype($project));
 	}
 	// }}}
 	// {{{ createLink()
