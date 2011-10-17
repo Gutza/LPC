@@ -241,8 +241,8 @@ class LPC_Group extends LPC_Base
 		foreach($kids as $kid) {
 			if (in_array($kid,$history))
 				continue;
-			$history=array_unique(array_merge($kids,$grandkids));
-			$grandkids=array_merge($grandkids,$this->getAllMemberGroupIDs($kid,$project,$history));
+			$my_history=array_merge($history,array($kid));
+			$grandkids=array_merge($grandkids,$this->getAllMemberGroupIDs($kid,$project,$my_history));
 		}
 		return array_unique(array_merge($kids,$grandkids));
 	}

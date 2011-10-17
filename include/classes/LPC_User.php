@@ -245,19 +245,41 @@ EOJS;
 		// (Any of the cache expiration dates MUST expire the cache!
 
 		// Validate global
-		if ($cacheDate<=$cache->getG(self::PE_KEY))
+		if (
+			!($cd=$cache->getG(self::PE_KEY)) ||
+			$cacheDate<=$cd
+		)
 			return false;
 
-		// Validate user
-		if ($cacheDate<=$cache->getU(self::PE_KEY,$userID))
+		// Validate user, if available
+		if (
+			$userID &&
+			(
+				(!$cd=$cache->getU(self::PE_KEY,$userID)) ||
+				$cacheDate<=$cd
+			)
+		)
 			return false;
 
 		// Validate project, if available
-		if ($projectID && $cacheDate<=$cache->getP(self::PE_KEY,$projectID))
+		if (
+			$projectID &&
+			(
+				!($cd=$cache->getP(self::PE_KEY,$projectID)) ||
+				$cacheDate<=$cd
+			)
+		)
 			return false;
 
 		// Validate user/project, if available
-		if ($userID && $projectID && $cacheDate<=$cache->getUP(self::PE_KEY,$userID,$projectID))
+		if (
+			$userID &&
+			$projectID &&
+			(
+				!($cd=$cache->getUP(self::PE_KEY,$userID,$projectID)) ||
+				$cacheDate<=$cd
+			)
+		)
 			return false;
 
 		$validated[$userID][$projectID]=true;
@@ -622,7 +644,7 @@ EOJS;
 
 		if ($project===false)
 			$projectID=LPC_Project::getCurrent()->id;
-		elseif (is_integer($group))
+		elseif (is_integer($project))
 			$projectID=$project;
 		elseif ($project instanceof LPC_Project)
 			$projectID=$project->id;
@@ -643,7 +665,7 @@ EOJS;
 			$rs->MoveNext();
 		}
 		$linkCount=count($projectIDs);
-		$projectIDs=array_unique($project_IDs);
+		$projectIDs=array_unique($projectIDs);
 		foreach($projectIDs as $prjID)
 			self::expireCache($prjID,$this->id);
 
