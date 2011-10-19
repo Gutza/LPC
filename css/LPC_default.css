@@ -153,13 +153,19 @@ div.scaffold-type {
 	font-size: 80%;
 }
 
-div.error_message {
+div.error_message, div.confirmation_message {
 	border: 1px solid red;
 	color: red;
 	font-weight: bold;
 	background-color: #fff0f0;
 	padding: 5px;
 	margin: 10px 0px;
+}
+
+div.confirmation_message {
+	border-color: #050;
+	background-color: #f0fff0;
+	color: #050;
 }
 
 /* Busy */

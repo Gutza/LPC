@@ -5,8 +5,10 @@
 */
 class LPC_Url
 {
-	private function process_query($url)
+	public static function process_query($url=NULL)
 	{
+		if ($url===NULL)
+			$url=self::get_current_URI();
 		$up=parse_url($url); // URL parts
 		$ub=''; // URL base
 		if (isset($up['host'])) {
@@ -33,7 +35,30 @@ class LPC_Url
 		);
 	}
 
-	public function add_GET_var($url,$newVar,$newValue)
+	// Adapted from http://dev.kanngard.net/Permalinks/ID_20050507183447.html
+	// Modifications:
+	// - Simplified the code for HTTP and HTTPS only
+	// - Added static caching
+	// - Properly managing the port for HTTPS
+	public static function get_current_URI()
+	{
+		static $current;
+		if (isset($current))
+			return $current;
+
+		$protocol=empty($_SERVER["HTTPS"])?"http":(($_SERVER["HTTPS"]=="on")?"https":"http");
+		$port="";
+		if (
+			($s=='http' && $_SERVER["SERVER_PORT"]!=80) ||
+			($s=='https' && $_SERVER["SERVER_PORT"]!=443)
+		)
+			$port=':'.$_SERVER["SERVER_PORT"];
+
+		$current=$protocol."://".$_SERVER['SERVER_NAME'].$port.$_SERVER['REQUEST_URI'];
+		return $current;
+	}
+
+	public static function add_GET_var($url,$newVar,$newValue)
 	{
 		$nfo=self::process_query($url);
 
@@ -44,7 +69,7 @@ class LPC_Url
 		return $nfo['url_base']."?".http_build_query($query);
 	}
 
-	public function remove_GET_var($url,$oldVar)
+	public static function remove_GET_var($url,$oldVar)
 	{
 		$nfo=self::process_query($url);
 
@@ -55,5 +80,17 @@ class LPC_Url
 		if ($URLquery)
 			$URLquery="?".$URLquery;
 		return $nfo['url_base'].$URLquery;
+	}
+
+	public static function get_script($url=NULL)
+	{
+		$nfo=self::process_query($url);
+		return $nfo['url_parts']['path'];
+	}
+
+	public static function get_full_script($url=NULL)
+	{
+		$nfo=self::process_query($url);
+		return $nfo['url_base'];
 	}
 }

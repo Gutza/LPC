@@ -27,5 +27,12 @@ if (LPC_GUI_OB)
 if (LPC_debug)
 	require LPC_include."/LPC_debug.php";
 
-if (getenv("LPC_auth") && isset($_SERVER['REMOTE_ADDR'])) // not for CLI
+if (
+	getenv("LPC_auth") &&
+	isset($_SERVER['REMOTE_ADDR']) && // not for CLI
+	!LPC_User::getCurrent(true) &&
+	($usr=LPC_User::newUser()) && // lazy instantiation
+	LPC_Url::get_script()!=$usr->recoverPasswordURL() &&
+	LPC_Url::get_full_script()!=$usr->processTokenBaseURL()
+)
 	LPC_User::getCurrent();

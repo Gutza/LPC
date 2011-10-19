@@ -9,8 +9,47 @@ abstract class LPC_User extends LPC_Base
 	// You should create a key on (user, password), because that's used for authentication
 	var $user_fields=array(
 		'user'=>'user', 	// any field type works
-		'password'=>'password'	// char(40), since this contains a SHA1 checksum
+		'password'=>'password',	// char(40), since this contains a SHA1 checksum
+		'token'=>'token',	// char(40) DEFAULT NULL, since this contains a SHA1 checksum
+					// it's crucial that this can be NULL, and that it's declared as such in LPC
+		'token_date'=>'token_date', // datetime
+		'email'=>'email',	// at least varchar(50), but typically make it varchar(255)
+		'fname'=>'fname',	// at least varchar(50), but typically make it varchar(255)
+		'lname'=>'lname',	// at least varchar(50), but typically make it varchar(255)
 	);
+
+	var $password_conditions=array(
+		'min_length'=>6,
+		'need_alpha'=>true,
+		'need_numeric'=>true,
+	);
+
+	var $token_delay=7; // token validity, in days (you can use fractions if you want shorter delays)
+	var $token_email_email='nobody'; // The originating e-mail address for token-related messages
+	var $token_email_name=LPC_project_full_name; // The originating name for token-related messages
+	var $token_invite_subject="%1\$s -- Account creation invitation";
+	var $token_invite_body="Dear %1\$s,
+
+Please create an account on %2\$s by clicking the following link:
+
+%3\$s
+
+This is an automated message, please do not reply.
+
+Thank you,
+The %4\$s team
+";
+	var $token_recover_subject="%1\$s -- Password retrieval";
+	var $token_recover_body="Dear %1\$s,
+
+Someone has initiated the password recovery procedure on %2\$s.
+Please click on the link below regardless of whether you have initiated the procedure or not
+(you will have an opportunity to cancel the password retrieval process, in case you haven't initiated it.)
+
+%3\$s
+
+Thank you,
+The %4\$s team";
 
 	const HU_KEY='perm_H'; // Cache key for whether this guy's a hyperuser
 	const SU_KEY='perm_S'; // Cache key for whether this guy's a superuser in the current project
@@ -94,9 +133,9 @@ abstract class LPC_User extends LPC_Base
 
 	public function getUserClass()
 	{
-		if (!defined("LPC_user_class")) {
+		if (!defined("LPC_user_class"))
 			throw new RuntimeException("Please define constant LPC_user_class if you want to use users.");
-		}
+
 		return LPC_user_class;
 	}
 
@@ -168,8 +207,10 @@ abstract class LPC_User extends LPC_Base
 		$p->a("      <td><input type='password' name='password'></td>");
 		$p->a("    </tr>");
 		$p->a("    <tr>");
-		$p->a("      <td colspan=2 style='text-align:center'>");
+		$p->a("      <td>&nbsp;</td>");
+		$p->a("      <td>");
 		$p->a("        <input type='submit' name='login' value='Log in'>");
+		$p->a("        <small><a href='".$this->recoverPasswordURL()."'>Recover password</a></small>");
 		$p->a("      </td>");
 		$p->a("    </tr>");
 		$p->a("  </table>");
@@ -681,5 +722,123 @@ EOJS;
 			return false;
 
 		return $linkCount;
+	}
+
+	// Token management
+	function generateToken()
+	{
+		$this->setAttr($this->user_fields['token_date'],time()+round($this->token_delay*86400)); // days to seconds
+		$tg=new LPC_Token_generator($this,$this->user_fields['token']);
+		if ($tg->generate())
+			return true;
+
+		$this->resetToken();
+		return false;
+	}
+
+	function resetToken()
+	{
+		if ($this->getAttr($this->user_fields['token'])===NULL)
+			return NULL;
+		$this->setAttrs(array(
+			$this->user_fields['token']=>NULL,
+			$this->user_fields['token_date']=>NULL,
+		));
+		return $this->save();
+	}
+
+	static public function recoverPasswordURL()
+	{
+		return LPC_url."/recover_password.php";
+	}
+
+	static public function processTokenBaseURL()
+	{
+		return LPC_full_url.'/welcome.php';
+	}
+
+	protected function processTokenURL()
+	{
+		return
+			self::processTokenBaseURL().'?t='.
+			$this->getAttr($this->user_fields['token']).
+			"&e=".rawurlencode($this->getAttr($this->user_fields['email']));
+	}
+
+	function sendTokenMail($subject,$body)
+	{
+		if (mail(
+			$this->getAttr($this->user_fields['email']),
+			$subject,
+			sprintf(
+				$body,
+				$this->getName(),		// %1$s
+				$this->processTokenURL()	// %2$s
+			),
+			"From: ".$this->token_email_name." <".$this->token_email_email.">\r\n".
+			"Reply-To: ".$this->token_email_name." <".$this->token_email_email.">\r\n".
+			"X-Mailer: LPC Token manager",
+			"-f".$this->token_email_email
+		))
+			return true;
+
+		$this->resetToken();
+		return false;
+	}
+
+	function sendInvitation()
+	{
+		if (!$this->generateToken())
+			return false;
+
+		$tis=$this->token_invite_subject;
+		$tis=sprintf(__L($tis),LPC_project_name);
+
+		$tib=$this->token_invite_body;
+		$tib=sprintf(__L($tib),"%1\$s",LPC_project_full_name,"%2\$s",LPC_project_name);
+
+		return $this->sendTokenMail($tis,$tib);
+	}
+
+	function sendRecover()
+	{
+		if (!$this->generateToken())
+			return false;
+
+		$trs=$this->token_recover_subject;
+		$trs=sprintf(__L($trs),LPC_project_name);
+
+		$trb=$this->token_recover_body;
+		$trb=sprintf(__L($trb),"%1\$s",LPC_project_full_name,"%2\$s",LPC_project_name);
+
+		return $this->sendTokenMail($trs,$trb);
+	}
+
+	function passwordProblems($pwd1,$pwd2)
+	{
+		if ($pwd1!==$pwd2)
+			return __L("Please make sure you type the exact same password twice!");
+
+		$min=$this->password_conditions['min_length'];
+		if (strlen($pwd1)<$min)
+			return __L("The password must be at least %d characters long.",$min);
+
+		if ($this->password_conditions['need_alpha'] && !preg_match("/[a-zA-Z]/",$pwd1))
+			return __L("At least one of the characters must be a letter.");
+
+		if ($this->password_conditions['need_numeric'] && !preg_match("/[0-9]/",$pwd1))
+			return __L("At least one of the characters in the password must be a number.");
+
+		return false;
+	}
+
+	function getNameH()
+	{
+		return htmlspecialchars($this->getName());
+	}
+
+	function getName()
+	{
+		return $this->getAttr($this->user_fields['fname']).' '.$this->getAttr($this->user_fields['lname']);
 	}
 }

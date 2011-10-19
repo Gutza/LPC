@@ -4,11 +4,26 @@
 // SPL autoloaders for your classes)
 // require dirname(dirname(dirname(__FILE__)))."/include/MY_lib.php";
 
-// Change this to the web path to your project
-define('LPC_url','/myProject/LPC');
+// Change this to your project's short name
+define('LPC_project_name','LPC');
 
-// Change this to reflect the full URL of your project; note the path above
-define('LPC_full_url','http://www.example.com'.LPC_url);
+// Change this to your project's long name
+define('LPC_project_full_name','LPC, the PHP library');
+
+// Change this to the URI pointing to your server's document root
+define('LPC_base_url','http://www.example.com');
+
+// Change this to the web path to your project
+define('LPC_project_url','/myProject');
+
+// Change this to the web path to the LPC base directory
+define('LPC_url',LPC_project_url.'/LPC');
+
+// If needed, change this to reflect the full URL of the LPC base directory
+define('LPC_full_url',LPC_base_url.LPC_url);
+
+// If needed, change this to reflect the full URL of your project
+define('LPC_project_full_url',LPC_base_url.LPC_project_url);
 
 // Change to true if you want to enable the GUI module.
 define('LPC_GUI',false);
