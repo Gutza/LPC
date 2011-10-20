@@ -221,7 +221,7 @@ abstract class LPC_Object implements Serializable
 
 	function addError($message, $id=0, $type=0, $sub_id=0)
 	{
-echo "<p><b>Eroare</b>: $message</p>\n";
+echo "<p><b>Erroe</b>: $message</p>\n";
 return;
 		global $commandline,$_LFX;
 		if ($commandline) {
@@ -1411,24 +1411,15 @@ if (count(debug_backtrace())>200)
 		if ($attName===NULL) {
 			$where='';
 		} elseif (is_array($attName)) {
-			if (!is_array($attValue)) {
-				$this->addError("Parameter att_name is an array but att_value isn't in SC::searchId()",
-					LFX_DV_BOGDAN+205, LFX_ET_ERROR+LFX_EL+SC);
-				return false;
-			}
-			if (count($attName)!=count($attValue)) {
-				$this->addError('Array att_name has different number of elements from att_value in SC::searchId()',
-					LFX_DV_BOGDAN+206, LFX_ET_ERROR+LFX_EL+SC);
-				return false;
-			}
+			if (!is_array($attValue))
+				throw new RuntimeException("Parameter att_name is an array but att_value isn't.");
+			if (count($attName)!=count($attValue))
+				throw new RuntimeException("Array att_name has different number of elements from att_value.");
 			$where='WHERE ';
 			for ($i=0;$i<count($attName);$i++) {
 				$field=$this->dataStructure['fields'][$attName[$i]]['fld_name'];
-				if (!$field) {
-					$this->addError("Attribute to search by ($attName) not found! (in SC::searchId(), class ".get_class($this).")",
-						LFX_DV_BOGDAN+207, LFX_ET_ERROR+LFX_EL_SC);
-					return false;
-				}
+				if (!$field)
+					throw new RuntimeException("Attribute to search by ($attName) not found!");
 				if ($this->dataStructure['fields'][$attName[$i]]['flags']['trim'])
 					$attValue[$i] = trim($attValue[$i]);
 				if ($attValue[$i]===NULL)
@@ -1444,11 +1435,8 @@ if (count(debug_backtrace())>200)
 			$where=substr($where,0,-5);
 		} else {
 			$field=$this->dataStructure['fields'][$attName]['fld_name'];
-			if (!$field) {
-				$this->addError("Attribute to search by ($attName) not found! (in SC::searchId(), class ".get_class($this).")",
-					LFX_DV_BOGDAN+84, LFX_ET_ERROR+LFX_EL_SC);
-				return false;
-			}
+			if (!$field)
+				throw new RuntimeException("Attribute to search by ($attName) not found!");
 
 			if (($attValue===NULL) && ($this->dataStructure['fields'][$attName]['flags']['NULL']))
 				$where="WHERE ".$field." IS NULL";
@@ -2996,10 +2984,9 @@ fclose($fp);
 	// {{{ atom2attr_ex()
 	function atom2attr_ex($atom)
 	{
-		if (!$this->db || !$this->db->LPC_queryData['meta']) {
-			$this->addError("No query_ex has been executed on this object!");
-			return false;
-		}
+		if (!$this->db || !$this->db->LPC_queryData['meta'])
+			throw new RuntimeException("No query_ex has been executed on this object!");
+
 		$atom=str_replace('~','',$atom);
 		$meta=$this->db->LPC_queryData['meta']['fields'];
 		for($i=0;$i<count($meta);$i++) {
@@ -3452,8 +3439,8 @@ fclose($fp);
 	// **TODO** -- should this throw an exception or is it just informal?
 	function stateTransitionError($attr,$transition,$msg)
 	{
-		$this->addError("Failed performing transition $transition on attribute ".
-			"$attr associated with this object: $msg");
+		throw new RuntimeException("Failed performing transition $transition on attribute ".
+                        "$attr associated with this object: $msg");
 	}
 	// }}}
 	// {{{ validateTransitions()
