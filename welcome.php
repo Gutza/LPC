@@ -43,8 +43,9 @@ if (isset($_POST['process_password'])) {
 		$u->load();
 		$u->setAttr($u->user_fields['password'],$u->saltPassword($_POST['pwd']));
 		$u->resetToken();
+		$u->save();
 		LPC_User::setCurrent($u);
-		$p->a(new LPC_HTML_confirm("Congratulations! You have successfully changed your password!"));
+		$p->a(new LPC_HTML_confirm(__L("Congratulations! You have successfully changed your password! You will be able to log in with username %1\$s and the password you just entered.",$u->getAttr($u->user_fields['user']))));
 		return;
 	}
 
