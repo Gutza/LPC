@@ -7,7 +7,7 @@ abstract class LPC_Project extends LPC_Base
 		'name'=>'name'
 	);
 
-	var $project_GET_var='project';
+	var $project_POST_var='project';
 	var $label_select_project="Please select a project";
 	var $label_no_projects="You don't have access to any projects";
 	var $default_project_name="Default project";
@@ -67,7 +67,16 @@ abstract class LPC_Project extends LPC_Base
 		}
 		$showingList=false;
 		self::setCurrent($cproject);
+		self::$currentInstance->onSetProject();
 		return self::$currentInstance;
+	}
+
+	/**
+	* This method is called when the project is set in a session
+	* (i.e. either for the first time, or when it's changed).
+	*/
+	public function onSetProject()
+	{
 	}
 
 	public function getProjectClass($info=false)
@@ -85,15 +94,14 @@ abstract class LPC_Project extends LPC_Base
 		$class=get_class($this);
 		// No project in session; maybe there is a project in GET?
 		static $nowSetting=false;
-		if (!$nowSetting && isset($_GET[$this->project_GET_var])) {
+		if (!$nowSetting && isset($_POST[$this->project_POST_var])) {
 			$nowSetting=true;
-			$p=new $class((int) abs($_GET[$this->project_GET_var]));
-			if ($p->probe() && $this->canUse($p->id)) {
-				self::setCurrent($p);
-				header("Location: ".LPC_Url::remove_GET_var($_SERVER['REQUEST_URI'],$this->project_GET_var));
-				exit;
+			$p=new $class();
+			$p->fromKey($_POST,$this->project_POST_var);
+			if ($p->id && $p->canUse()) {
+				$nowSetting=false;
+				return $p;
 			}
-			$nowSetting=false;
 		}
 		$projects=$this->search(NULL,NULL,$this->user_fields['name']);
 		if (!$projects) {
@@ -114,6 +122,7 @@ abstract class LPC_Project extends LPC_Base
 
 	public function canUse($projectID=0)
 	{
+		$projectID=$this->defaultID($projectID);
 		if ($u=LPC_User::getCurrent(true))
 			return (bool) $u->getAllPermissions($projectID);
 		return true;
@@ -125,15 +134,26 @@ abstract class LPC_Project extends LPC_Base
 		$p->clear();
 
 		$p->title=$this->label_select_project;
+		$p->head->a(<<<EOJS
+<script type='text/javascript'>
+	function setProject(projID)
+	{
+		var frm=document.getElementById('set_project');
+		var fld=document.getElementById('set_project_field');
+		fld.value=projID;
+		frm.submit();
+	}
+</script>
+EOJS
+		);
 		$p->st();
 		$p->a("<ul>");
 		$any_project=false;
 		foreach($projects as $project) {
-			if (!$this->canUse($project->id))
+			if (!$project->canUse())
 				continue;
 			$any_project=true;
-			$url=LPC_Url::add_GET_var($_SERVER['REQUEST_URI'],$this->project_GET_var,$project->id);
-			$p->a("<li><a href='".$url."'>".$project->getAttrH($this->user_fields['name'])."</a></li>");
+			$p->a("<li><a href='#' onClick='setProject(".$project->id.")'>".$project->getAttrH($this->user_fields['name'])."</a></li>");
 		}
 		$p->a("</ul>");
 
@@ -142,6 +162,12 @@ abstract class LPC_Project extends LPC_Base
 			$p->title=$this->label_no_projects;
 			$p->st();
 		}
+
+		$form=new LPC_HTML_form($_SERVER['REQUEST_URI']);
+		$form->setAttr('id','set_project');
+		$form->a("<input type='hidden' id='set_project_field' name='".$this->project_POST_var."' value='0'>");
+		$p->a($form);
+
 		$p->show();
 		exit();
 	}
