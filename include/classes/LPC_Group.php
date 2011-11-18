@@ -174,16 +174,11 @@ class LPC_Group extends LPC_Base
 	}
 
 	/**
-	* Same as {@link getMemberUserIDs}(), but returns instantiated LPC_User objects.
-	* If you have set configuration directive LPC_user_class, it will return those
-	* kinds of objects.
+	* Same as {@link getMemberUserIDs}(), but returns instantiated user objects.
 	*/
 	function getMemberUsers($project=0,$id=0)
 	{
-		$class="LPC_User";
-		if (defined("LPC_user_class"))
-			$class=LPC_user_class;
-		return $this->instantiate($this->getUserIDs($project,$id),$class);
+		return $this->instantiate($this->getUserIDs($project,$id),LPC_User::getUserClass());
 	}
 
 	/**
@@ -280,7 +275,7 @@ class LPC_Group extends LPC_Base
 	*/
 	function getAllMemberUsers($project=0,$id=0)
 	{
-		return $this->instantiate($this->getAllMemberUserIDs($project,$id),'LPC_User');
+		return $this->instantiate($this->getAllMemberUserIDs($project,$id),LPC_User::getUserClass());
 	}
 
 	/**

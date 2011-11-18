@@ -183,12 +183,20 @@ The %4\$s team";
 	{
 		if (isset($_POST['login'])) {
 			$me=$this->matchCredentials($_POST['username'],$_POST['password']);
-			if ($me) {
+			if ($me && $me->canAuthenticate()) {
 				LPC_User::setCurrent($me);
 				return LPC_User::getCurrent();
 			}
 		}
 		$this->showLoginForm();
+	}
+
+	/**
+	* Override this to manage your own disabled/enabled users mechanism
+	*/
+	protected function canAuthenticate()
+	{
+		return true;
 	}
 
 	protected function populateLogin($p)
