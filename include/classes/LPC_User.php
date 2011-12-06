@@ -12,7 +12,7 @@ abstract class LPC_User extends LPC_Base
 		'password'=>'password',	// char(40), since this contains a SHA1 checksum
 		'token'=>'token',	// char(40) DEFAULT NULL, since this contains a SHA1 checksum
 					// it's crucial that this can be NULL, and that it's declared as such in LPC
-		'token_date'=>'token_date', // datetime
+		'token_date'=>'token_date', // datetime DEFAULT NULL; same notes as above
 		'email'=>'email',	// at least varchar(50), but typically make it varchar(255)
 		'fname'=>'fname',	// at least varchar(50), but typically make it varchar(255)
 		'lname'=>'lname',	// at least varchar(50), but typically make it varchar(255)
