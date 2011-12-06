@@ -10,19 +10,19 @@ define('LPC_project_name','LPC');
 // Change this to your project's long name
 define('LPC_project_full_name','LPC, the PHP library');
 
-// Change this to the URI pointing to your server's document root
+// Change this to the URI pointing to your server's document root (no trailing slash)
 define('LPC_base_url','http://www.example.com');
 
-// Change this to the web path to your project
+// Change this to the web path to your project (no trailing slash; empty if it's in the root)
 define('LPC_project_url','/myProject');
 
-// Change this to the web path to the LPC base directory
+// If needed, change this to the web path to the LPC base directory (no trailing slash)
 define('LPC_url',LPC_project_url.'/LPC');
 
-// If needed, change this to reflect the full URL of the LPC base directory
+// If needed, change this to reflect the full URL of the LPC base directory (no trailing slash)
 define('LPC_full_url',LPC_base_url.LPC_url);
 
-// If needed, change this to reflect the full URL of your project
+// If needed, change this to reflect the full URL of your project (no trailing slash)
 define('LPC_project_full_url',LPC_base_url.LPC_project_url);
 
 // Change to true if you want to enable the GUI module.
@@ -30,9 +30,9 @@ define('LPC_GUI',false);
 // Set the default page class
 //define('LPC_page_class','LPC_Page');
 
-// Change to false if you want to manually populate the page
+// Change to true if you want LPC to automatically grab the output and populate the page
 if (!defined('LPC_GUI_OB'))
-	define('LPC_GUI_OB',true);
+	define('LPC_GUI_OB',false);
 
 // Identify your user class, if you want to use native authentication
 define('LPC_user_class','');
