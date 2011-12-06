@@ -42,7 +42,7 @@ class LPC_Class_Generator
 	{
 		$x=explode("_",$this->baseClass);
 		if (count($x)==1) {
-			echo "INFO: Unusual base class name; the prefix will be ".$this->baseClass."!\n";
+			echo "      INFO: Unusual base class name; the prefix will be ".$this->baseClass."!\n";
 			$this->prefix=$this->baseClass."_";
 		} else {
 			$this->prefix=$x[0]."_";
@@ -53,7 +53,7 @@ class LPC_Class_Generator
 	{
 		$filename=$this->path."/".$this->baseClass.".php";
 		if (file_exists($filename)) {
-			echo "INFO: Base class already exists -- skipping.\n";
+			echo "      INFO: Base class already exists -- skipping.\n";
 			return;
 		}
 		echo "ACTION: Creating base class in $filename\n";
@@ -80,7 +80,7 @@ class LPC_Class_Generator
 		}
 		while(!$rs->EOF) {
 			if (substr($rs->fields[0],0,4)=='LPC_')
-				echo "INFO: Table ".$rs->fields[0]." seems to be LPC -- skipping.\n";
+				echo "      INFO: Table ".$rs->fields[0]." seems to be LPC -- skipping.\n";
 			else
 				$this->processTable($rs->fields[0]);
 			$rs->MoveNext();
@@ -92,7 +92,7 @@ class LPC_Class_Generator
 		$class=$this->prefix.ucfirst($table);
 		$filename=$this->path."/".$class.".php";
 		if (file_exists($filename)) {
-			echo "INFO: File $filename already exists -- skipping.\n";
+			echo "      INFO: File $filename already exists -- skipping.\n";
 			return;
 		}
 		$fp=fopen($filename,'w');
@@ -111,7 +111,7 @@ class LPC_Class_Generator
 					$rs->MoveNext();
 					continue;
 				} else {
-					echo "INFO: Table $table doesn't start with an ID field -- skipping.\n";
+					echo "      INFO: Table $table doesn't start with an ID field -- skipping.\n";
 					fclose($fp); 
 					unlink($filename);
 					return;
