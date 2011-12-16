@@ -23,7 +23,7 @@ if (!$us || $us[0]->getAttr($u->user_fields['token_date'])<time()) {
 }
 $u=$us[0];
 
-if ($u->getAttr('password'))
+if ($u->getAttr($u->user_fields['password']))
 	$p->title=__L("Password reset");
 else
 	$p->title=__L("Create your password");
@@ -57,7 +57,7 @@ $form->setAttr('action',$_SERVER['PHP_SELF']);
 $p->a($form);
 
 $info=new LPC_HTML_node('div');
-if ($u->getAttr('password')) {
+if ($u->getAttr($u->user_fields['password'])) {
 	$info->a(__L(
 		"<p>Please use the form below to change the password for your account.</p>".
 		"<p>If you have NOT requested a password reset, please click the button labeled &quot;<i>Cancel the password reset</i>&quot; at the bottom of the form.</p>"
