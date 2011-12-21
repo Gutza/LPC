@@ -59,6 +59,16 @@ class LPC_Excel_base
 		$this->excel->getActiveSheet()->SetCellValue($this->coord_L2E($coord),$content);
 	}
 
+	function getCell($coord)
+	{
+		return $this->excel->getActiveSheet()->getCell($this->coord_L2E($coord))->getCalculatedValue();
+	}
+
+	function getCellDate($coord)
+	{
+		return PHPExcel_Shared_Date::ExcelToPHP($this->getCell($coord));
+	}
+
 	function setBorder($coord1,$coord2=false)
 	{
 		$c=$this->coord_L2E($coord1);
@@ -78,6 +88,31 @@ class LPC_Excel_base
 	{
 		$objWriter = new PHPExcel_Writer_Excel2007($this->excel);
 		$objWriter->save($filename);
+	}
+
+	function import5($filename)
+	{
+		$objReader = new PHPExcel_Reader_Excel5();
+		return $this->importFromReader($objReader,$filename);
+	}
+
+	function import2007($filename)
+	{
+		$objReader = new PHPExcel_Reader_Excel2007();
+		return $this->importFromReader($objReader,$filename);
+	}
+
+	private function importFromReader($objReader,$filename)
+	{
+		$this->excel=$objReader->load($filename);
+		return $this->excel->getSheetCount();
+	}
+
+	function import($filename)
+	{
+		if ($sheetCount=$this->import2007($filename))
+			return $sheetCount;
+		return $this->import5($filename);
 	}
 
 	function setNumberFormat($coord,$format)
