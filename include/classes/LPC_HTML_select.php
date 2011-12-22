@@ -52,6 +52,17 @@ class LPC_HTML_select extends LPC_HTML_widget
 			$this->selected=$value;
 	}
 
+	function removeOption($value)
+	{
+		foreach($this->content as $key=>$option) {
+			if ($option->getAttr('value')==$value) {
+				unset($this->content[$key]);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	function prepare()
 	{
 		if (!strlen($this->selected.$this->default))
