@@ -18,6 +18,18 @@ if (!isset($argv[1])) {
 
 $username=$argv[1];
 
+$u=LPC_User::newUser();
+if (
+	empty($u->user_fields["user"]) ||
+	empty($u->user_fields['password']) ||
+	empty($u->dataStructure['fields'][$u->user_fields["user"]]) ||
+	empty($u->dataStructure['fields'][$u->user_fields['password']])
+) {
+	echo "Your user class must properly define both user_fields['user'] and user_fields['password'].\n";
+	exit;
+}
+	
+
 $password="";
 while(!strlen($password)) {
 	echo "Password for user ".$username.": ";
@@ -26,7 +38,6 @@ while(!strlen($password)) {
 		echo "Please enter a password or interrupt to exit.\n";
 }
 
-$u=LPC_User::newUser();
 $us=$u->search($u->user_fields["user"],$username);
 if ($us)
 	$u=$us[0];
