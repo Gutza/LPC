@@ -16,8 +16,9 @@
 */
 class LPC_Impex
 {
-	var $objects=array();
-	var $data=array();
+	static $objects=array();
+	static $data=array();
+	static $objectList=array();
 	
 	function __construct($data=NULL)
 	{
@@ -43,7 +44,7 @@ class LPC_Impex
 		if (!$object->load())
 			throw new RuntimeException("Failed loading object!");
 
-		$this->objects[]=$object;
+		self::$objects[]=$object;
 		$data=array(
 			'class'=>get_class($object),
 			'id'=>$object->id,
@@ -67,7 +68,7 @@ class LPC_Impex
 					'id'=>$linked->id
 				);
 		}
-		$this->data[]=$data;
+		self::$data[]=$data;
 		return(true);
 	}
 	
@@ -115,7 +116,7 @@ class LPC_Impex
 			$objects=array($objects);
 
 		foreach($objects as $object) {
-			if (!($current=$this->parseObject($object)))
+			if (!($current=self::parseObject($object)))
 				return false;
 
 			if (!$current)
@@ -123,33 +124,34 @@ class LPC_Impex
 
 			$wives=$object->getAllObjects();
 			foreach($wives as $wife) {
-				if (in_array(get_class($wife['object'])."_".$wife['object']->id,$this->objectList))
+				if (in_array(get_class($wife['object'])."_".$wife['object']->id,self::$objectList))
 					continue;
-				if (!$this->doExport($wife['object']))
+				if (!self::doExport($wife['object']))
 					return false;
 
-				$this->objectList[]=get_class($wife['object'])."_".$wife['object']->id;
+				self::$objectList[]=get_class($wife['object'])."_".$wife['object']->id;
 			}
 		}
 
-		return $this->data;
+		return self::$data;
 	}
 	
 	function init()
 	{
-		unset($this->objects,$this->data);
-		$this->objectList=array();
+		self::$objects=array();
+		self::$data=NULL;
+		self::$objectList=array();
 	}
 	
 	function import($data)
 	{
-		$this->init();
-		return($this->doImport($data));
+		self::init();
+		return self::doImport($data);
 	}
 	
 	function export($object)
 	{
-		$this->init();
-		return($this->doExport($object));
+		self::init();
+		return self::doExport($object);
 	}
 }
