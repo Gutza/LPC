@@ -37,11 +37,10 @@ class LPC_HTML_list extends LPC_HTML_widget
 		<parent field>=>array(
 			array(
 				'sort'=><child key 1>,
-				'order'=>true for the same order as parent, false for opposite
-			),
-			array(
-				'sort'=><child key 2>,
-				'order'=>true for the same order as parent, false for opposite
+				'relative_order'=>true for the same order as parent, false for opposite
+					OR
+				'absolute_order'=>"ASC" for ascending, "DESC" for descending
+					DEFAULT order: same as parent
 			),
 			...
 		),
@@ -324,11 +323,18 @@ class LPC_HTML_list extends LPC_HTML_widget
 		));
 		if (!isset($this->orderPresets[$sortInfo['sort']]))
 			return $sortInfo;
-		foreach($this->orderPresets[$sortInfo['sort']] as $kid)
+		foreach($this->orderPresets[$sortInfo['sort']] as $kid) {
+			if (isset($kid['relative_order']))
+				$order=($sortInfo['order'] xor $kid['order'])?"ASC":"DESC";
+			elseif (isset($kid['absolute_order']))
+				$order=$kid['absolute_order'];
+			else
+				$order=$kid['order']?"ASC":"DESC";
 			$sortInfo['query'][]=array(
 				'field'=>$kid['sort'],
-				'type'=>($sortInfo['order'] xor $kid['order'])?'ASC':'DESC'
+				'type'=>$order,
 			);
+		}
 		return $sortInfo;
 	}
 
