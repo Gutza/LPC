@@ -12,7 +12,11 @@ class LPC_Cache
 	const GENERIC_TYPE_SESSION=1;
 	const GENERIC_TYPE_GLOBAL=3;
 
+	const SPEED_SLOW=1;
+	const SPEED_FAST=2;
+
 	private static $type=self::GENERIC_TYPE_FAKE;
+	private static $speed=self::SPEED_SLOW;
 
 	static $current;
 
@@ -22,6 +26,12 @@ class LPC_Cache
 	{
 		self::getCurrent();
 		return self::$type;
+	}
+
+	public function getSpeed()
+	{
+		self::getCurrent();
+		return self::$speed;
 	}
 
 	public function getCurrent()
@@ -58,6 +68,7 @@ class LPC_Cache
 		if (!defined('LPC_CACHE_MC_PORT'))
 			throw new InvalidArgumentException("Memcache caches need a port (constant LPC_CACHE_MC_PORT is undefined).");
 		self::$type=self::GENERIC_TYPE_GLOBAL;
+		self::$speed=self::SPEED_FAST;
 		return new LPC_Cache_memcache(LPC_CACHE_MC_HOST,LPC_CACHE_MC_PORT);
 	}
 
@@ -82,6 +93,7 @@ class LPC_Cache
 	private function build_cache_apc()
 	{
 		self::$type=self::GENERIC_TYPE_GLOBAL;
+		self::$speed=self::SPEED_FAST;
 		return new LPC_Cache_apc();
 	}
 }
