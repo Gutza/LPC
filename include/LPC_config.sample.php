@@ -4,6 +4,13 @@
 // SPL autoloaders for your classes)
 // require dirname(dirname(dirname(__FILE__)))."/include/MY_lib.php";
 
+if (!function_exists('LPC_skip')) {
+	function LPC_skip()
+	{
+		return false;
+	}
+}
+
 // Change this to your project's short name
 define('LPC_project_name','LPC');
 
@@ -29,6 +36,15 @@ define('LPC_project_full_url',LPC_base_url.LPC_project_url);
 define('LPC_GUI',false);
 // Set the default page class
 //define('LPC_page_class','LPC_Page');
+
+// Default system language ID; taken from LPC_Language
+define('LPC_default_language',1);
+
+// System language type (LPC_Language field)
+define('LPC_language_type','POSIX');
+
+// The system path that contains this entire project (usually the directory above LPC)
+define('LPC_base_path',dirname(dirname(dirname(__FILE__))));
 
 // Change to true if you want LPC to automatically grab the output and populate the page
 if (!defined('LPC_GUI_OB'))
