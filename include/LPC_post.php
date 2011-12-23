@@ -1,5 +1,8 @@
 <?php
 
+if (LPC_skip())
+	return;
+
 if (LPC_GUI) {
 	$p=LPC_Page::getCurrent();
 	if (LPC_GUI_OB) {
