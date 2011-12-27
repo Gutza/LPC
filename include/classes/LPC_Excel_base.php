@@ -130,5 +130,10 @@ class LPC_Excel_base
 		$colName=substr($this->coord_L2E(array($column,1)),0,-1);
 		$this->excel->getActiveSheet()->getColumnDimension($colName)->setWidth($width);
 	}
+
+	function styleFromArray($coord,$style)
+	{
+		$this->excel->getActiveSheet()->getStyle($this->coord_L2E($coord))->applyFromArray($style);
+	}
 }
 
