@@ -194,169 +194,35 @@ abstract class LPC_Object implements Serializable
 		$this->db=$this->_doDbInit($this->dbKey);
 	}
 	// }}}
+	// {{{ beginTransaction()
 	function beginTransaction()
 	{
 		$this->dbInit();
 		return $this->db->BeginTrans();
 	}
+	// }}}
+	// {{{ commitTransaction()
 	function commitTransaction()
 	{
 		$this->dbInit();
 		return $this->db->commitTrans();
 	}
+	// }}}
+	// {{{ rollbackTransaction()
 	function rollbackTransaction()
 	{
 		$this->dbInit();
 		return $this->db->rollbackTrans();
 	}
+	// }}}
 	// {{{ addError()
-// **TODO**
 	/**
-	 * Adds an error to this object's messages list and performs error management
-	 *
-	 * This is the only method you should ever call if you need to output errors,
-	 * warnings or informational messages. 'Informational messages' means things like
-	 * "Parent not specified - defaulting to root", not "Please enter e-mail address:"
-	 */
-
-	function addError($message, $id=0, $type=0, $sub_id=0)
+	* Deprecated method, it really shouldn't be used anywhere any more.
+	* Currently just throws an exception unconditionally.
+	*/
+	function addError($message)
 	{
-echo "<p><b>Erroe</b>: $message</p>\n";
-return;
-		global $commandline,$_LFX;
-		if ($commandline) {
-			if ($_LFX['page']['output_error']!='all') {
-				if (strstr($_LFX['page']['output_error'],'c') && $type!=0) {
-					return null;
-				}
-				if (strstr($_LFX['page']['output_error'],'e') && $type!=1 && $type!=2) {
-					return null;
-				}
-				if (strstr($_LFX['page']['output_error'],'w') && $type!=3) {
-					return null;
-				}
-				if (strstr($_LFX['page']['output_error'],'i') && $type!=4) {
-					return null;
-				}
-				if (strstr($_LFX['page']['output_error'],'none')) {
-					return null;
-				}
-			}
-		}
-		if (function_exists('debug_backtrace')) {
-			$data_dump=debug_backtrace();
-			$this->messages[]=
-				array('id'=>$id, 'sub_id'=>$sub_id, 'type'=>$type,
-					'message'=>$message, 'obj_id'=>$this->id, 'obj_class'=>get_class($this),
-					'debug_backtrace'=> $data_dump);
-		} else {
-			$this->messages[]=
-				array('id'=>$id, 'sub_id'=>$sub_id, 'type'=>$type,
-					'message'=>$message, 'obj_id'=>$this->id, 'obj_class'=>get_class($this));
-			$data_dump=0;
-		}
-
-		// log the error
-		$severities=array(
-			0 => 'critical',
-			1 => 'error',
-			2 => 'error',
-			3 => 'warning',
-			4 => 'info'
-		);
-		if(!$severity=$severities[$type]) {
-			$severity='critical';
-		}
-		global $_LFX;
-		$xtra=array(
-			'module' => $_LFX['global']['application'],
-			'keywords' => '',
-			'subsystem' => $_LFX['global']['subsystem'],
-			'data_dump' => $data_dump
-		);
-		openlog('LFXlib'.':'.$_LFX['global']['application'].':'.$_LFX['global']['subsystem'],LOG_ODELAY,LOG_LOCAL1);
-		syslog(LOG_ERR,$message);
-
-		// Error management
-		global $_LFX;
-		if ($_LFX['page']['debug_level']) {
-			switch($_LFX['page']['debug_level']) {
-				case LFX_DL_PROD:
-					$stop=$_LFX['global']['error_mgt']['stop'];
-					$mail=$_LFX['global']['error_mgt']['mail'];
-					$show=$_LFX['global']['error_mgt']['show'];
-					break;
-				case LFX_DL_DEBUG:
-					$stop=LFX_ET_ERROR;
-					$mail=LFX_ET_NONE;
-					$show=LFX_ET_WARNING;
-					break;
-				case LFX_DL_DEVEL:
-					$stop=LFX_ET_NONE;
-					$mail=LFX_ET_NONE;
-					$show=LFX_ET_ALL;
-					break;
-				case LFX_DL_QUIET:
-					$stop=LFX_ET_NONE;
-					$mail=LFX_ET_NONE;
-					$show=LFX_ET_NONE;
-					break;
-				default:
-					//echo("Warning! Debug level set to unknown value! Will assume development status!<br />");
-					$stop=LFX_ET_NONE;
-					$mail=LFX_ET_NONE;
-					$show=LFX_ET_ALL;
-			}
-		} else {
-			// If not set, we'll assume recommended production status
-			$stop=LFX_ET_NONE;
-			$mail=LFX_ET_NONE;
-			$show=LFX_ET_ALL;
-		}
-		$et=$type >> 8;
-		$el=$type & 255;
-		if (($show==LFX_ET_ALL) || ($el <= $show)) {
-			if ($commandline) {
-				$_LFX['page']['error_messages']=array_merge(
-					$_LFX['page']['error_messages'],$this->messages
-				);
-				eecho ($this->getErrorsH());
-				return null;
-			}
-			if (function_exists('LFX_echo')) {
-				global $_LFX;
-				$_LFX['page']['error_messages']=array_merge(
-					$_LFX['page']['error_messages'],$this->messages
-				);
-				//echo(LFX_echo($this->getErrorsH()));
-			} else {
-				// Ouch, this is really bad, LFXlib is not stable at all!
-				// Probably a bad install, dumping the messages just like that
-				// and exiting, God knows what we could end up doing if we continued
-				// execution in this state!
-				if (!$commandline) {
-					echo("Critical error: LFX_echo is unavailable to SC::addError. Here's the error:");
-					echo("<pre>"); var_dump($this->messages); echo("</pre>");
-				} else {
-					eecho("Critical error: LFX_echo is unavailable to SC::addError. Here's the error:");
-					eecho("\n"); var_dump($this->messages); eecho("\n");
-				}
-				// We used to exit here... :-)
-				//exit;
-			}
-		} else {
-			if (!$commandline) {
-				pecho('<b>Error '.($id?"#$id":'(unknown ID)')."</b>.<br />\n");
-			} else {
-				eecho('Error '.($id?"#$id":'(unknown ID)').".\n");
-			}
-		}
-		if (($stop==LFX_ET_ALL) || ($el <= $stop)) {
-			pecho("Aborting due to errors.<br />\n");
-			pecho("</body></html>\n");
-			exit;
-		}
-		$this->messages=array();
+		throw new RuntimeException($message);
 	}
 	// }}}
 	// {{{ onLoad()
@@ -510,7 +376,7 @@ if (count(debug_backtrace())>200)
 	 * need to however, please note it accepts no parameters.
 	 * @return boolean true on success or false on error
 	 */
-	function insert()
+	function insert($withID=false)
 	{
 		if ($this->internal_beforeSave(true, NULL, false)!==true)
 			return NULL;
@@ -526,9 +392,11 @@ if (count(debug_backtrace())>200)
 		if (!$this->query("INSERT INTO ".$table." ".$query))
 			return false;
 
-		$this->id = $this->db->insert_id();
-		if (!$this->id)
+		if (!$withID) {
+			$this->id = $this->db->insert_id();
+			if (!$this->id)
 				throw new RangeException("Failed retrieving LAST INSERT ID!");
+		}
 
 		foreach($this->dataStructure['fields'] as $attName=>$dataEntry)
 			$this->attr_flags[$attName]['modified']=false;
@@ -547,25 +415,39 @@ if (count(debug_backtrace())>200)
 	/**
 	* TODO: this is prone to race conditions!
 	*/
-	function insertWithId($id)
+	function insertWithId($id=NULL,$force=false)
 	{
-		// We first test if there's an object in the database with this id
-		if ($this->probe($id) && !$this->delete($id))
+		if (!isset($id))
+			$id=$this->id;
+		if (!isset($id))
+			throw new RuntimeException("LPC::insertWithId requires either an explicit or an implicit ID -- neither was provided!");
+
+		if (
+			$this->probe($id) && (
+				!$force ||
+				!$this->delete($id)
+			)
+		)
 			return false;
 
-		$this->touchAllAttrs();
-		$result=$this->insert();
-		if (!$result)
-			return $result;
+		$id_fld=$this->dataStructure['id_field'];
 
-		$id_field=$this->dataStructure['id_field'];
-		$query="
-			UPDATE ".$this->dataStructure['table_name']."
-			SET ".$id_field."=".$this->db->qstr($id)."
-			WHERE ".$id_field."=".$this->db->qstr($this->id)
-		;
-		return $this->query($query);
+		// Set fake attribute for the field
+		$this->attr[$id_fld]=array();
+		$this->attr_flags[$id_fld]=array();
+		$this->dataStructure['fields'][$id_fld]=array('fld_name'=>$id_fld,'flags'=>array());
+		$this->setAttr($id_fld,$id);
 
+		// Do the insert
+		$result=$this->insert(true);
+
+		// Unset all fake attributes
+		unset(
+			$this->attr[$id_fld],
+			$this->attr_flags[$id_fld],
+			$this->dataStructure['fields'][$id_fld]
+		);
+		return $result;
 	}
 	// }}}
 	// {{{ beforeDelete()
@@ -760,51 +642,52 @@ if (count(debug_backtrace())>200)
 	 * @param string $order_att the attribute to sort the list by
 	 * @param boolean $reverse if true, the list will be reversed
 	 * @param boolean $countOnly if true, only the number of dependencies is returned
+	 * @param mixed $id the ID of "this" object
 	 * @return mixed array of instantiated objects, integer if $count_only is true, or false on error
 	 */
-	function getLinks($dep_name, $order_att=NULL, $reverse=false, $count_only=false)
+	function getLinks($dep_name, $order_att=NULL, $reverse=false, $count_only=false, $id='')
 	{
-		if (!$this->id) {
-			throw new BadMethodCallException("Dependency search request on object with ID not set!");
-		}
+		if (!$id)
+			$id=$this->id;
+
+		if (!$id)
+			throw new BadMethodCallException("Dependency search request on object with ID not set either explicitly or implicitly!");
+
 		$dep=$this->dataStructure['depend'][$dep_name];
-		if (!$dep) {
+		if (!$dep)
 			throw new InvalidArgumentException("Dependency search request on \"$dep_name\", but that dependency is not defined in this object!");
-		}
 		if ($dep['type']=='one') {
-			$tmp=&new $dep['class'];
-			if ($count_only) {
-				return $tmp->searchCount($dep['attr'], $this->id);
-			}
-			$ids=$tmp->searchId($dep['attr'], $this->id, $order_att, $reverse);
-			if ($ids===false) {
+			$tmp=new $dep['class'];
+			if ($count_only)
+				return $tmp->searchCount($dep['attr'], $id);
+
+			$ids=$tmp->searchId($dep['attr'], $id, $order_att, $reverse);
+			if ($ids===false)
 				$this->debug('SC::getLinks() called SC::search() which failed');
-			}
+
 			return $ids;
 		} elseif ($dep['type']=='many') {
 			// Better error management required below - no checking right now!
-			$db=&$this->_doDbInit($dep['dbKey']);
+			$db=$this->_doDbInit($dep['dbKey']);
 
-			$myId=addslashes($this->id);
 			$link_fld=$dep['link_fld_name'];
-			$my_fld=$dep['my_fld_name'];
+			$my_fld=$db->qstr($dep['my_fld_name']);
 			// No ordering here because we didn't need it yet! When we will, we'll probably have to
 			// perform a LEFT JOIN on the object's table. That's going to be a little
 			// work because we'll have to also include the "other" object's file in order
 			// to properly determine the proper field names, etc.
 
-			$tbl = $dep['table_name'];
-			$myId = $db->qstr($myId);
+			$tbl = $db->qstr($dep['table_name']);
+			$myId = $db->qstr($id);
 
-			if ($count_only) {
+			if ($count_only)
 				$sql = "SELECT COUNT(*) FROM ".$tbl." WHERE ".$my_fld."=".$myId;
-			} else {
+			else
 				$sql = "SELECT ".$link_fld." FROM ".$tbl." WHERE ".$my_fld."=".$myId;
-			}
 			$rs=$db->query($sql);
-			if ($count_only) {
+
+			if ($count_only)
 				return $rs->fields[$link_fld];
-			}
 
 			$tmDb=&$tmObject->db;
 
@@ -957,28 +840,27 @@ if (count(debug_backtrace())>200)
 	 */
 	function createLink($dep_name, $link, $justCheck=false)
 	{
-		if (empty($this->dataStructure['depend'][$dep_name])) {
+		if (empty($this->dataStructure['depend'][$dep_name]))
 			throw new InvalidArgumentException("Link creation requested for undefined dependency \"$dep_name\".");
-		}
+
 		$dep=$this->dataStructure['depend'][$dep_name];
-		if (!$this->id) {
+		if (!$this->id)
 			throw new BadMethodCallException('Link creation requested on object with ID not set!');
-		}
+
 		$link_class=$dep['class'];
-		if (is_numeric($link)) {
-			$link_id=$link;
-		} else {
-			if (!is_subclass_of($link,'LPC_Object')) {
+		if (is_object($link)) {
+			if (!is_subclass_of($link,'LPC_Object'))
 				throw new InvalidArgumentException("Link creation requested to a \"$link_class\" object - but that's not a descendant of LPC_Object!");
-			}
-			if (strtolower($link_class)!=strtolower($dep['class'])) {
+
+			if (strtolower($link_class)!=strtolower($dep['class']))
 				throw new InvalidArgumentException("Link creation requested to a $link_class object - but the dependency $dep_name refers to {$dep['class']} objects! (in SC::createLink())");
-			}
+
 			$link_id=$link->id;
-		}
-		if (!$link_id) {
+		} else
+			$link_id=$link;
+		if (!$link_id)
 			throw new InvalidArgumentException("Link creation requested but couldn't determine link id! (in SC::createLink())");
-		}
+
 		// Finally finished checking for errors!
 		if ($dep['type']=='many') {
 			$db=&$this->_doDbInit($dep['dbKey']);
@@ -1007,15 +889,14 @@ if (count(debug_backtrace())>200)
 			}
 		} else {
 			$depObject=&new $link_class($link_id);
-			if ($justCheck) {
+			if ($justCheck)
 				return $dep['attr']==$this->id;
-			}
+
 			if ($depObject->getAttr($dep['attr'])!=$this->id) {
 				$depObject->setAttr($dep['attr'],$this->id);
 				return $depObject->save();
-			} else {
+			} else
 				return true;
-			}
 		}
 	}
 	// }}}
@@ -1291,8 +1172,7 @@ if (count(debug_backtrace())>200)
 	 */
 	function touchAllAttrs()
 	{
-		@reset($this->attr);
-		while(list($key)=@each($this->attr))
+		foreach($this->attr as $key=>$value)
 			$this->touchAttr($key);
 		return true;
 	}
@@ -2261,15 +2141,18 @@ if (count(debug_backtrace())>200)
 				continue;
 			$type=explode(".",$dataDef['type']);
 			$rules=array();
-			if (in_array($type[0],array('integer','email','float','date'))) {
+
+			if (in_array($type[0],array('text','longtext')))
+				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
+			elseif (in_array($type[0],array('integer','email','float','date'))) {
 				$rules[]=$type[0];
 				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
 			} elseif ($type[0]=='datetime') {
 				$rules[]='date'; // <- we use the date rule for datetime
 				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
-			} else {
-				throw new RuntimeException("Unknown field type ".$type[0]." for field ".$attName."; valid types are 'integer','email','float','date'.");
-			}
+			} else
+				throw new RuntimeException("Unknown field type ".$type[0]." for field ".$attName."; valid types are 'integer','email','float','date','datetime','text','longtext'.");
+
 			if (isset($type[1])) {
 				if ($type[1]=='required') {
 					$rules[]='required';
@@ -3165,7 +3048,7 @@ fclose($fp);
 			throw new BadMethodCallException('ID to load not specified!');
 
 		$id_fld=$id_fld_clean=$this->dataStructure['id_field'];
-		if (!$this->db)
+		if (empty($this->db))
 			// We should NEVER end up executing this, but hey! Who knows...
 			$this->dbInit();
 		if (is_array($id)) {
@@ -3490,9 +3373,9 @@ fclose($fp);
 		if (!isset($this->dataStructure['fields'][$attr])) {
 			throw new RuntimeException("Attribute ".$attr." not defined (no such entry in dataStructure['fields']).");
 		}
-		if (empty($this->dataStructure['fields'][$attr]['rules'])) {
+		if (empty($this->dataStructure['fields'][$attr]['rules']))
 			return array();
-		}
+
 		$validator=new LPC_Validator();
 		return $validator->validate(
 			$this->getAttr($attr),
@@ -3520,6 +3403,160 @@ fclose($fp);
 		$this->id=$data['id'];
 		$this->attr=$data['attr'];
 		$this->rootId=$data['rootId'];
+	}
+// }}}
+// {{{ SCAFFOLDING-RELATED METHODS
+	/**
+	* Checks whether the current user has a specific CRUD scaffolding right.
+	*
+	* Superusers (and hyperusers) always have all rights by default.
+	* Other users (including anonymous users) never have any right by default.
+	* Override this method in descendants if you want to customize it.
+	*
+	* Typically you'll want to start with the following code:
+	* if (parent::hasScaffoldingRight($right)) return true;
+	*
+	* @param char $right the right to check for; one of "C", "R", "U", "D"
+	* @return boolean true if the current user does have the specified right, false otherwise.
+	*/
+	public function hasScaffoldingRight($right)
+	{
+		if (!defined('LPC_user_class'))
+			// This project doesn't have registered users
+			return false;
+
+		$u=LPC_User::getCurrent();
+		return $u->isSuperuser();
+	}
+
+	/**
+	* Returns a LPC_HTML_list object which is the list of
+	* objects in the database.
+	*
+	* @return object LPC_HTML_list object
+	*/
+	public function getScaffoldingList()
+	{
+		$l=$this->getBaseList();
+		$l->onProcessHeaderCell=array($this,'onScaffoldingHeaderCell');
+		$l->onProcessHeaderRow=array($this,'onScaffoldingHeaderRow');
+		$l->onProcessBodyCell=array($this,'onScaffoldingBodyCell');
+		$l->onProcessBodyRow=array($this,'onScaffoldingBodyRow');
+		$l->msgEmptyList=_LH("scaffoldingMessageNoObjectsInClass");
+		return $l;
+	}
+
+	public function getBaseList()
+	{
+		$l=new LPC_HTML_list();
+		$l->queryObject=$this;
+		$query=array(
+			'from'=>$this->getTableName(),
+		);
+		$query['select']=array_keys($this->dataStructure['fields']);
+		array_unshift($query['select'],$this->dataStructure['id_field']);
+		$l->sql=$query;
+		$l->legalSortKeys=$query['select'];
+		$l->defaultOrder=array(
+			'sort'=>$this->dataStructure['id_field'],
+			'order'=>0,
+		);
+		return $l;
+	}
+
+	public function onScaffoldingHeaderCell($key,$cell)
+	{
+		return true;
+	}
+
+	public function onScaffoldingHeaderRow($row)
+	{
+		$th=new LPC_HTML_node('th');
+		$row->a($th);
+		$th->a(_LH('scaffoldingActionHeader'));
+		return true;
+	}
+
+	public function onScaffoldingBodyCell($key,$cell,&$rowData)
+	{
+		return true;
+	}
+
+	public function onScaffoldingBodyRow($row,&$rowData)
+	{
+		$td=new LPC_HTML_node('td');
+		$row->a($td);
+		$id=$rowData[$this->dataStructure['id_field']];
+		$td->a("[<a href='objectEdit.php?c=".get_class($this)."&amp;id=".$id."'>"._LS('scaffoldingEditAction')."</a>]");
+		$td->a("&bull;");
+		$td->a("[<a href='objectDelete.php?c=".get_class($this)."&amp;id=".$id."&amp;k=".LPC_Session_key::get()."'>"._LS('scaffoldingDeleteAction')."</a>]");
+		foreach($this->dataStructure['depend'] as $depName=>$depData) {
+			$td->a("&bull;");
+			$suffix="";
+			if ($depCount=$this->getLinks($depName,NULL,false,true,$id))
+				$suffix=" (<a href='objectList.php?c=".rawurlencode($depData['class'])."&amp;rd=".rawurlencode($depName)."&amp;rc=".rawurlencode(get_class($this))."&amp;rid=".rawurlencode($id)."'>".$depCount."</a>)";
+			$td->a("[<a href='objectEdit.php?c=".rawurlencode($depData['class'])."&amp;rd=".rawurlencode($depName)."&amp;rc=".rawurlencode(get_class($this))."&amp;rid=".rawurlencode($id)."'>"._LS('scaffoldingCreateDependency',htmlspecialchars($depName))."</a>".$suffix."]");
+		}
+
+		return true;
+	}
+
+	public function getScaffoldingEditRow($attName)
+	{
+		$link="";
+		if (isset($this->dataStructure['fields'][$attName]['link_class'])) {
+			$class=$this->dataStructure['fields'][$attName]['link_class'];
+			if (
+				$this->id &&
+				$this->getAttr($attName)
+			)
+				$link=" <a href='objectEdit.php?c=".rawurlencode($class)."&amp;id=".rawurlencode($this->getAttr($attName))."'>"._LS('scaffoldingEditLink',htmlspecialchars($class),$this->getAttrH($attName))."</a>";
+			$link.=" <a href='#' onClick='return LPC_scaffolding_pickObject(\"".addslashes($class)."\",$(this).prevAll(\"input\").get(0))'>"._LS('scaffoldingPickLink')."</a>";
+		}
+		$type="";
+		if (isset($this->dataStructure['fields'][$attName]['type']))
+			$type=$this->dataStructure['fields'][$attName]['type'];
+		switch($type) {
+			case 'integer':
+				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrF($attName)."\">".$link;
+				break;
+			case 'longtext':
+				$input="<textarea name='attr[$attName]' rows='5' style='width:100%'>".$this->getAttrH($attName)."</textarea>";
+				break;
+			default:
+				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrF($attName)."\" style='width:100%'>".$link;
+		}
+		$attDesc=$attName;
+		$rs=$this->query("DESCRIBE ".$this->getTableName()." ".$this->getFieldName($attName,true));
+		$attDesc.="<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt>".htmlspecialchars($rs->fields['Type'])."</tt></div>";
+		return new LPC_HTML_form_row(array(
+			'label'=>$attDesc,
+			'input'=>$input,
+		));
+	}
+
+	public function processScaffoldingEdit()
+	{
+		foreach($_POST['attr'] as $attName=>$attValue)
+			$this->setAttr($attName,$attValue);
+		if ($this->save())
+			return $this->onScaffoldingEdit();
+	}
+
+	public function onScaffoldingEdit()
+	{
+	}
+
+	public function processScaffoldingDelete()
+	{
+		if ($this->delete())
+			return $this->onScaffoldingDelete();
+	}
+
+	public function onScaffoldingDelete()
+	{
+		header("Location: objectList.php?c=".get_class($this));
+		exit;
 	}
 // }}}
 }
