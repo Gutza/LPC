@@ -1498,7 +1498,6 @@ if (count(debug_backtrace())>200)
 				}
 			}
 			$where=substr($where,0,-5);
-			//echo"$where check<br>";
 		} else {
 			$field=$this->dataStructure['fields'][$attName]['fld_name'];
 			if (!$field)
@@ -1507,15 +1506,14 @@ if (count(debug_backtrace())>200)
 				$where="WHERE ".$field." IS NULL";
 			else {
 				if ($this->dataStructure['fields'][$attName]['flags']['sqlDate'])
-					$Satt_value = $this->sqlDate($attValue);
+					$SattValue = $this->sqlDate($attValue);
 				else
-					$attValue = $this->db->qstr($attValue);
+					$SattValue = $this->db->qstr($attValue);
 				if($like==false)
-					$where="WHERE ".$field."=".$attValue;
+					$where="WHERE ".$field."=".$SattValue;
 				else
-					$where="WHERE ".$field." LIKE ".$attValue;
+					$where="WHERE ".$field." LIKE ".$SattValue;
 			}
-			//echo"Where: $where<br>";
 		}
 		$orderby='';
 		if ($order_att!==NULL) {
@@ -2372,9 +2370,9 @@ if (count(debug_backtrace())>200)
 	 */
 	function sqlDate($timestamp=false)
 	{
-		if ($timestamp===false) {
+		if ($timestamp===false)
 			$timestamp = time();
-		}
+
 		$current_default_timezone=date_default_timezone_get();
 		date_default_timezone_set('');
 		$sqlDate=$this->db->DBTimeStamp($timestamp);
