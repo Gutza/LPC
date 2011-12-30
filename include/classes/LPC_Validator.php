@@ -58,77 +58,76 @@ class LPC_Validator
 	{
 		if (preg_match("/^[0-9]+$/",$value))
 			return NULL;
-		return sprintf(__L("Field %s must be an integer!"),__L($this->field_name));
+		return _LH('validationFieldInteger',$this->field_name);
 	}
 
 	public function validate_float($value,$ruleParams)
 	{
 		if (is_numeric($value))
 			return NULL;
-		return sprintf(__L("Field %s must be a number!"),__L($this->field_name));
+		return _LH('validationFieldFloat',$this->field_name);
 	}
 
 	public function validate_email($value,$ruleParams)
 	{
 		if (preg_match("/@.*\.[a-z]{2,4}$/",$value))
 			return NULL;
-		return sprintf(__L("Field %s must be an e-mail address!"),__L($this->field_name));
+		return _LH('validationFieldEmail',$this->field_name);
 	}
 
 	public function validate_less($value,$ruleParams)
 	{
 		if ($value<$ruleParams[0])
 			return NULL;
-		return sprintf(__L("The value for field %1\$s must be smaller than %2\$d!"),__L($this->field_name),$ruleParams[0]);
+		return _LH('validationFieldLess',$this->field_name,$ruleParams[0]);
 	}
 
 	public function validate_more($value,$ruleParams)
 	{
 		if ($value>$ruleParams[0])
 			return NULL;
-		return sprintf(__L("The value for field %1\$s must be larger than %2\$d!"),__L($this->field_name),$ruleParams[0]);
+		return _LH('validationFieldMore',$this->field_name,$ruleParams[0]);
 	}
 
 	public function validate_min($value,$ruleParams)
 	{
 		if ($value>=$ruleParams[0])
 			return NULL;
-		return sprintf(__L("The value for field %1\$s must be at least %2\$d!"),__L($this->field_name),$ruleParams[0]);
+		return _LH('validationFieldMin',$this->field_name,$ruleParams[0]);
 	}
 
 	public function validate_max($value,$ruleParams)
 	{
 		if ($value<=$ruleParams[0])
 			return NULL;
-		return sprintf(__L("The value for field %1\$s must be at most %2\$d!"),__L($this->field_name),$ruleParams[0]);
+		return _LH('validationFieldMax',$this->field_name,$ruleParams[0]);
 	}
 
 	public function validate_min_length($value,$ruleParams)
 	{
 		if (strlen($value)>=$ruleParams[0])
 			return NULL;
-		return sprintf(__L("The value for field %1\$s must be at least %2\$d characters long!"),__L($this->field_name),$ruleParams[0]);
+		return _LH('validationFieldMinLength',$this->field_name,$ruleParams[0]);
 	}
 
 	public function validate_max_length($value,$ruleParams)
 	{
 		if (strlen($value)<=$ruleParams[0])
 			return NULL;
-		return sprintf(__L("The value for field %1\$s must be at most %2\$d characters long!"),__L($this->field_name),$ruleParams[0]);
+		return _LH('validationFieldMaxLength',$this->field_name,$ruleParams[0]);
 	}
 
 	public function validate_required($value)
 	{
-		if (strlen($value)) {
+		if (strlen($value))
 			return NULL;
-		}
-		return sprintf(__L("Field %s is required!"),__L($this->field_name));
+		return _LH('validationFieldRequired',$this->field_name);
 	}
 
 	public function validate_date($value)
 	{
 		if (preg_match("/^[0-9]+$/",$value))
 			return NULL;
-		return sprintf(__L("Field %s must be a date!"),__L($this->field_name));
+		return _LH('validationFieldDate',$this->field_name);
 	}
 }
