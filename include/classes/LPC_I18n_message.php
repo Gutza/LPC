@@ -43,5 +43,6 @@ class LPC_I18n_message extends LPC_Base
 	function beforeDelete($id)
 	{
 		$this->clearCache();
+		return true;
 	}
 }
