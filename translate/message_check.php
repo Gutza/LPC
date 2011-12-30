@@ -13,8 +13,6 @@ $p->a(
 if (isset($_GET['delete']))
 	$p->a(deleteOne($_GET['delete']));
 
-$ref=new LPC_I18n_reference();
-$refs=$ref->search(NULL,NULL,0);
 $obsolete=get_obsolete();
 if (isset($_GET['deleteAll']) && $_GET['deleteAll']) {
 	$p->a(deleteMany($obsolete));
@@ -80,12 +78,12 @@ function deleteMessage($message_key,$bak_fname)
 {
 	$fp=fopen($bak_fname,'a');
 	if (!$fp)
-		return false;
+		throw new RuntimeException("Failed opening backup file ".$bak_fname);
 	$ref=new LPC_I18n_reference($message_key);
 	fputs($fp,serialize(LPC_Impex::export($ref)));
 	fclose($fp);
-
-	$ref->delete();
+	$result=$ref->delete();
+	return $result;
 }
 
 function deleteConfirm($fname,$ok=true)
@@ -103,6 +101,8 @@ function deleteConfirm($fname,$ok=true)
 
 function get_obsolete()
 {
+	$ref=new LPC_I18n_reference();
+	$refs=$ref->search(NULL,NULL,0);
 	$obsolete=array();
 	foreach($refs as $ref) {
 		if (find_message($ref->id))
