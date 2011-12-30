@@ -1,4 +1,5 @@
-<?
+<?php
+// vim: fdm=marker:
 /**
 * The LPC import/export class.
 * Please note that this class only retrieves an object's data into an
@@ -19,7 +20,7 @@ class LPC_Impex
 	static $objects=array();
 	static $data=array();
 	static $objectList=array();
-	
+//{{{ __construct($data=NULL)
 	function __construct($data=NULL)
 	{
 		if (is_object($data))
@@ -29,17 +30,18 @@ class LPC_Impex
 		elseif ($data!==NULL)
 			throw new RuntimeException("Unknown data type!");
 	}
-	
+//}}}
+//{{{ parseObject($object)
 	function parseObject($object)
 	{
 		if (!is_object($object))
 			throw new RuntimeException("Parameter is not an object!");
 
 		if (!($object instanceof LPC_Object))
-			throw new RuntimeException("Parameter is not a LPC_Object instance!");
+			throw new RuntimeException("Parameter is not an LPC_Object instance!");
 
 		if (empty($object->id))
-			throw new RuntimeException("Object doesn't have any ID!");
+			throw new RuntimeException("Object doesn't have an ID!");
 
 		if (!$object->load())
 			throw new RuntimeException("Failed loading object!");
@@ -56,7 +58,7 @@ class LPC_Impex
 		Now that we have the basic object saved, we look for MISTRESS
 		dependencies. We don't care for STRANGER dependencies (ever),
 		and we don't care about WIFE dependencies right now (that would
-		lead to recursivity, and we don't do that here.
+		lead to recursivity, and we don't do that here).
 		*/
 		foreach($object->dataStructure['depend'] as $depName=>$dep) {
 			if ($dep['on_mod']!='MISTRESS')
@@ -69,9 +71,9 @@ class LPC_Impex
 				);
 		}
 		self::$data[]=$data;
-		return(true);
 	}
-	
+//}}}
+//{{{ parseData($data)
 	function parseData($data)
 	{
 		if (!is_array($data))
@@ -88,7 +90,8 @@ class LPC_Impex
 		
 		return($object);
 	}
-
+//}}}
+//{{{ doImport($data)
 	private function doImport($data)
 	{
 		foreach($data as $key=>$entry) {
@@ -109,49 +112,55 @@ class LPC_Impex
 		}
 		return true;
 	}
-	
+//}}}
+//{{{ doExport($objects)
 	private function doExport($objects)
 	{
 		if (!is_array($objects))
 			$objects=array($objects);
 
 		foreach($objects as $object) {
-			if (!($current=self::parseObject($object)))
+			if (!self::parseObject($object))
 				return false;
-
-			if (!$current)
-				continue;
 
 			$wives=$object->getAllObjects();
 			foreach($wives as $wife) {
-				if (in_array(get_class($wife['object'])."_".$wife['object']->id,self::$objectList))
+				$wife_key=get_class($wife['object'])."_".$wife['object']->id;
+				if (in_array($wife_key,self::$objectList))
 					continue;
+
 				if (!self::doExport($wife['object']))
 					return false;
 
-				self::$objectList[]=get_class($wife['object'])."_".$wife['object']->id;
+				self::$objectList[]=$wife_key;
 			}
 		}
 
-		return self::$data;
+		return true;
 	}
-	
+//}}}
+//{{{ init()
 	function init()
 	{
 		self::$objects=array();
 		self::$data=NULL;
 		self::$objectList=array();
 	}
-	
+//}}}
+//{{{ import($data)
 	function import($data)
 	{
 		self::init();
 		return self::doImport($data);
 	}
-	
+//}}}
+//{{{ export($object)
 	function export($object)
 	{
 		self::init();
-		return self::doExport($object);
+		if (!self::doExport($object))
+			return false;
+		return self::$data;
 	}
+//}}}
 }
