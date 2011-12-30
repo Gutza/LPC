@@ -154,12 +154,12 @@ abstract class LPC_Object implements Serializable
 	 */
 	function __construct($id=0)
 	{
-		if ($id) {
+		if ($id)
 			$this->id=$id;
-		}
-		if (!$this->dbKey) {
+
+		if (!$this->dbKey)
 			throw new LogicException("Property dbKey not available in the constructor!");
-		}
+
 		$this->dataStructure=$this->registerDataStructure();
 		$this->fillDataStructure();
 	}
@@ -647,57 +647,24 @@ if (count(debug_backtrace())>200)
 	 */
 	function getLinks($dep_name, $order_att=NULL, $reverse=false, $count_only=false, $id='')
 	{
-		if (!$id)
-			$id=$this->id;
+		$query=$this->_makeGetLinksQuery($dep_name, $order_att, $reverse, $count_only, $id);
 
-		if (!$id)
-			throw new BadMethodCallException("Dependency search request on object with ID not set either explicitly or implicitly!");
+		$dbKey=$this->dbKey;
+		if ($this->dataStructure['depend'][$dep_name]['type']=='many')
+			$dbKey=$this->dataStructure['depend'][$dep_name]['dbKey'];
+		$db=$this->_doDbInit($dbKey);
+		$queryObj=new LPC_Query_builder();
 
-		$dep=$this->dataStructure['depend'][$dep_name];
-		if (!$dep)
-			throw new InvalidArgumentException("Dependency search request on \"$dep_name\", but that dependency is not defined in this object!");
-		if ($dep['type']=='one') {
-			$tmp=new $dep['class'];
-			if ($count_only)
-				return $tmp->searchCount($dep['attr'], $id);
+		$rs=$db->query($queryObj->buildSQL($query));
+		if ($count_only)
+			return $rs->fields[0];
 
-			$ids=$tmp->searchId($dep['attr'], $id, $order_att, $reverse);
-			if ($ids===false)
-				$this->debug('SC::getLinks() called SC::search() which failed');
-
-			return $ids;
-		} elseif ($dep['type']=='many') {
-			// Better error management required below - no checking right now!
-			$db=$this->_doDbInit($dep['dbKey']);
-
-			$link_fld=$dep['link_fld_name'];
-			$my_fld=$db->qstr($dep['my_fld_name']);
-			// No ordering here because we didn't need it yet! When we will, we'll probably have to
-			// perform a LEFT JOIN on the object's table. That's going to be a little
-			// work because we'll have to also include the "other" object's file in order
-			// to properly determine the proper field names, etc.
-
-			$tbl = $db->qstr($dep['table_name']);
-			$myId = $db->qstr($id);
-
-			if ($count_only)
-				$sql = "SELECT COUNT(*) FROM ".$tbl." WHERE ".$my_fld."=".$myId;
-			else
-				$sql = "SELECT ".$link_fld." FROM ".$tbl." WHERE ".$my_fld."=".$myId;
-			$rs=$db->query($sql);
-
-			if ($count_only)
-				return $rs->fields[$link_fld];
-
-			$tmDb=&$tmObject->db;
-
-			$tmp_array=array();
-			while (!$rs->EOF) {
-				$tmp_array[]=$rs->fields[$link_fld];
-				$rs->MoveNext();
-			}
-			return $tmp_array;
+		$result=array();
+		while(!$rs->EOF) {
+			$result[]=$rs->fields[0];
+			$rs->MoveNext();
 		}
+		return $result;
 	}
 	// }}}
 	// {{{ getObjectsCount()
@@ -756,15 +723,15 @@ if (count(debug_backtrace())>200)
 	 */
 	function getLoadedObjects($dep_name, $order_att=NULL, $reverse=false)
 	{
-		if (empty($this->dataStructure['depend'][$dep_name])) {
+		if (empty($this->dataStructure['depend'][$dep_name]))
 			throw new BadMethodCallException("Loaded objects requested on undefined dependency \"$dep_name\".");
-		}
+
 		$class=$this->dataStructure['depend'][$dep_name]['class'];
 		$links=$this->getLinks($dep_name, $order_att, $reverse);
-		if (!$links) {
+		if (!$links)
 			return array();
-		}
-		$tmp=&new $class;
+
+		$tmp=new $class;
 		return $tmp->_doLoad($links);
 	}
 	// }}}
@@ -944,9 +911,6 @@ if (count(debug_backtrace())>200)
 
 		// Finally finished checking for errors!
 		if ($dep['type']=='many') {
-			if (!$dep['dbKey'])
-				$dep['dbKey']=$this->dbKey;
-
 			$db=&$this->_doDbInit($dep['dbKey']);
 			$join_table=$dep['table_name'];
 			$my_fld=$dep['my_fld_name'];
@@ -984,28 +948,25 @@ if (count(debug_backtrace())>200)
 	 */
 	function dropLinks($dep_name)
 	{
-		if (empty($this->dataStructure['depend'][$dep_name])) {
+		if (empty($this->dataStructure['depend'][$dep_name]))
 			throw new InvalidArgumentException("Link drop requested for undefined dependency \"$dep_name\".");
-		}
+
 		$dep=$this->dataStructure['depend'][$dep_name];
-		if ($dep['type']!='many') {
+		if ($dep['type']!='many')
 			throw new InvalidArgumentException("Link drop requested on one to one dependency \"$dep_name\" - use attributes for that!");
-		}
-		if (!$this->id) {
+
+		if (!$this->id)
 			throw new BadMethodCallException('Link drop requested on object with id not set!');
-		}
+
 		// Finally finished checking for errors!
-		if (!$dep['dbKey']) {
-			$dep['dbKey']=$this->dbKey;
-		}
+		$dep['dbKey']=$this->dbKey;
+
 		$db=&$this->_doDbInit($dep['dbKey']);
 		$join_table=$dep['table_name'];
 		$my_fld=$dep['my_fld_name'];
-		if ($db->query("DELETE FROM ".$join_table." WHERE ".$my_fld."=".$this->db->qstr($this->id))) {
+		if ($db->query("DELETE FROM ".$join_table." WHERE ".$my_fld."=".$this->db->qstr($this->id)))
 			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 	// }}}
 	// {{{ getAttrH()
@@ -1271,7 +1232,6 @@ if (count(debug_backtrace())>200)
 	}
 	// }}}
 	// {{{ searchCount()
-	// **TODO** -- rethink this madness
 	/**
 	 * Returns the number of results of a search.
 	 *
@@ -1288,57 +1248,12 @@ if (count(debug_backtrace())>200)
 	 */
 	function searchCount($attName=NULL, $attValue=NULL, $like=false)
 	{
-		if ($attName===NULL) {
-			$where='';
-		} elseif (is_array($attName)) {
-			if (!is_array($attValue))
-				throw new RuntimeException("Parameter att_name is an array but att_value isn't.");
-			if (count($attName)!=count($attValue))
-				throw new RuntimeException("Array att_name has different number of elements from att_value.");
-			$where='WHERE ';
-			for ($i=0;$i<count($attName);$i++) {
-				$field=$this->dataStructure['fields'][$attName[$i]]['fld_name'];
-				if (!$field)
-					throw new RuntimeException("Attribute to search by ($attName) not found!");
-				if ($this->dataStructure['fields'][$attName[$i]]['flags']['trim'])
-					$attValue[$i] = trim($attValue[$i]);
-				if ($attValue[$i]===NULL)
-					$where.=$field." IS NULL AND ";
-				else {
-					$Satt_value=$this->db->qstr($attValue[$i]);
-					if ($like)
-						$where.=$field." LIKE ".$Satt_value." AND ";
-					else
-						$where.=$field."=".$Satt_value." AND ";
-				}
-			}
-			$where=substr($where,0,-5);
-		} else {
-			$field=$this->dataStructure['fields'][$attName]['fld_name'];
-			if (!$field)
-				throw new RuntimeException("Attribute to search by ($attName) not found!");
-
-			if (($attValue===NULL) && ($this->dataStructure['fields'][$attName]['flags']['NULL']))
-				$where="WHERE ".$field." IS NULL";
-			else {
-				$attValue=$this->db->qstr($attValue);
-				if ($like)
-					$where="WHERE ".$field." LIKE ".$attValue;
-				else
-					$where="WHERE ".$field."=".$attValue;
-			}
-		}
-		$id_fld=$this->dataStructure['id_field'];
-		$table=$this->dataStructure['table_name'];
-		// To check for malformed dataStructure
-
-		$sql="SELECT COUNT(*) FROM ".$table." ".$where;
-		$rs=$this->query($sql);
+		$query=$this->_makeSearchCountQuery($attName,$attValue,$like);
+		$rs=$this->query($query);
 		return $rs->fields[0];
 	}
 	// }}}
 	// {{{ searchId()
-	// **TODO** -- rethink this madness
 	/**
 	 * Returns the result of a search as object IDs
 	 *
@@ -1347,91 +1262,14 @@ if (count(debug_backtrace())>200)
 	 */
 	function searchId($attName=NULL, $attValue=NULL, $order_att=NULL, $reverse=false, $like=false)
 	{
-		if ($attName===NULL)
-			$where='';
-		elseif (is_array($attName)) {
-			if (!is_array($attValue))
-				throw new RuntimeException("Parameter att_name is an array but att_value isn't in SC::searchId()");
-			if (count($attName)!=count($attValue))
-				throw new RuntimeException('Array att_name has different number of elements from att_value in SC::searchId()');
-			$where='WHERE ';
-			for ($i=0;$i<count($attName);$i++) {
-				$field=$this->dataStructure['fields'][$attName[$i]]['fld_name'];
-				if (!$field)
-					throw new RuntimeException("Attribute to search by ($attName[$i]) not found! (in SC::searchId(), class ".get_class($this).")");
-				if ($this->dataStructure['fields'][$attName[$i]]['flags']['trim'])
-					$attValue[$i] = trim($attValue[$i]);
-
-				if (($attValue[$i]===NULL) && ($this->dataStructure['fields'][$attName[$i]]['flags']['NULL']))
-					$where.=$field." IS NULL AND ";
-				else {
-					
-					if ($this->dataStructure['fields'][$attName[$i]]['flags']['sqlDate'])
-						$Satt_value = $this->sqlDate($attValue[$i]);
-					else
-						$Satt_value = $this->db->qstr($attValue[$i]);
-
-					if($like==false)
-						 $where.=$field."=".$Satt_value." AND ";
-					else
-						$where.=$field." LIKE ".$Satt_value." AND ";
-				}
-			}
-			$where=substr($where,0,-5);
-		} else {
-			$field=$this->dataStructure['fields'][$attName]['fld_name'];
-			if (!$field)
-				throw new RuntimeException("Attribute to search by ($attName) not found! (in SC::searchId(), class ".get_class($this).")");
-			if ($attValue===NULL)
-				$where="WHERE ".$field." IS NULL";
-			else {
-				if ($this->dataStructure['fields'][$attName]['flags']['sqlDate'])
-					$SattValue = $this->sqlDate($attValue);
-				else
-					$SattValue = $this->db->qstr($attValue);
-				if($like==false)
-					$where="WHERE ".$field."=".$SattValue;
-				else
-					$where="WHERE ".$field." LIKE ".$SattValue;
-			}
-		}
-		$orderby='';
-		if ($order_att!==NULL) {
-			if ($order_att!==0) {
-				$orderby=$this->dataStructure['fields'][$order_att]['fld_name'];
-				if (!$orderby) {
-					@reset($this->dataStructure['fields']);
-					$attList='';
-					while(list($tmpAtt)=each($this->dataStructure['fields'])) {
-						$attList.="$tmpAtt, ";
-					}
-					$attList=substr($attList,0,-2).'.';
-					throw new RuntimeException(
-						"Attribute to order by ($order_att) not found! ".
-						"The valid attributes of this object are: $attList"
-					);
-				}
-				$orderby="ORDER BY ".$orderby;
-			} else {
-				$idfield = $this->dataStructure['id_field'];
-				$orderby='ORDER BY '.$idfield;
-			}
-		}
-		if ($orderby && $reverse) {
-			$orderby.=' DESC';
-		}
-		$id_fld=$this->dataStructure['id_field'];
-		$table=$this->dataStructure['table_name'];
-		// To check for malformed dataStructure
-		$sql="SELECT ".$id_fld." FROM ".$table." ".$where." $orderby";
-		$rs=$this->query($sql); // Will have to manage errors!
-
-		$tmp_array=array();
-		while (!$rs->EOF) {
-			$tmp_array[]=$rs->fields[$id_fld];
+		$query=$this->_makeSearchIdQuery($attName,$attValue,$order_att,$reverse,$like);
+		$rs=$this->query($query);
+		$result=array();
+		while(!$rs->EOF) {
+			$result[]=$rs->fields[0];
 			$rs->MoveNext();
 		}
-		return $tmp_array;
+		return $result;
 	}
 	// }}}
 	// {{{ search()
@@ -1466,12 +1304,10 @@ if (count(debug_backtrace())>200)
 	function search($attName=NULL, $attValue=NULL, $order_att=NULL, $reverse=false, $like=false)
 	{
 		$ids=$this->searchId($attName, $attValue, $order_att, $reverse, $like);
-		if ($ids===false) {
-			$this->debug('SC::search() called SC::searchID() which failed');
+		if ($ids===false)
 			return false;
-		} elseif (!$ids) {
+		if (!$ids)
 			return array();
-		}
 
 		$ins=$this->instantiate($ids);
 		for($i=0;$i<count($ins);$i++)
@@ -1480,37 +1316,6 @@ if (count(debug_backtrace())>200)
 		return $ins;
 	}
 	// }}}
-	// {{{ searchStr()
-	/**
-	 * Same as {@link search}, except it initializes the searchId with the
-	 * true value for $like
-	 *
-	 * Note: this will excecute SQL with the like statement, so it will be
-	 *       slower than the normal search method.
-	 *
-	 * --------
-	 * WARNING!
-	 * --------
-	 * This functionality is now available in {@link search} directly, so
-	 * this function is deprecated and will be removed in a future version
-	 * of this library (no later than June 2003)
-	 */
-	function searchStr($attName=NULL, $attValue=NULL, $order_att=NULL, $reverse=false)
-	{
-		$ids=$this->searchId($attName, $attValue, $order_att, $reverse,true);
-		if ($ids===false) {
-			$this->debug('SC::search() called SC::searchID() which failed');
-			return false;
-		}
-		$ins=$this->instantiate($ids);
-		if ($ins===false) {
-			$this->debug('SC::search() called SC::instantiate which failed');
-			return false;
-		}
-		return $ins;
-	}
-	// }}}
-
 	// {{{ fromKey()
 	/**
 	* Instantiates an object based on a key in an array.
@@ -1541,7 +1346,6 @@ if (count(debug_backtrace())>200)
 		return $this->id;
 	}
 	// }}}
-
 	//{{{ idFromArrayKey()
 	/**
 	* Deprecated alias for {@link fromKey()}
@@ -2083,41 +1887,40 @@ if (count(debug_backtrace())>200)
 		//   deleted, automatically delete the "many")
 		$deps=$this->dataStructure['depend'];
 		foreach($deps as $depName=>$dep) {
-			if (!isset($dep['dbKey'])) {
-				$dep['dbKey']=NULL;
-			}
-			if (empty($dep['type'])) {
+			if (empty($dep['dbKey']))
+				$dep['dbKey']=$this->dbKey;
+
+			if (empty($dep['type']))
 				$dep['type']='one';
-			}
+
 			if (empty($dep['on_mod'])) {
-				if ($dep['type']=='many') {
+				if ($dep['type']=='many')
 					$dep['on_mod']='MISTRESS';
-				} else {
+				else
 					$dep['on_mod']='WIFE';
-				}
 			}
 			switch($dep['type']) {
 				case 'one':
-					if (empty($dep['class'])) {
+					if (empty($dep['class']))
 						throw new RuntimeException("One-to-many dependency \"$depName\" in class ".get_class($this)." doesn't specify the class name of the remote object! (key 'class')");
-					}
-					if (empty($dep['attr'])) {
+
+					if (empty($dep['attr']))
 						throw new RuntimeException("One-to-many dependency \"$depName\" in class ".get_class($this)." doesn't specify the attribute of the remote object! (key 'attr')");
-					}
+
 					break;
 				case 'many':
-					if (empty($dep['class'])) {
+					if (empty($dep['class']))
 						throw new RuntimeException("Many-to-many dependency \"$depName\" in class ".get_class($this)." doesn't specify the class name of the remote object! (key 'class')");
-					}
-					if (empty($dep['table_name'])) {
+
+					if (empty($dep['table_name']))
 						throw new RuntimeException("Many-to-many dependency \"$depName\" in class ".get_class($this)." doesn't specify the name of the table containing the dependencies! (key 'table_name')");
-					}
-					if (empty($dep['my_fld_name'])) {
+
+					if (empty($dep['my_fld_name']))
 						throw new RuntimeException("Many-to-many dependency \"$depName\" in class ".get_class($this)." doesn't specify the name of the field pointing to this class in table \"{$dep['table_name']}\"! (key 'my_fld_name')");
-					}
-					if (empty($dep['link_fld_name'])) {
+
+					if (empty($dep['link_fld_name']))
 						throw new RuntimeException("Many-to-many dependency \"$depName\" in class ".get_class($this)." doesn't specify the name of the field pointing to the remote class in table \"{$dep['table_name']}\"! (key 'link_fld_name')");
-					}
+
 					break;
 				default:
 					throw new RuntimeException("Unknown dependency type \"{$dep['type']}\" for dependency \"$depName\" in class ".get_class($this)."! (only 'one' and 'many' supported in key 'type')");
@@ -2128,9 +1931,8 @@ if (count(debug_backtrace())>200)
 
 		// And finally, let's make sure to register the link between this object
 		// and its siblings, in case a tree link attribute is defined.
-		if (!empty($this->dataStructure['tree_link_attr'])) {
+		if (!empty($this->dataStructure['tree_link_attr']))
 			$this->dataStructure['fields'][$this->dataStructure['tree_link_attr']]['link_class']=$myClass;
-		}
 
 		// Now we'll fill in the validation defaults, for fields where we HAVE a type AND we DON'T have validation rules
 		foreach($this->dataStructure['fields'] as $attName=>$dataDef) {
@@ -2155,9 +1957,8 @@ if (count(debug_backtrace())>200)
 				if ($type[1]=='required') {
 					$rules[]='required';
 					$this->dataStructure['fields'][$attName]['flags']['required']=true;
-				} else {
+				} else
 					throw new RuntimeException("Unknown field modifier ".$type[1]."; the only valid modifier is 'required'.");
-				}
 			}
 			$this->dataStructure['fields'][$attName]['rules']=$rules;
 		}
@@ -2167,11 +1968,10 @@ if (count(debug_backtrace())>200)
 		// default, such as 'title' or 'name'. We'll use one of those by default
 		// if any present among the existing attributes.
 		if (empty($this->dataStructure['title_attr'])) {
-			if (isset($this->dataStructure['fields']['title'])) {
+			if (isset($this->dataStructure['fields']['title']))
 				$this->dataStructure['title_attr']='title';
-			} elseif (isset($this->dataStructure['fields']['name'])) {
+			elseif (isset($this->dataStructure['fields']['name']))
 				$this->dataStructure['title_attr']='name';
-			}
 		}
 
 		LPC_dataStructure::registerDataStructure($myClass,$this->dataStructure);
@@ -2198,27 +1998,25 @@ if (count(debug_backtrace())>200)
 	 * instead of hardcoding field names. Field names should never appear
 	 * in your code.
 	 *
-	 * @param string $attName the attribute to find the field associated to
+	 * @param string $attName the attribute to find the field associated to. Use 0 for the id field.
 	 * @param boolean $simple set to true if you do NOT want the table name
 	 *   (the default is returning 'tablename.fieldname')
 	 */
 	function getFieldName($attName, $simple=false)
 	{
-		if (!$attName) {
+		if ($attName===0)
 			$fld=$this->dataStructure['id_field'];
-		} elseif ($this->dataStructure['fields'][$attName]['fld_name']) {
+		elseif (empty($attName) || empty($this->dataStructure['fields'][$attName]['fld_name']))
+			throw new RuntimeException("Attribute to retrieve the field for (\"".$attName."\") wasn't defined in this class!");
+		else
 			$fld=$this->dataStructure['fields'][$attName]['fld_name'];
-		} else {
-			$fld=$attName;
-		}
-		if ($simple) {
+
+		if ($simple)
 			return $fld;
-		}
-		$tbl=$this->dataStructure['table_name'];
-		if (!$tbl) {
-			throw new BadMethodCallException("Extended field name requested, but table name not defined!");
-		}
-		return "$tbl.$fld";
+
+		$tbl=$this->getTableName();
+
+		return $tbl.".".$fld;
 	}
 	// }}}
 	// {{{ getTableName()
@@ -2231,12 +2029,14 @@ if (count(debug_backtrace())>200)
 	 */
 	function getTableName($full=false)
 	{
-		$tableName=$this->dataStructure['table_name'];
+		if (empty($this->dataStructure['table_name']))
+			throw new RuntimeException("Table name requested for class which doesn't have a table name defined!");
+
 		if (!$full)
-			return $tableName;
+			return $this->dataStructure['table_name'];
 
 		$db=&$this->_doDbInit($this->dbKey);
-		return $db->database.".".$tableName;
+		return $db->database.".".$this->dataStructure['table_name'];
 	}
 	// }}}
 	// {{{ sqlDate()
@@ -3201,9 +3001,8 @@ fclose($fp);
 	 */
 	function _doDbInit($dbKey=NULL)
 	{
-		if (!$dbKey) {
+		if (!$dbKey)
 			$dbKey = $this->dbKey;
-		}
 		return LPC_DB::getConnection($dbKey);
 	}
 	// }}}
@@ -3236,11 +3035,151 @@ fclose($fp);
 			return false;
 		$clone=new $className();
 		$vars=get_object_vars($this);
-		while(list($var,$val)=each($vars)) {
+		while(list($var,$val)=each($vars))
 			if (!in_array($var,array('dataStructure','module','dbKey')))
 				$clone->$var=$val;
-		}
+
 		return $clone;
+	}
+	// }}}
+	// {{{ _makeGetObjectsQuery()
+	function _makeGetLinksQuery($dep_name, $order_att=NULL, $reverse=false, $count_only=false, $id=0)
+	{
+		$id=$this->defaultId($id);
+		if (!$id)
+			throw new BadMethodCallException("Dependency search request on object with ID not set either explicitly or implicitly!");
+
+		if (empty($this->dataStructure['depend'][$dep_name]))
+			throw new InvalidArgumentException("Dependency search request on \"$dep_name\", but that dependency is not defined in this object!");
+		$dep=$this->dataStructure['depend'][$dep_name];
+
+		switch($dep['type']) {
+			case 'one':
+				$query=$this->_makeGetLinksOneQuery($dep,$order_att,$reverse,$id);
+				break;
+			case 'many':
+				$query=$this->_makeGetLinksManyQuery($dep,$order_att,$reverse,$id);
+				break;
+			default:
+				throw new RuntimeException("Unknown dependency type (\"".$dep['type']."\")");
+		}
+		if ($count_only)
+			$query['select']=array("COUNT(*)");
+		return $query;
+	}
+	// }}}
+	// {{{ _makeGetLinksOneQuery()
+	function _makeGetLinksOneQuery($dep,$order_att,$reverse,$id)
+	{
+		$tmp=new $dep['class'];
+		return $tmp->_makeSearchIdQuery($dep['attr'],$id,$order_att,$reverse);
+	}
+	// }}}
+	// {{{ _makeGetLinksManyQuery()
+	function _makeGetLinksManyQuery($dep,$order_att,$reverse,$id)
+	{
+		$link_fld=$dep['link_fld_name'];
+		$my_fld=$dep['my_fld_name'];
+		$tbl = $db->qstr($dep['table_name']);
+		$myId = $db->qstr($id);
+		$query=array(
+			'select'=>array($link_fld),
+			'from'=>array($tbl),
+			'where'=>array(
+				'type'=>'AND',
+				'conditions'=>array(
+					$my_fld."=".$myId
+				),
+			),
+		);
+		if ($order_att!==NULL)
+			$query['order']=array(
+				'field'=>$this->getFieldName($order_att),
+				'type'=>($reverse?'DESC':'ASC'),
+			);
+		return $query;
+	}
+	// }}}
+	// {{{ _makeSearchCountQuery()
+	function _makeSearchCountQuery($attName=NULL, $attValue=NULL, $like=false)
+	{
+		$query=$this->_makeRawSearchQuery($attName,$attValue,$like);
+		$query['select'][]="COUNT(*)";
+		return $query;
+	}
+	// }}}
+	// {{{ _makeSearchIdQuery()
+	function _makeSearchIdQuery($attName=NULL, $attValue=NULL, $order_att=NULL, $reverse=false, $like=false)
+	{
+		$query=$this->_makeRawSearchQuery($attName,$attValue,$like);
+		$query['select'][]=$this->getFieldName(0); // id
+
+		if ($order_att===NULL)
+			return $query;
+
+		$query['order']=array(
+			'field'=>$this->getFieldName($order_att),
+			'type'=>($reverse?'DESC':'ASC'),
+		);
+		return $query;
+	}
+	// }}}
+	// {{{ _makeRawSearchQuery()
+	function _makeRawSearchQuery($attName=NULL, $attValue=NULL, $like=false)
+	{
+		$query=array(
+			'select'=>array(),
+			'from'=>array(
+				$this->getTableName(),
+			),
+			'where'=>array(
+				'type'=>'AND',
+				'conditions'=>array(),
+			),
+		);
+		if ($attName===NULL)
+			return $query;
+
+		$where=array();
+		if (is_array($attName)) {
+			if (!is_array($attValue))
+				throw new RuntimeException("Parameter att_name is an array but att_value isn't.");
+
+			if (count($attName)!=count($attValue))
+				throw new RuntimeException("Array att_name has different number of elements from att_value.");
+
+			foreach($attName as $idx=>$att)
+				$where=array_merge($where,$this->_makeSearchQueryAtom($att,$attValue[$idx],$like));
+		} else
+			$where=$this->_makeSearchQueryAtom($attName,$attValue,$like);
+
+		$query['where']['conditions']=$where;
+		return $query;
+	}
+	// }}}
+	// {{{ _makeSearchQueryAtom()
+	function _makeSearchQueryAtom($attName=NULL, $attValue=NULL, $like=false)
+	{
+		$where=array();
+		$field=$this->getFieldName($attName);
+
+		if ($this->dataStructure['fields'][$attName]['flags']['trim'])
+			$attValue = trim($attValue);
+
+		if (($attValue===NULL) && ($this->dataStructure['fields'][$attName]['flags']['NULL']))
+			$where[]=$field." IS NULL";
+		else {
+			if ($this->dataStructure['fields'][$attName]['flags']['sqlDate'])
+				$Sval = $this->sqlDate($attValue);
+			else
+				$Sval = $this->db->qstr($attValue);
+
+			if ($like)
+				$where[]=$field." LIKE ".$Sval;
+			else
+				$where[]=$field." = ".$Sval;
+		}
+		return $where;
 	}
 	// }}}
 // }}}
@@ -3433,9 +3372,9 @@ fclose($fp);
 	*
 	* @return object LPC_HTML_list object
 	*/
-	public function getScaffoldingList()
+	public function getScaffoldingList($query=NULL)
 	{
-		$l=$this->getBaseList();
+		$l=$this->getBaseList($query);
 		$l->onProcessHeaderCell=array($this,'onScaffoldingHeaderCell');
 		$l->onProcessHeaderRow=array($this,'onScaffoldingHeaderRow');
 		$l->onProcessBodyCell=array($this,'onScaffoldingBodyCell');
@@ -3444,14 +3383,27 @@ fclose($fp);
 		return $l;
 	}
 
-	public function getBaseList()
+	public function getBaseList($query=NULL)
 	{
 		$l=new LPC_HTML_list();
 		$l->queryObject=$this;
-		$query=array(
-			'from'=>$this->getTableName(),
-		);
-		$query['select']=array_keys($this->dataStructure['fields']);
+		if (!$query)
+			$query=array(
+				'from'=>$this->getTableName(),
+			);
+		if (empty($this->dataStructure['files']))
+			$query['select']=array_keys($this->dataStructure['fields']);
+		else {
+			$query['select']=array();
+			$attributes=array_keys($this->dataStructure['fields']);
+			$file_attrs=array();
+			foreach($this->dataStructure['files'] as $meta)
+				$file_attrs=array_merge($file_attrs,array_values($meta));
+
+			foreach($attributes as $attName)
+				if (!in_array($attName,$file_attrs))
+					$query['select'][]=$attName;
+		}
 		array_unshift($query['select'],$this->dataStructure['id_field']);
 		$l->sql=$query;
 		$l->legalSortKeys=$query['select'];
@@ -3469,6 +3421,11 @@ fclose($fp);
 
 	public function onScaffoldingHeaderRow($row)
 	{
+		foreach($this->dataStructure['files'] as $fname=>$fmeta) {
+			$th=new LPC_HTML_node('th');
+			$row->a($th);
+			$th->a($fname);
+		}
 		$th=new LPC_HTML_node('th');
 		$row->a($th);
 		$th->a(_LH('scaffoldingActionHeader'));
@@ -3477,14 +3434,22 @@ fclose($fp);
 
 	public function onScaffoldingBodyCell($key,$cell,&$rowData)
 	{
+		$cell->content=htmlspecialchars($rowData[$key]);
+		if (!empty($this->dataStructure['fields'][$key]['link_class']))
+			$cell->content="<a href='objectEdit.php?c=".$this->dataStructure['fields'][$key]['link_class']."&amp;id=".rawurlencode($rowData[$key])."'>".$cell->content."</a>";
 		return true;
 	}
 
 	public function onScaffoldingBodyRow($row,&$rowData)
 	{
+		$id=$rowData[$this->dataStructure['id_field']];
+		foreach($this->dataStructure['files'] as $fname=>$fmeta) {
+			$td=new LPC_HTML_node('td');
+			$row->a($td);
+			$td->a("<a href='fileDownload.php?c=".get_class($this)."&amp;id=".$id."&amp;file=".rawurlencode($fname)."'>"._LS('scaffoldingDownloadFile')."</a>");
+		}
 		$td=new LPC_HTML_node('td');
 		$row->a($td);
-		$id=$rowData[$this->dataStructure['id_field']];
 		$td->a("[<a href='objectEdit.php?c=".get_class($this)."&amp;id=".$id."'>"._LS('scaffoldingEditAction')."</a>]");
 		$td->a("&bull;");
 		$td->a("[<a href='objectDelete.php?c=".get_class($this)."&amp;id=".$id."&amp;k=".LPC_Session_key::get()."'>"._LS('scaffoldingDeleteAction')."</a>]");
@@ -3499,8 +3464,32 @@ fclose($fp);
 		return true;
 	}
 
+	protected function getScaffoldingFileRow($attName)
+	{
+		if (!isset($this->dataStructure['files']))
+			return false;
+		$found=false;
+		foreach($this->dataStructure['files'] as $fname=>$fdata) {
+			foreach($fdata as $type=>$att) {
+				if ($att!=$attName)
+					continue;
+				if ($type!='content')
+					return "";
+				return new LPC_HTML_form_row(array(
+					'label'=>$fname."<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt>LPC file</tt></div>",
+					'input'=>"<input type='file' name='file[".$fname."]'>",
+				));
+			}
+		}
+		return false;
+	}
+
 	public function getScaffoldingEditRow($attName)
 	{
+		$row=$this->getScaffoldingFileRow($attName);
+		if ($row!==false)
+			return $row;
+
 		$link="";
 		if (isset($this->dataStructure['fields'][$attName]['link_class'])) {
 			$class=$this->dataStructure['fields'][$attName]['link_class'];
@@ -3533,10 +3522,67 @@ fclose($fp);
 		));
 	}
 
-	public function processScaffoldingEdit()
+	protected function processScaffoldingAttributes()
 	{
 		foreach($_POST['attr'] as $attName=>$attValue)
 			$this->setAttr($attName,$attValue);
+	}
+
+	protected function processScaffoldingFile($key)
+	{
+		if (
+			empty($this->dataStructure['files']) ||
+			empty($this->dataStructure['files'][$key])
+		)
+			return;
+
+		$meta=$this->dataStructure['files'][$key];
+		foreach($meta as $type=>$attr) {
+			switch($type) {
+				case 'content':
+					$this->setAttr($attr,file_get_contents($_FILES['file']['tmp_name'][$key]));
+					break;
+				case 'mime':
+					$fname=$_FILES['file']['name'][$key];
+					$tname=tempnam(sys_get_temp_dir(),'LPC_scaff_');
+					$tfname=$tname.$fname;
+					copy($_FILES['file']['tmp_name'][$key],$tfname);
+
+					$finfo = finfo_open(FILEINFO_MIME_TYPE);
+					$mime=finfo_file($finfo, $tfname);
+					finfo_close($finfo);
+
+					$this->setAttr($attr,$mime);
+					finfo_close($finfo);
+
+					unlink($tname);
+					unlink($tfname);
+
+					break;
+				case 'name':
+					$this->setAttr($attr,$_FILES['file']['name'][$key]);
+					break;
+				default:
+					throw new RuntimeException("Unknown file entry type (\"".$type."\") for file key \"".$key."\"");
+			}
+		}
+	}
+
+	protected function processScaffoldingFiles()
+	{
+		if (empty($_FILES) || empty($_FILES['file']))
+			return;
+		foreach($_FILES['file']['tmp_name'] as $key=>$tmp_name) {
+			if (!is_uploaded_file($tmp_name))
+				continue;
+			$this->processScaffoldingFile($key);
+		}
+	}
+
+	public function processScaffoldingEdit()
+	{
+		$this->processScaffoldingAttributes();
+		$this->processScaffoldingFiles();
 		if ($this->save())
 			return $this->onScaffoldingEdit();
 	}
