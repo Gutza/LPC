@@ -1,4 +1,19 @@
 <?php
+function LPC_exceptionHandler($exception)
+{
+	echo "<h1>LPC: Uncaught exception</h1>";
+	echo "<h2 style='color:red'>", htmlspecialchars($exception->getMessage()), "</h2>";
+	echo "<p>Exception trace:<ul>";
+	$trace=$exception->getTrace();
+	foreach($trace as $atom) {
+		echo "<li>";
+		echo $atom['file'].':'.$atom['line']." &mdash; ".$atom['function']."()";
+		echo "</li>";
+	}
+	echo "</ul>";
+	exit;
+}
+set_exception_handler('LPC_exceptionHandler');
 /**
 * This function starts a timer - use {@link LPC_getTimer()} afterwards to
 * get the time elapsed.
