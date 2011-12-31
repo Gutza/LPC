@@ -3,17 +3,12 @@
 require "common.php";
 
 if (empty($_REQUEST['m'])) {
-	header("index.php");
+	header("Location: index.php");
 	exit;
 }
 
 $p->title="Message translator";
 $p->st();
-
-$p->a("<p>".
-	"[<a href='lang_select.php?m=".rawurlencode($_REQUEST['m'])."'>Translate this message to another language</a>] &bull; ".
-	"[<a href='message_select.php'>Message list</a>]".
-"</p>");
 
 $msg=new LPC_I18n_message();
 $msg=$msg->search(
@@ -39,6 +34,25 @@ if (isset($_POST['submit'])) {
 	$ref->setAttr('comment',$_POST['comment']);
 	$ref->save();
 }
+
+// The links on the top of  the page
+$links=array(
+	"[<a href='lang_select.php?m=".$msgKey."'>Translate this message to another language</a>]",
+	"[<a href='message_select.php'>Message list</a>]"
+);
+
+$sql="
+	SELECT ref.message_key
+	FROM LPC_i18n_reference ref
+	LEFT JOIN LPC_i18n_message msg ON msg.message_key=ref.message_key AND msg.language=".$_SESSION['LPC_target_lang']."
+	WHERE msg.id IS NULL
+	LIMIT 1
+";
+$rs=$msg->query($sql);
+if (!$rs->EOF && $rs->fields[0]!=$msgKey)
+	$links[]="[<a href='?m=".rawurlencode($rs->fields[0])."'>Find an untranslated message</a>]";
+$p->a("<p>".implode(" &bull; ",$links)."</p>");
+// Done links
 
 $ref_trans=new LPC_I18n_message();
 $ref_trans=$ref_trans->search(
