@@ -5,7 +5,6 @@
  * @author Bogdan Stancescu <bogdan@moongate.ro>
  * @copyright Copyright (c) October 2002, Bogdan Stancescu
  * @license http://www.gnu.org/licenses/gpl.html GNU Public License v3 or later
- * @version $Id: LPC_Object.php,v 1.35 2011/08/07 23:09:47 bogdan Exp $
  */
 abstract class LPC_Object implements Serializable
 {
@@ -17,6 +16,27 @@ abstract class LPC_Object implements Serializable
 	 * The id of this object in the database
 	 */
 	var $id;
+
+	/**
+	 * The name of the class which extends this object's
+	 * attributes for internationalization
+	 */
+	var $i18n_class="";
+
+	/**
+	 * The actual associated i18n object instance
+	 */
+	var $i18n_object=NULL;
+
+	/**
+	 * This object's language ID
+	 */
+	var $i18n_langID=0;
+
+	/**
+	 * Field mappings for user-defined fields
+	 */
+	var $user_fields=array();
 
 	/**
 	 * The attributes of this object - an associative array
@@ -295,6 +315,8 @@ abstract class LPC_Object implements Serializable
 	// {{{ internal_onSave()
 	protected function internal_onSave($new)
 	{
+		if ($this->i18n_object)
+			$this->i18n_object->save();
 		$this->onSave($new);
 	}
 	// }}}
@@ -999,7 +1021,7 @@ if (count(debug_backtrace())>200)
 			throw new InvalidArgumentException("Please specify a non-empty attribute name!");
 
 		if (empty($this->dataStructure['fields'][$attName]))
-			throw new DomainException("Attribute \"$attName\" has never been defined!");
+			return $this->getI18nAttr($attName);
 
 		if (
 			$this->attr_flags[$attName]['loaded'] ||
@@ -1012,63 +1034,6 @@ if (count(debug_backtrace())>200)
 		// We DON'T want to force overloading attributes which were already set.
 		$this->load(0,false);
 		return $this->attr[$attName];
-	}
-	// }}}
-	// {{{ getAttrs()
-	/**
-	 * Returns an array of attributes, each of the values being retrieved
-	 * using {@link getAttr}.
-	 *
-	 * The $attr_names parameter MUST be an array, and its format dictates
-	 * the format of the resulting array:
-	 * - If $attr_names is an indexed array then the values must contain
-	 *   the attribute names, and the resulting array will be an indexed
-	 *   array of the corresponding values, with the keys matching;
-	 * - If $attr_names is an associative array then the keys must contain
-	 *   the attribute names, and the resulting array will be the same
-	 *   associative array, with the values of the attributes filled in as
-	 *   the values of the array;
-	 * - If $attr_names is a mixed array, the result will be a mixed array
-	 *   as well, with corresponding keys as described above.
-	 *
-	 * @param array $attr_names the attributes to be returned
-	 * @return array an array containing the attribute values
-	 */
-	function getAttrs($attr_names)
-	{
-		$result=array();
-		while(list($key,$val)=@each($attr_names))
-			if (is_numeric($key))
-				$result[$key]=$this->getAttr($val);
-			else
-				$result[$key]=$this->getAttr[$key];
-		return $result;
-	}
-	// }}}
-	// {{{ setAttr()
-	/**
-	 * Sets the value of the specified attribute - note $slashes!
-	 *
-	 * @param string $attName the attribute to assign a value to
-	 * @param mixed $attValue the value to assign it. Valid values
-	 *   are strings, numeric values and the PHP NULL
-	 * @return boolean true on success or false on error.
-	 */
-	function setAttr($attName, $attValue)
-	{
-		if (empty($this->dataStructure['fields'][$attName]))
-			throw new InvalidArgumentException("Attribute \"$attName\" has never been defined in class ".get_class($this)."!");
-
-		if ($this->dataStructure['fields'][$attName]['flags']['trim'])
-			$attValue = trim($attValue);
-
-		if (!isset($this->attr[$attName]) || ($this->attr[$attName]!==$attValue)) {
-			$this->modified=true;
-			$this->attr[$attName]=$attValue;
-			$this->attr_flags[$attName]['modified']=true;
-			return true;
-		}
-		return true;
 	}
 	// }}}
 	// {{{ isModified()
@@ -3606,5 +3571,114 @@ fclose($fp);
 		header("Location: objectList.php?c=".get_class($this));
 		exit;
 	}
+// }}}
+// {{{ I18N-RELATED METHODS
+	// {{{ initializeI18nObject()
+	function initializeI18nObject()
+	{
+		$this->i18n_object=new $this->i18n_class();
+		$this->i18n_object->initI18nChild($this->id,$this->i18n_langID);
+	}
+	// }}}
+	// {{{ getI18nAttr()
+	function getI18nAttr($attName)
+	{
+		if (!$this->i18n_class)
+			throw new DomainException("Attribute \"$attName\" has never been defined in this class, and no i18n class is defined!");
+		$this->initI18n();
+		return $this->i18n_object->getAttr($attName);
+	}
+	// }}}
+	// {{{ setAttr()
+	/**
+	 * Sets the value of the specified attribute - note $slashes!
+	 *
+	 * @param string $attName the attribute to assign a value to
+	 * @param mixed $attValue the value to assign it. Valid values
+	 *   are strings, numeric values and the PHP NULL
+	 * @return boolean true on success or false on error.
+	 */
+	function setAttr($attName, $attValue)
+	{
+		if (empty($this->dataStructure['fields'][$attName]))
+			return $this->setI18nAttr($attName,$attValue);
+
+		if ($this->dataStructure['fields'][$attName]['flags']['trim'])
+			$attValue = trim($attValue);
+
+		if (!isset($this->attr[$attName]) || ($this->attr[$attName]!==$attValue)) {
+			$this->modified=true;
+			$this->attr[$attName]=$attValue;
+			$this->attr_flags[$attName]['modified']=true;
+			return true;
+		}
+		return true;
+	}
+	// }}}
+	// {{{ setI18nAttr()
+	function setI18nAttr($attName,$attValue)
+	{
+		if (!$this->i18n_class)
+			throw new InvalidArgumentException("Attribute \"$attName\" has never been defined in class, and no i18n class is defined!");
+		$this->initI18n();
+		return $this->i18n_object->setAttr($attName,$attValue);
+	}
+	// }}}
+	// {{{ initI18n()
+	function initI18n()
+	{
+		if ($this->i18n_object)
+			return;
+		if (!$this->id)
+			return $this->initializeI18nObject();
+
+		$obj=new $this->i18n_class();
+		$obj=$obj->findI18nParent($this->id,$this->i18n_langID);
+		if (!$obj)
+			return $this->initializeI18nObject();
+
+		$this->i18n_object=$obj;
+	}
+	// }}}
+	// {{{ checkI18nChild()
+	function checkI18nChild()
+	{
+		if (empty($this->user_fields['i18n_parent']))
+			throw new RuntimeException("Internationalization children must define \$user_fields['i18n_parent'], as the name of the attribute pointing to the parent object.");
+		if (empty($this->user_fields['i18n_language']))
+			throw new RuntimeException("Internationalization children must define \$user_fields['i18n_language'], as the name of the attribute pointing to the translation language ID.");
+	}
+	// }}}
+	// {{{ findI18nParent()
+	function findI18nParent($id,$langID=0)
+	{
+		$this->checkI18nChild();
+		if (!$langID)
+			$langID=LPC_Language::getCurrent()->id;
+		$objects=$this->search(
+			array(
+				$this->user_fields['i18n_parent'],
+				$this->user_fields['i18n_language'],
+			),
+			array(
+				$id,
+				$langID,
+			)
+		);
+		if (!$objects)
+			return false;
+		return $objects[0];
+	}
+	// }}}
+	// {{{ initI18nChild()
+	function initI18nChild($id,$langID=0)
+	{
+		$this->checkI18nChild();
+		if (!$langID)
+			$langID=LPC_Language::getCurrent()->id;
+		$this->setAttr($this->user_fields['i18n_parent'],$id);
+		$this->setAttr($this->user_fields['i18n_language'],$langID);
+	}
+	// }}}
 // }}}
 }
