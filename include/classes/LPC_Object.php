@@ -3094,8 +3094,10 @@ fclose($fp);
 		);
 		if ($order_att!==NULL)
 			$query['order']=array(
-				'field'=>$this->getFieldName($order_att),
-				'type'=>($reverse?'DESC':'ASC'),
+				array(
+					'field'=>$this->getFieldName($order_att),
+					'type'=>($reverse?'DESC':'ASC'),
+				),
 			);
 		return $query;
 	}
@@ -3118,8 +3120,10 @@ fclose($fp);
 			return $query;
 
 		$query['order']=array(
-			'field'=>$this->getFieldName($order_att),
-			'type'=>($reverse?'DESC':'ASC'),
+			array(
+				'field'=>$this->getFieldName($order_att),
+				'type'=>($reverse?'DESC':'ASC'),
+			),
 		);
 		return $query;
 	}
