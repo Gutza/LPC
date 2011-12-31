@@ -73,6 +73,7 @@ class LPC_HTML_node extends LPC_HTML_base
 				if ($attribute===null)
 					continue;
 				if (is_string($attribute) || is_numeric($attribute)) {
+					// Do NOT addslashes here! That would escape all apostrophes!
 					$result.=' '.$key.'="'.$attribute.'"';
 					continue;
 				}
