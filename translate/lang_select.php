@@ -22,7 +22,7 @@ $form->a("<input type='hidden' name='m' value=\"".addslashes($msgKey)."\">");
 $t=new LPC_HTML_table();
 $form->a($t);
 
-$ref_selector=new LPC_HTML_select('target_lang',$_SESSION,'LPC_target_lang');
+$ref_selector=new LPC_HTML_select('reference_lang',$_SESSION,'LPC_target_lang');
 $lng=new LPC_Language();
 $langs=$lng->search('translated',1,'name');
 foreach($langs as $lang)
@@ -33,7 +33,7 @@ $t->a(new LPC_HTML_form_row(array(
 	'input'=>$ref_selector
 )));
 
-$target_selector=new LPC_HTML_select('reference_lang',$_SESSION,'LPC_reference_lang');
+$target_selector=new LPC_HTML_select('target_lang',$_SESSION,'LPC_reference_lang');
 $langs=$lng->search(NULL,NULL,'name');
 foreach($langs as $lang)
 	$target_selector->addOption($lang->getAttrF('name'),$lang->id);
