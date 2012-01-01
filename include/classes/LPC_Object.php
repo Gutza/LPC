@@ -3356,14 +3356,21 @@ fclose($fp);
 		return $l;
 	}
 
-	public function getBaseList($query=NULL)
+	public function getBaseList($filterQuery=NULL)
 	{
 		$l=new LPC_HTML_list();
 		$l->queryObject=$this;
-		if (!$query)
-			$query=array(
-				'from'=>$this->getTableName(),
-			);
+		$query=array(
+			'from'=>$this->getTableName(),
+			'where'=>array(
+				'type'=>'AND',
+				'condiions'=>array(),
+			),
+		);
+		if ($filterQuery) {
+			$qb=new LPC_Query_builder();
+			$query['where']['conditions'][]=$this->getFieldName(0)." IN (".$qb->buildSQL($filterQuery).")";
+		}
 		if (empty($this->dataStructure['files']))
 			$query['select']=array_keys($this->dataStructure['fields']);
 		else {
