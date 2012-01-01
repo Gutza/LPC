@@ -21,7 +21,7 @@ abstract class LPC_Object implements Serializable
 	 * The name of the class which extends this object's
 	 * attributes for internationalization
 	 */
-	var $i18n_class="";
+	static $i18n_class="";
 
 	/**
 	 * The actual associated i18n object instance
@@ -3048,8 +3048,9 @@ fclose($fp);
 	{
 		$link_fld=$dep['link_fld_name'];
 		$my_fld=$dep['my_fld_name'];
-		$tbl = $db->qstr($dep['table_name']);
-		$myId = $db->qstr($id);
+		$this->dbInit();
+		$tbl = $dep['table_name'];
+		$myId = $this->db->qstr($id);
 		$query=array(
 			'select'=>array($link_fld),
 			'from'=>array($tbl),
@@ -3579,14 +3580,14 @@ fclose($fp);
 	// {{{ initializeI18nObject()
 	function initializeI18nObject()
 	{
-		$this->i18n_object=new $this->i18n_class();
+		$this->i18n_object=new $this::$i18n_class();
 		$this->i18n_object->initI18nChild($this->id,$this->i18n_langID);
 	}
 	// }}}
 	// {{{ getI18nAttr()
 	function getI18nAttr($attName)
 	{
-		if (!$this->i18n_class)
+		if (!$this::$i18n_class)
 			throw new DomainException("Attribute \"$attName\" has never been defined in this class, and no i18n class is defined!");
 		$this->initI18n();
 		return $this->i18n_object->getAttr($attName);
@@ -3621,7 +3622,7 @@ fclose($fp);
 	// {{{ setI18nAttr()
 	function setI18nAttr($attName,$attValue)
 	{
-		if (!$this->i18n_class)
+		if (!$this::$i18n_class)
 			throw new InvalidArgumentException("Attribute \"$attName\" has never been defined in class, and no i18n class is defined!");
 		$this->initI18n();
 		return $this->i18n_object->setAttr($attName,$attValue);
@@ -3634,8 +3635,7 @@ fclose($fp);
 			return;
 		if (!$this->id)
 			return $this->initializeI18nObject();
-
-		$obj=new $this->i18n_class();
+		$obj=new $this::$i18n_class();
 		$obj=$obj->findI18nParent($this->id,$this->i18n_langID);
 		if (!$obj)
 			return $this->initializeI18nObject();
