@@ -315,8 +315,11 @@ abstract class LPC_Object implements Serializable
 	// {{{ internal_onSave()
 	protected function internal_onSave($new)
 	{
-		if ($this->i18n_object)
+		if ($this->i18n_object) {
+			if ($new)
+				$this->i18n_object->initI18nChild($this->id,$this->i18n_langID);
 			$this->i18n_object->save();
+		}
 		$this->onSave($new);
 	}
 	// }}}
