@@ -22,8 +22,13 @@ function exposeDirClasses($dir)
 		if ($cr->isAbstract())
 			continue;
 
-		// Finally, skip classes you don't have the right to
+		// Next, skip classes you don't have the right to
 		if (!validateClassRights($class))
+			continue;
+
+		// Finally, skip internationalization children
+		$instance=new $class();
+		if (isset($instance->user_fields['i18n_parent']))
 			continue;
 
 		// Record everything else for display
