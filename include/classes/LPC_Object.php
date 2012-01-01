@@ -315,11 +315,7 @@ abstract class LPC_Object implements Serializable
 	// {{{ internal_onSave()
 	protected function internal_onSave($new)
 	{
-		if ($this->i18n_object) {
-			if ($new)
-				$this->i18n_object->initI18nChild($this->id,$this->i18n_langID);
-			$this->i18n_object->save();
-		}
+		$this->save_i18n($new);
 		$this->onSave($new);
 	}
 	// }}}
@@ -359,10 +355,6 @@ abstract class LPC_Object implements Serializable
 			return $this->insert();
 
 		$this->id=$id;
-/*
-if (count(debug_backtrace())>200)
-	throw new RuntimeException("Excessive depth, you're missing an exit condition somewhere!");
-*/
 
 		if (!$this->modified && !$force)
 			return $this->id;
@@ -371,8 +363,10 @@ if (count(debug_backtrace())>200)
 			return NULL;
 
 		$query=$this->_makeSaveQuery($force);
-		if (!$query)
+		if (!$query) {
+			$this->save_i18n(false);
 			return $this->id;
+		}
 
 		$id=$this->db->qstr($id);
 		$id_fld=$this->dataStructure['id_field'];
@@ -1103,6 +1097,31 @@ if (count(debug_backtrace())>200)
 	{
 		foreach($this->attr as $key=>$value)
 			$this->touchAttr($key);
+		return true;
+	}
+	// }}}
+	// {{{ setAttr()
+	/**
+	 * Sets the value of the specified attribute
+	 *
+	 * @param string $attName the attribute to assign a value to
+	 * @param mixed $attValue the value to assign it. Valid values
+	 *   are strings, numeric values and the PHP NULL
+	 * @return boolean true on success or false on error.
+	 */
+	function setAttr($attName, $attValue)
+	{
+		if (empty($this->dataStructure['fields'][$attName]))
+			return $this->setI18nAttr($attName,$attValue);
+
+		if ($this->dataStructure['fields'][$attName]['flags']['trim'])
+			$attValue = trim($attValue);
+
+		if (!isset($this->attr[$attName]) || ($this->attr[$attName]!==$attValue)) {
+			$this->modified=true;
+			$this->attr[$attName]=$attValue;
+			$this->attr_flags[$attName]['modified']=true;
+		}
 		return true;
 	}
 	// }}}
@@ -3600,39 +3619,16 @@ fclose($fp);
 		return $this->i18n_object->getAttr($attName);
 	}
 	// }}}
-	// {{{ setAttr()
-	/**
-	 * Sets the value of the specified attribute - note $slashes!
-	 *
-	 * @param string $attName the attribute to assign a value to
-	 * @param mixed $attValue the value to assign it. Valid values
-	 *   are strings, numeric values and the PHP NULL
-	 * @return boolean true on success or false on error.
-	 */
-	function setAttr($attName, $attValue)
-	{
-		if (empty($this->dataStructure['fields'][$attName]))
-			return $this->setI18nAttr($attName,$attValue);
-
-		if ($this->dataStructure['fields'][$attName]['flags']['trim'])
-			$attValue = trim($attValue);
-
-		if (!isset($this->attr[$attName]) || ($this->attr[$attName]!==$attValue)) {
-			$this->modified=true;
-			$this->attr[$attName]=$attValue;
-			$this->attr_flags[$attName]['modified']=true;
-			return true;
-		}
-		return true;
-	}
-	// }}}
 	// {{{ setI18nAttr()
 	function setI18nAttr($attName,$attValue)
 	{
 		if (!$this::$i18n_class)
 			throw new InvalidArgumentException("Attribute \"$attName\" has never been defined in class, and no i18n class is defined!");
 		$this->initI18n();
-		return $this->i18n_object->setAttr($attName,$attValue);
+		$this->i18n_object->setAttr($attName,$attValue);
+		if (!$this->modified)
+			$this->modified=$this->i18n_object->modified;
+		return true;
 	}
 	// }}}
 	// {{{ initI18n()
@@ -3688,6 +3684,16 @@ fclose($fp);
 			$langID=LPC_Language::getCurrent()->id;
 		$this->setAttr($this->user_fields['i18n_parent'],$id);
 		$this->setAttr($this->user_fields['i18n_language'],$langID);
+	}
+	// }}}
+	// {{{ save_i18n()
+	function save_i18n($new)
+	{
+		if (!$this->i18n_object)
+			return;
+		if ($new)
+			$this->i18n_object->initI18nChild($this->id,$this->i18n_langID);
+		$this->i18n_object->save();
 	}
 	// }}}
 // }}}
