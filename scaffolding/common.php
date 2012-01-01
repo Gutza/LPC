@@ -12,8 +12,21 @@ function exposeDirClasses($dir)
 	while (false !== ($entry = $d->read())) {
 		$fname=$dir."/".$entry;
 		$class=substr($entry,0,-4);
-		if (!validClassFile($fname) || !validClassName($class) || !validateClassRights($class))
+
+		// First skip filesystem entries and known auxiliary classes
+		if (!validClassFile($fname) || !validClassName($class))
 			continue;
+
+		// Second, skip abstract classes
+		$cr=new ReflectionClass($class);
+		if ($cr->isAbstract())
+			continue;
+
+		// Finally, skip classes you don't have the right to
+		if (!validateClassRights($class))
+			continue;
+
+		// Record everything else for display
 		$result['name'][]=$class;
 		$result['formal'][]=getFormalName($class);
 	}
