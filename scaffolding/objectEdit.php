@@ -112,7 +112,7 @@ $form->a($t);
 foreach($obj->dataStructure['fields'] as $attr=>$desc)
 	$t->a($obj->getScaffoldingEditRow($attr));
 
-if ($obj->i18n_class) {
+if ($class::$i18n_class) {
 	$t->a("<tr><th colspan='2'>"._LH('scaffoldingLocalizedSection')."</th></tr>");
 	$obj->initI18n();
 	$skipFields=array(
