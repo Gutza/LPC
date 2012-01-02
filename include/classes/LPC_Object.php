@@ -3335,6 +3335,7 @@ fclose($fp);
 	}
 // }}}
 // {{{ SCAFFOLDING-RELATED METHODS
+	// {{{ hasScaffoldingRight()
 	/**
 	* Checks whether the current user has a specific CRUD scaffolding right.
 	*
@@ -3357,7 +3358,8 @@ fclose($fp);
 		$u=LPC_User::getCurrent();
 		return $u->isSuperuser();
 	}
-
+	// }}}
+	// {{{ getScaffoldingList()
 	/**
 	* Returns a LPC_HTML_list object which is the list of
 	* objects in the database.
@@ -3374,7 +3376,8 @@ fclose($fp);
 		$l->msgEmptyList=_LH("scaffoldingMessageNoObjectsInClass");
 		return $l;
 	}
-
+	// }}}
+	// {{{ getBaseList()
 	public function getBaseList($filterQuery=NULL)
 	{
 		$l=new LPC_HTML_list();
@@ -3412,12 +3415,14 @@ fclose($fp);
 		);
 		return $l;
 	}
-
+	// }}}
+	// {{{ onScaffoldingHeaderCell()
 	public function onScaffoldingHeaderCell($key,$cell)
 	{
 		return true;
 	}
-
+	// }}}
+	// {{{ onScaffoldingHeaderRow()
 	public function onScaffoldingHeaderRow($row)
 	{
 		foreach($this->dataStructure['files'] as $fname=>$fmeta) {
@@ -3430,7 +3435,8 @@ fclose($fp);
 		$th->a(_LH('scaffoldingActionHeader'));
 		return true;
 	}
-
+	// }}}
+	// {{{ onScaffoldingBodyCell()
 	public function onScaffoldingBodyCell($key,$cell,&$rowData)
 	{
 		$cell->content=htmlspecialchars($rowData[$key]);
@@ -3438,7 +3444,8 @@ fclose($fp);
 			$cell->content="<a href='objectEdit.php?c=".$this->dataStructure['fields'][$key]['link_class']."&amp;id=".rawurlencode($rowData[$key])."'>".$cell->content."</a>";
 		return true;
 	}
-
+	// }}}
+	// {{{ onScaffoldingBodyRow()
 	public function onScaffoldingBodyRow($row,&$rowData)
 	{
 		$id=$rowData[$this->dataStructure['id_field']];
@@ -3464,7 +3471,8 @@ fclose($fp);
 
 		return true;
 	}
-
+	// }}}
+	// {{{ getScaffoldingFileRow()
 	protected function getScaffoldingFileRow($attName)
 	{
 		if (!isset($this->dataStructure['files']))
@@ -3484,7 +3492,8 @@ fclose($fp);
 		}
 		return false;
 	}
-
+	// }}}
+	// {{{ getScaffoldingEditRow()
 	public function getScaffoldingEditRow($attName)
 	{
 		$row=$this->getScaffoldingFileRow($attName);
@@ -3522,13 +3531,15 @@ fclose($fp);
 			'input'=>$input,
 		));
 	}
-
+	// }}}
+	// {{{ processScaffoldingAttributes()
 	protected function processScaffoldingAttributes()
 	{
 		foreach($_POST['attr'] as $attName=>$attValue)
 			$this->setAttr($attName,$attValue);
 	}
-
+	// }}}
+	// {{{ processScaffoldingFile()
 	protected function processScaffoldingFile($key)
 	{
 		if (
@@ -3568,7 +3579,8 @@ fclose($fp);
 			}
 		}
 	}
-
+	// }}}
+	// {{{ processScaffoldingFiles()
 	protected function processScaffoldingFiles()
 	{
 		if (empty($_FILES) || empty($_FILES['file']))
@@ -3579,7 +3591,8 @@ fclose($fp);
 			$this->processScaffoldingFile($key);
 		}
 	}
-
+	// }}}
+	// {{{ processScaffoldingEdit()
 	public function processScaffoldingEdit()
 	{
 		$this->processScaffoldingAttributes();
@@ -3587,22 +3600,26 @@ fclose($fp);
 		if ($this->save())
 			return $this->onScaffoldingEdit();
 	}
-
+	// }}}
+	// {{{ onScaffoldingEdit()
 	public function onScaffoldingEdit()
 	{
 	}
-
+	// }}}
+	// {{{ processScaffoldingDelete()
 	public function processScaffoldingDelete()
 	{
 		if ($this->delete())
 			return $this->onScaffoldingDelete();
 	}
-
+	// }}}
+	// {{{ onScaffoldingDelete()
 	public function onScaffoldingDelete()
 	{
 		header("Location: objectList.php?c=".get_class($this));
 		exit;
 	}
+	// }}}
 // }}}
 // {{{ I18N-RELATED METHODS
 	// {{{ initializeI18nObject()
