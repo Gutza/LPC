@@ -109,7 +109,8 @@ $t=new LPC_HTML_table();
 $t->compact=false;
 $form->a($t);
 
-foreach($obj->dataStructure['fields'] as $attr=>$desc)
+$attrs=$obj->getScaffoldingAttributes();
+foreach($attrs as $attr)
 	$t->a($obj->getScaffoldingEditRow($attr));
 
 if ($class::$i18n_class) {
