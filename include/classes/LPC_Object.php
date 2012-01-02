@@ -2006,6 +2006,15 @@ abstract class LPC_Object implements Serializable
 		return $tbl.".".$fld;
 	}
 	// }}}
+	// {{{ getFieldNames()
+	function getFieldNames($attNames, $simple=false)
+	{
+		$result=array();
+		foreach($attNames as $key=>$attName)
+			$result[$key]=$this->getFieldName($attName,$simple);
+		return $result;
+	}
+	// }}}
 	// {{{ getTableName()
 	/**
 	 * Returns the table name associated with the given object
@@ -3383,7 +3392,9 @@ fclose($fp);
 		$l=new LPC_HTML_list();
 		$l->queryObject=$this;
 		$query=array(
+			'select'=>array(),
 			'from'=>$this->getTableName(),
+			'join'=>array(),
 			'where'=>array(
 				'type'=>'AND',
 				'condiions'=>array(),
@@ -3394,19 +3405,31 @@ fclose($fp);
 			$query['where']['conditions'][]=$this->getFieldName(0)." IN (".$qb->buildSQL($filterQuery).")";
 		}
 		if (empty($this->dataStructure['files']))
-			$query['select']=array_keys($this->dataStructure['fields']);
+			$query['select']=$this->getFieldNames($this->getScaffoldingAttributes());
 		else {
-			$query['select']=array();
-			$attributes=array_keys($this->dataStructure['fields']);
+			$attributes=$this->getScaffoldingAttributes();
 			$file_attrs=array();
 			foreach($this->dataStructure['files'] as $meta)
 				$file_attrs=array_merge($file_attrs,array_values($meta));
 
+			$attrs=array();
 			foreach($attributes as $attName)
 				if (!in_array($attName,$file_attrs))
-					$query['select'][]=$attName;
+					$attrs[]=$attName;
+			$query['select']=$this->getFieldNames($attrs);
 		}
-		array_unshift($query['select'],$this->dataStructure['id_field']);
+		if ($this::$i18n_class) {
+			$i18n_obj=new $this::$i18n_class();
+			$query['join'][]=array(
+				'type'=>'left',
+				'table'=>$i18n_obj->getTableName(),
+				'condition'=>
+					$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_parent'])."=".$this->getFieldName(0)." AND ".
+					$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_language'])."=".LPC_Language::getCurrent()->id,
+			);
+			$query['select']=array_merge($query['select'],$i18n_obj->getFieldNames($i18n_obj->getScaffoldingAttributes()));
+		}
+		array_unshift($query['select'],$this->getFieldName(0));
 		$l->sql=$query;
 		$l->legalSortKeys=$query['select'];
 		$l->defaultOrder=array(
@@ -3620,8 +3643,8 @@ fclose($fp);
 		exit;
 	}
 	// }}}
-	// {{{ getScaffoldingFields()
-	function getScaffoldingFields()
+	// {{{ getScaffoldingAttributes()
+	function getScaffoldingAttributes()
 	{
 		$fields=array_keys($this->dataStructure['fields']);
 		if (!empty($this->user_fields['i18n_parent']))

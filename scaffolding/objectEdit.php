@@ -115,7 +115,7 @@ foreach($obj->dataStructure['fields'] as $attr=>$desc)
 if ($class::$i18n_class) {
 	$t->a("<tr><th colspan='2'>"._LH('scaffoldingLocalizedSection')."</th></tr>");
 	$obj->initI18n();
-	$i18n_fields=$obj->i18n_object->getScaffoldingFields();
+	$i18n_fields=$obj->i18n_object->getScaffoldingAttributes();
 	foreach($i18n_fields as $attr)
 		$t->a($obj->i18n_object->getScaffoldingEditRow($attr));
 }
