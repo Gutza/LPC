@@ -518,7 +518,11 @@ abstract class LPC_Object implements Serializable
 			if ($depType!='*' && $dep['on_mod']!=$depType)
 				continue;
 
-			if ($tmp=$this->getObjects($depName,0)) // order by ID, in case they need to be compared
+// This breaks many to many dependencies, because we don't (yet) support
+// ordering for those. Don't know what "in case they need to be compared"
+// might mean in a practical setp.
+//			if ($tmp=$this->getObjects($depName,0)) // order by ID, in case they need to be compared
+			if ($tmp=$this->getObjects($depName))
 				foreach($tmp as $tmp_object)
 					$objects[]=array('dep'=>$depName,'object'=>$tmp_object);
 			elseif ($tmp===false)
@@ -673,8 +677,10 @@ abstract class LPC_Object implements Serializable
 			$dbKey=$this->dataStructure['depend'][$dep_name]['dbKey'];
 		$db=$this->_doDbInit($dbKey);
 		$queryObj=new LPC_Query_builder();
-
-		$rs=$db->query($queryObj->buildSQL($query));
+		$sql=$queryObj->buildSQL($query);
+		$rs=$db->query($sql);
+		if (!$rs)
+			throw new RuntimeException("Database error #{$db->ErrorNo()}: {$db->ErrorMsg()}; Query: \"$sql\"");
 		if ($count_only)
 			return $rs->fields[0];
 
