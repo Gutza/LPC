@@ -3455,8 +3455,10 @@ fclose($fp);
 		foreach($this->dataStructure['depend'] as $depName=>$depData) {
 			$td->a("&bull;");
 			$suffix="";
+			if ($depData['type']=='many')
+				$suffix.=" <a href='objectMany.php?c=".rawurlencode($depData['class'])."&amp;rd=".rawurlencode($depName)."&amp;rc=".rawurlencode(get_class($this))."&amp;rid=".rawurlencode($id)."&amp;rt=".rawurlencode($_SERVER['REQUEST_URI'])."'>☞</a>";
 			if ($depCount=$this->getLinks($depName,NULL,false,true,$id))
-				$suffix=" (<a href='objectList.php?c=".rawurlencode($depData['class'])."&amp;rd=".rawurlencode($depName)."&amp;rc=".rawurlencode(get_class($this))."&amp;rid=".rawurlencode($id)."'>".$depCount."</a>)";
+				$suffix.=" (<a href='objectList.php?c=".rawurlencode($depData['class'])."&amp;rd=".rawurlencode($depName)."&amp;rc=".rawurlencode(get_class($this))."&amp;rid=".rawurlencode($id)."'>".$depCount."</a>)";
 			$td->a("[<a href='objectEdit.php?c=".rawurlencode($depData['class'])."&amp;rd=".rawurlencode($depName)."&amp;rc=".rawurlencode(get_class($this))."&amp;rid=".rawurlencode($id)."'>"._LS('scaffoldingCreateDependency',htmlspecialchars($depName))."</a>".$suffix."]");
 		}
 
@@ -3631,10 +3633,21 @@ fclose($fp);
 		return true;
 	}
 	// }}}
-	// {{{ initI18n()
-	function initI18n()
+	// {{{ switchLanguage()
+	function switchLanguage($lang)
 	{
-		if ($this->i18n_object)
+		if (is_object($lang))
+			$langID=$lang->id;
+		else
+			$langID=$lang;
+		$this->i18n_langID=$langID;
+		$this->initI18n(true);
+	}
+	// }}}
+	// {{{ initI18n()
+	function initI18n($force=false)
+	{
+		if ($this->i18n_object && !$force)
 			return;
 		if (!$this->id)
 			return $this->initializeI18nObject();
