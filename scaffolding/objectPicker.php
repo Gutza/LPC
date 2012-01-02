@@ -3,7 +3,6 @@
 require "common.php";
 
 $p=LPC_Page::getCurrent();
-//$p->renderMode='raw';
 $p->noHeader=true;
 
 $p->head->a(new LPC_HTML_script(LPC_js."/jquery.js"));
