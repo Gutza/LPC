@@ -49,6 +49,12 @@ function validClassFile($fname)
 
 function validClassName($class)
 {
+	static $LPC_classes=array(
+		'LPC_Language',
+	);
+	if (in_array($class,$LPC_classes))
+		return true;
+
 	return
 		substr($class,0,4)!='LPC_' &&
 		class_exists($class) &&
