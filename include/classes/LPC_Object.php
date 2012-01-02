@@ -3620,6 +3620,18 @@ fclose($fp);
 		exit;
 	}
 	// }}}
+	// {{{ getScaffoldingFields()
+	function getScaffoldingFields()
+	{
+		$fields=array_keys($this->dataStructure['fields']);
+		if (!empty($this->user_fields['i18n_parent']))
+			$fields=array_diff($fields,array(
+				$this->user_fields['i18n_parent'],
+				$this->user_fields['i18n_language'],
+			));
+		return $fields;
+	}
+	// }}}
 // }}}
 // {{{ I18N-RELATED METHODS
 	// {{{ initializeI18nObject()

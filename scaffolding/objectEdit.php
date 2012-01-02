@@ -115,13 +115,9 @@ foreach($obj->dataStructure['fields'] as $attr=>$desc)
 if ($class::$i18n_class) {
 	$t->a("<tr><th colspan='2'>"._LH('scaffoldingLocalizedSection')."</th></tr>");
 	$obj->initI18n();
-	$skipFields=array(
-		$obj->i18n_object->user_fields['i18n_parent'],
-		$obj->i18n_object->user_fields['i18n_language'],
-	);
-	foreach($obj->i18n_object->dataStructure['fields'] as $attr=>$desc)
-		if (!in_array($attr,$skipFields))
-			$t->a($obj->i18n_object->getScaffoldingEditRow($attr));
+	$i18n_fields=$obj->i18n_object->getScaffoldingFields();
+	foreach($i18n_fields as $attr)
+		$t->a($obj->i18n_object->getScaffoldingEditRow($attr));
 }
 
 $t->a(new LPC_HTML_form_row(array(
