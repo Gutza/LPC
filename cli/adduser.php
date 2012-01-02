@@ -49,5 +49,13 @@ $u->setAttr($u->user_fields['password'],$u->saltPassword($password));
 
 if ($u->save())
 	echo "User ".$username." successfully added/edited.\n";
-else
+else {
 	echo "Failed creating/editing user ".$username."\n";
+	exit;
+}
+
+echo "Make this a hyperuser? [y/N] ";
+if (strtolower(trim(fgets(STDIN)))=='y') {
+	$u->addToGroup(1,0);
+	echo "Ok, now this is a hyperuser.\n";
+}
