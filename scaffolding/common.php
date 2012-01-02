@@ -2,6 +2,29 @@
 
 $u=LPC_User::getCurrent();
 
+if (isset($_GET['langID'])) {
+	$lang=new LPC_Language();
+	$lang->fromKey($_GET,'langID');
+	if ($lang->id) {
+		LPC_Language::setCurrent($lang);
+		header("Location: ".LPC_Url::remove_get_var($_SERVER['REQUEST_URI'],'langID'));
+		exit;
+	}
+}
+$langSelect=new LPC_HTML_node('div');
+$langSelect->setAttr('style','float: right');
+$langSelect->a(_LH('scaffoldingSelectLang'));
+
+$langs=new LPC_HTML_select();
+$langSelect->a($langs);
+$langObjs=new LPC_Language();
+$langObjs=$langObjs->search(NULL,NULL,'name');
+foreach($langObjs as $langObj)
+	$langs->addOption($langObj->getAttr('name'),$langObj->id);
+$langs->setAttr('onChange',"window.location=location.pathname+location.search+(location.search?'&':'?')+'langID='+this.options[this.selectedIndex].value;");
+$langs->selected=LPC_Language::getCurrent()->id;
+LPC_Page::getCurrent()->a($langSelect);
+
 function exposeDirClasses($dir)
 {
 	$result=array(
