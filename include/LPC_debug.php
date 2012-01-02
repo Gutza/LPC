@@ -1,6 +1,14 @@
 <?php
 function LPC_exceptionHandler($exception)
 {
+	if (isset($_SERVER['REQUEST_METHOD']))
+		LPC_HTML_exceptionHandler($exception);
+	else
+		LPC_CLI_exceptionHandler($exception);
+}
+
+function LPC_HTML_exceptionHandler($exception)
+{
 	echo "<h1>LPC: Uncaught exception</h1>";
 	echo "<h2 style='color:red'>", htmlspecialchars($exception->getMessage()), "</h2>";
 	echo "<p>Exception trace:<ul>";
@@ -11,6 +19,17 @@ function LPC_exceptionHandler($exception)
 		echo "</li>";
 	}
 	echo "</ul>";
+	exit;
+}
+function LPC_CLI_exceptionHandler($exception)
+{
+	echo "LPC: Uncaught exception: ";
+	echo $exception->getMessage()."\n\n";
+	echo "Exception trace:\n";
+	$trace=$exception->getTrace();
+	foreach($trace as $atom) {
+		echo $atom['file'].':'.$atom['line']." -- ".$atom['function']."()\n";
+	}
 	exit;
 }
 set_exception_handler('LPC_exceptionHandler');
