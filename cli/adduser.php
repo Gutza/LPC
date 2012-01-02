@@ -29,7 +29,7 @@ if (
 	exit;
 }
 	
-
+echo "WARNING! The password will be visible on screen!\n";
 $password="";
 while(!strlen($password)) {
 	echo "Password for user ".$username.": ";
