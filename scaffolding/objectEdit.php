@@ -57,16 +57,22 @@ if ($id && !$obj->probe()) {
 	return;
 }
 
-if (isset($_POST['LPC_scaffolding_submit_button'])) {
+if (
+	isset($_POST['LPC_scaffolding_submit_button']) ||
+	isset($_POST['LPC_scaffolding_submit_plus'])
+) {
 	try {
 		LPC_HTML_form::enforceSK();
 		$obj->processScaffoldingEdit();
 
-		if (!empty($rc) && !empty($rid) && !empty($rd)) {
+		if (withAttach()) {
 			$link=new $rc($rid);
 			$link->createLink($rd,$obj);
 		}
-		header("Location: objectList.php?c=".get_class($obj));
+		if (isset($_POST['LPC_scaffolding_submit_button']))
+			header("Location: objectList.php?c=".get_class($obj));
+		else
+			header("Location: ".$_SERVER['REQUEST_URI']);
 		exit;
 	} catch (Exception $e) {
 		$p->a(new LPC_HTML_error(_LH('scaffoldingSaveError',$e->getMessage())));
@@ -74,19 +80,21 @@ if (isset($_POST['LPC_scaffolding_submit_button'])) {
 }
 
 $skipAttr="";
-if (!empty($rc) && !empty($rid) && !empty($rd)) {
+if (withAttach()) {
 	$link=new $rc();
 	$skipAttr=$link->dataStructure['depend'][$rd]['attr'];
 }
 
-$form=new LPC_HTML_form(false,'post',true);
+$form=new LPC_HTML_form($_SERVER['REQUEST_URI'],'post',true);
 $p->a($form);
+/*
 $form->a("<input type='hidden' name='LPC_scaffolding_class_name' value='$class'>");
 $form->a("<input type='hidden' name='LPC_scaffolding_id' value='$id'>");
 foreach($refdata as $refatom) {
 	if (!empty($$refatom)) // Reference dependency
 		$form->a("<input type='hidden' name='LPC_scaffolding_".$refatom."' value=\"".addslashes($$refatom)."\">");
 }
+*/
 $form->addSK();
 $t=new LPC_HTML_table();
 $t->compact=false;
@@ -105,7 +113,19 @@ if ($class::$i18n_class) {
 		$t->a($obj->i18n_object->getScaffoldingEditRow($attr));
 }
 
+$submit="<input type='submit' name='LPC_scaffolding_submit_button' value=\"".addslashes(_LS($submitLabelKey))."\">";
+if (withAttach())
+	$submit.=" <input type='submit' name='LPC_scaffolding_submit_plus' value=\"".addslashes(_LS('scaffoldingButtonEditPlus'))."\">";
 $t->a(new LPC_HTML_form_row(array(
 	'label'=>'&nbsp;',
-	'input'=>"<input type='submit' name='LPC_scaffolding_submit_button' value=\"".addslashes(_LS($submitLabelKey))."\">",
+	'input'=>$submit,
 )));
+
+function withAttach()
+{
+	global $rc, $rid, $rd;
+	return
+		!empty($rc) &&
+		!empty($rid) &&
+		!empty($rd);
+}
