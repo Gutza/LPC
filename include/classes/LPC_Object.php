@@ -1931,6 +1931,8 @@ abstract class LPC_Object implements Serializable
 
 			if (in_array($type[0],array('text','longtext')))
 				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
+			elseif (in_array($type[0],array('html')))
+				$this->dataStructure['fields'][$attName]['base_type']='text';
 			elseif (in_array($type[0],array('integer','email','float','date'))) {
 				$rules[]=$type[0];
 				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
@@ -1938,7 +1940,7 @@ abstract class LPC_Object implements Serializable
 				$rules[]='date'; // <- we use the date rule for datetime
 				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
 			} else
-				throw new RuntimeException("Unknown field type ".$type[0]." for field ".$attName."; valid types are 'integer','email','float','date','datetime','text','longtext'.");
+				throw new RuntimeException("Unknown field type ".$type[0]." for field ".$attName."; valid types are 'integer','email','float','date','datetime','text','longtext','html'.");
 
 			if (isset($type[1])) {
 				if ($type[1]=='required') {
@@ -3531,7 +3533,7 @@ fclose($fp);
 				$this->getAttr($attName)
 			)
 				$link=" <a href='objectEdit.php?c=".rawurlencode($class)."&amp;id=".rawurlencode($this->getAttr($attName))."'>"._LS('scaffoldingEditLink',htmlspecialchars($class),$this->getAttrH($attName))."</a>";
-			$link.=" <a href='#' onClick='return LPC_scaffolding_pickObject(\"".addslashes($class)."\",$(this).prevAll(\"input\").get(0))'>"._LS('scaffoldingPickLink')."</a>";
+			$link.=" <a href='#' onClick='return LPC_scaffolding_pickObject(\"".addslashes($class)."\",$(this).prevAll(\"input\").get(0))'>☞</a>";
 		}
 		$type="";
 		if (isset($this->dataStructure['fields'][$attName]['type']))
@@ -3541,6 +3543,7 @@ fclose($fp);
 				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrF($attName)."\">".$link;
 				break;
 			case 'longtext':
+			case 'html':
 				$input="<textarea name='attr[$attName]' rows='5' style='width:100%'>".$this->getAttrH($attName)."</textarea>";
 				break;
 			default:
