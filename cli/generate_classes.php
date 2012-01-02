@@ -206,12 +206,15 @@ class LPC_Class_Generator
 	private function writeFooter($tableName,$fp)
 	{
 		fputs($fp,"\n");
+		fputs($fp,"\t\t\$files=array();\n");
+		fputs($fp,"\n");
 		fputs($fp,"\t\t\$depend=array();\n");
 		fputs($fp,"\n");
 		fputs($fp,"\t\treturn array(\n");
 		fputs($fp,"\t\t\t'table_name'=>'$tableName',\n");
 		fputs($fp,"\t\t\t'id_field'=>'id',\n");
 		fputs($fp,"\t\t\t'fields'=>\$fields,\n");
+		fputs($fp,"\t\t\t'files'=>\$files,\n");
 		fputs($fp,"\t\t\t'depend'=>\$depend\n");
 		fputs($fp,"\t\t);\n");
 		fputs($fp,"\t}\n");
