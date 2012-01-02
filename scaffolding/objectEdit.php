@@ -96,6 +96,12 @@ if (isset($_POST['LPC_scaffolding_submit_button'])) {
 	}
 }
 
+$skipAttr="";
+if (!empty($rc) && !empty($rid) && !empty($rd)) {
+	$link=new $rc();
+	$skipAttr=$link->dataStructure['depend'][$rd]['attr'];
+}
+
 $form=new LPC_HTML_form(false,'post',true);
 $p->a($form);
 $form->a("<input type='hidden' name='LPC_scaffolding_class_name' value='$class'>");
@@ -111,7 +117,8 @@ $form->a($t);
 
 $attrs=$obj->getScaffoldingAttributes();
 foreach($attrs as $attr)
-	$t->a($obj->getScaffoldingEditRow($attr));
+	if ($attr!=$skipAttr)
+		$t->a($obj->getScaffoldingEditRow($attr));
 
 if ($class::$i18n_class) {
 	$t->a("<tr><th colspan='2'>"._LH('scaffoldingLocalizedSection')."</th></tr>");
