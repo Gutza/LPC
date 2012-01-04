@@ -3413,7 +3413,7 @@ fclose($fp);
 			$query['where']['conditions'][]=$this->getFieldName(0)." IN (".$qb->buildSQL($filterQuery).")";
 		}
 		if (empty($this->dataStructure['files']))
-			$query['select']=$this->getFieldNames($this->getScaffoldingAttributes());
+			$attrs=$this->getScaffoldingAttributes();
 		else {
 			$attributes=$this->getScaffoldingAttributes();
 			$file_attrs=array();
@@ -3424,8 +3424,10 @@ fclose($fp);
 			foreach($attributes as $attName)
 				if (!in_array($attName,$file_attrs))
 					$attrs[]=$attName;
-			$query['select']=$this->getFieldNames($attrs);
 		}
+		$query['select']=$this->getFieldNames($attrs);
+		$l->legalSortKeys=$this->getScaffoldingSortableAttributes();
+		$l->legalSortKeys[]=$this->getFieldName(0,true);
 		if ($this::$i18n_class) {
 			$i18n_obj=new $this::$i18n_class();
 			$query['join'][]=array(
@@ -3436,10 +3438,11 @@ fclose($fp);
 					$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_language'])."=".LPC_Language::getCurrent()->id,
 			);
 			$query['select']=array_merge($query['select'],$i18n_obj->getFieldNames($i18n_obj->getScaffoldingAttributes()));
+			$l->legalSortKeys=array_merge($l->legalSortKeys,$i18n_obj->getScaffoldingSortableAttributes());
 		}
 		array_unshift($query['select'],$this->getFieldName(0));
 		$l->sql=$query;
-		$l->legalSortKeys=$query['select'];
+//		$l->legalSortKeys=$query['select'];
 		$l->defaultOrder=array(
 			'sort'=>$this->dataStructure['id_field'],
 			'order'=>0,
@@ -3662,6 +3665,20 @@ fclose($fp);
 				$this->user_fields['i18n_language'],
 			));
 		return $fields;
+	}
+	// }}}
+	// {{{ getScaffoldingSortableAttributes()
+	function getScaffoldingSortableAttributes()
+	{
+		$attrs=$this->getScaffoldingAttributes();
+		$sortable=array();
+		foreach($attrs as $attName) {
+			if (
+				!isset($this->dataStructure['fields'][$attName]['type']) ||
+				$this->dataStructure['fields'][$attName]['type']!='longtext')
+			$sortable[]=$attName;
+		}
+		return $sortable;
 	}
 	// }}}
 // }}}
