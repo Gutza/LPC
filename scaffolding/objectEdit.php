@@ -69,10 +69,13 @@ if (
 			$link=new $rc($rid);
 			$link->createLink($rd,$obj);
 		}
-		if (isset($_POST['LPC_scaffolding_submit_button']))
-			header("Location: objectList.php?c=".get_class($obj));
-		else
-			header("Location: ".$_SERVER['REQUEST_URI']);
+
+		$url=$_SERVER['REQUEST_URI'];
+		if (isset($_POST['LPC_scaffolding_submit_button']) && !isset($_GET['id']))
+			$url=LPC_Url::add_get_var($url,'id',$obj->id);
+		elseif (isset($_POST['LPC_scaffolding_submit_plus']) && isset($_GET['id']))
+			$url=LPC_Url::remove_get_var($url,'id');
+		header("Location: ".$url);
 		exit;
 	} catch (Exception $e) {
 		$p->a(new LPC_HTML_error(_LH('scaffoldingSaveError',$e->getMessage())));
