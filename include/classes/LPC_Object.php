@@ -3463,6 +3463,11 @@ fclose($fp);
 			if (empty($this->dataStructure['fields'][$attName]['type']))
 				$filters->a(new LPC_HTML_list_filter_string(),$attName);
 		}
+		if ($this::$i18n_class) {
+			$i18n_obj=new $this::$i18n_class();
+			$i18n_filters=$i18n_obj->getScaffoldingFilters();
+			$filters->content=array_merge($filters->content,$i18n_filters->content);
+		}
 		return $filters;
 	}
 	// }}}
