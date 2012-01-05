@@ -74,6 +74,7 @@ function validClassName($class)
 {
 	static $LPC_classes=array(
 		'LPC_Language',
+		'LPC_Scaffolding_default',
 	);
 	if (in_array($class,$LPC_classes))
 		return true;

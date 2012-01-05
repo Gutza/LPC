@@ -3565,6 +3565,8 @@ fclose($fp);
 				$link=" <a href='objectEdit.php?c=".rawurlencode($class)."&amp;id=".rawurlencode($this->getAttr($attName))."'>"._LS('scaffoldingEditLink',htmlspecialchars($class),$this->getAttrH($attName))."</a>";
 			$link.=" <a href='#' onClick='return LPC_scaffolding_pickObject(\"".addslashes($class)."\",$(this).prevAll(\"input\").get(0))'>☞</a>";
 		}
+		if (!$this->id)
+			$this->setAttr($attName,$this->getScaffoldingDefault($attName));
 		$type="";
 		if (isset($this->dataStructure['fields'][$attName]['type']))
 			$type=$this->dataStructure['fields'][$attName]['type'];
@@ -3582,10 +3584,13 @@ fclose($fp);
 		$attDesc=$attName;
 		$rs=$this->query("DESCRIBE ".$this->getTableName()." ".$this->getFieldName($attName,true));
 		$attDesc.="<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt>".htmlspecialchars($rs->fields['Type'])."</tt></div>";
-		return new LPC_HTML_form_row(array(
+
+		$row=new LPC_HTML_form_row(array(
 			'label'=>$attDesc,
 			'input'=>$input,
 		));
+		$row->compact=true;
+		return $row;
 	}
 	// }}}
 	// {{{ processScaffoldingAttributes()
@@ -3700,6 +3705,12 @@ fclose($fp);
 			$sortable[]=$attName;
 		}
 		return $sortable;
+	}
+	// }}}
+	// {{{ getScaffoldingDefault()
+	function getScaffoldingDefault($attName)
+	{
+		return LPC_Scaffolding_default::getDefault(get_class($this),$attName,$this->i18n_langID);
 	}
 	// }}}
 // }}}
