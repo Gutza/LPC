@@ -87,14 +87,6 @@ if (withAttach()) {
 
 $form=new LPC_HTML_form($_SERVER['REQUEST_URI'],'post',true);
 $p->a($form);
-/*
-$form->a("<input type='hidden' name='LPC_scaffolding_class_name' value='$class'>");
-$form->a("<input type='hidden' name='LPC_scaffolding_id' value='$id'>");
-foreach($refdata as $refatom) {
-	if (!empty($$refatom)) // Reference dependency
-		$form->a("<input type='hidden' name='LPC_scaffolding_".$refatom."' value=\"".addslashes($$refatom)."\">");
-}
-*/
 $form->addSK();
 $t=new LPC_HTML_table();
 $t->compact=false;
