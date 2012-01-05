@@ -65,7 +65,7 @@ function rbr($row,&$rowData)
 	$cid=$rowData[$obj->dataStructure['id_field']];
 	if ($rObj->createLink($_GET['rd'],$cid,1)) {
 		$url=LPC_Url::add_get_var($_SERVER['REQUEST_URI'],'crid',$cid);
-		$td->a("[<a href='".$url."'>"._LS('scaffoldingRemoveThis')."</a>");
+		$td->a("[<a href='".$url."'>"._LS('scaffoldingRemoveThis')."</a>]");
 	} else {
 		$url=LPC_Url::add_get_var($_SERVER['REQUEST_URI'],'caid',$cid);
 		$td->a("[<a href='".$url."'>"._LS('scaffoldingAddThis')."</a>]");
