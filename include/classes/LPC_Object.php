@@ -3405,7 +3405,7 @@ fclose($fp);
 			'join'=>array(),
 			'where'=>array(
 				'type'=>'AND',
-				'condiions'=>array(),
+				'conditions'=>array(),
 			),
 		);
 		if ($filterQuery) {
@@ -3447,7 +3447,23 @@ fclose($fp);
 			'sort'=>$this->dataStructure['id_field'],
 			'order'=>0,
 		);
+		$l->filters=$this->getScaffoldingFilters();
 		return $l;
+	}
+	// }}}
+	// {{{ getScaffoldingFilters()
+	function getScaffoldingFilters()
+	{
+		$filters=new LPC_HTML_fragment();
+		$attrs=$this->getScaffoldingAttributes();
+		foreach($attrs as $attName) {
+			if (!empty($this->dataStructure['fields'][$attName]['link_class']))
+				// no filters for links
+				continue;
+			if (empty($this->dataStructure['fields'][$attName]['type']))
+				$filters->a(new LPC_HTML_list_filter_string(),$attName);
+		}
+		return $filters;
 	}
 	// }}}
 	// {{{ onScaffoldingHeaderCell()
