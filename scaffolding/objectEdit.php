@@ -18,9 +18,14 @@ else {
 	return;
 }
 
+if (isset($_GET['rt']))
+	$return="[<a href='".$_GET['rt']."'>"._LS('scaffoldingBackToList')."</a>]";
+else
+	$return="[<a href='objectList.php?c=".rawurlencode($class)."'>"._LS('scaffoldingSwitchObject')."</a>]";
+
 $p->a(
 "<p>".
-	"[<a href='objectList.php?c=".rawurlencode($class)."'>"._LS('scaffoldingSwitchObject')."</a>] &bull; ".
+	$return." &bull; ".
 	"[<a href='index.php'>"._LS('scaffoldingSwitchClass')."</a>]".
 "</p>"
 );
