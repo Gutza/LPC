@@ -34,6 +34,13 @@ abstract class LPC_Object implements Serializable
 	var $i18n_langID=0;
 
 	/**
+	 * An indexed array of fields that shouldn't be shown in the
+	 * scaffolding field list. This is not a security measure,
+	 * it's just meant to simplify the interface.
+	 */
+	var $scaffoldingHiddenAttributes=array();
+
+	/**
 	 * Field mappings for user-defined fields
 	 */
 	var $user_fields=array();
@@ -148,6 +155,8 @@ abstract class LPC_Object implements Serializable
 	* Whether this object has ever been loaded (even partially), using {@link load}()
 	*/
 	var $loaded=false;
+
+	static protected $scaffoldingSortableAttributesCache;
 // }}}
 // {{{ CONSTRUCTOR
 	// ----------------------------------
@@ -3425,6 +3434,7 @@ fclose($fp);
 				if (!in_array($attName,$file_attrs))
 					$attrs[]=$attName;
 		}
+		$attrs=array_diff($attrs,$this->scaffoldingHiddenAttributes);
 		$query['select']=$this->getFieldNames($attrs);
 		$l->legalSortKeys=$this->getScaffoldingSortableAttributes();
 		$l->legalSortKeys[]=$this->getFieldName(0,true);
@@ -3437,12 +3447,14 @@ fclose($fp);
 					$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_parent'])."=".$this->getFieldName(0)." AND ".
 					$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_language'])."=".LPC_Language::getCurrent()->id,
 			);
-			$query['select']=array_merge($query['select'],$i18n_obj->getFieldNames($i18n_obj->getScaffoldingAttributes()));
+			$attrs=$i18n_obj->getScaffoldingAttributes();
+			$attrs=array_diff($attrs,$this->scaffoldingHiddenAttributes);
+			$query['select']=array_merge($query['select'],$i18n_obj->getFieldNames($attrs));
 			$l->legalSortKeys=array_merge($l->legalSortKeys,$i18n_obj->getScaffoldingSortableAttributes());
 		}
+		$this::$scaffoldingSortableAttributesCache=$l->legalSortKeys;
 		array_unshift($query['select'],$this->getFieldName(0));
 		$l->sql=$query;
-//		$l->legalSortKeys=$query['select'];
 		$l->defaultOrder=array(
 			'sort'=>$this->dataStructure['id_field'],
 			'order'=>0,
@@ -3495,8 +3507,13 @@ fclose($fp);
 	public function onScaffoldingBodyCell($key,$cell,&$rowData)
 	{
 		$cell->content=htmlspecialchars($rowData[$key]);
-		if (!empty($this->dataStructure['fields'][$key]['link_class']))
-			$cell->content="<a href='objectEdit.php?c=".$this->dataStructure['fields'][$key]['link_class']."&amp;id=".rawurlencode($rowData[$key])."'>".$cell->content."</a>";
+		if (!empty($this->dataStructure['fields'][$key]['link_class'])) {
+			if ($rowData[$key])
+				$cell->content="<a href='objectEdit.php?c=".$this->dataStructure['fields'][$key]['link_class']."&amp;id=".rawurlencode($rowData[$key])."'>".$cell->content."</a>";
+		} elseif (!in_array($key,$this::$scaffoldingSortableAttributesCache)) {
+			if (strlen($rowData[$key])>10)
+				$cell->content=htmlspecialchars(substr($rowData[$key],0,10)."…");
+		}
 		return true;
 	}
 	// }}}
@@ -3511,7 +3528,7 @@ fclose($fp);
 		}
 		$td=new LPC_HTML_node('td');
 		$row->a($td);
-		$td->a("[<a href='objectEdit.php?c=".get_class($this)."&amp;id=".$id."'>"._LS('scaffoldingEditAction')."</a>]");
+		$td->a("[<a href='objectEdit.php?c=".get_class($this)."&amp;id=".$id."&amp;rt=".rawurlencode($_SERVER['REQUEST_URI'])."'>"._LS('scaffoldingEditAction')."</a>]");
 		$td->a("&bull;");
 		$td->a("[<a href='objectDelete.php?c=".get_class($this)."&amp;id=".$id."&amp;k=".LPC_Session_key::get()."'>"._LS('scaffoldingDeleteAction')."</a>]");
 		foreach($this->dataStructure['depend'] as $depName=>$depData) {
