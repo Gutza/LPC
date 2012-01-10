@@ -1,4 +1,4 @@
-<?
+<?php
   /**
   * The LPC Query Management Library
   * Bogdan Stancescu <bogdan@moongate.ro>, November 2004
