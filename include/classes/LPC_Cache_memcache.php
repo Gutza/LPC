@@ -11,7 +11,7 @@ class LPC_Cache_memcache extends LPC_Cache_global
 			return null;
 		self::$mcO=new Memcache();
 		if (!self::$mcO->connect($host,$port))
-			throw new RuntimeException("Failed connecting to the memcache server.");
+			throw new RuntimeException("Failed connecting to the memcache server on host $host, port $port.");
 	}
 
 	// GLOBAL -------------------------------------------------------------
