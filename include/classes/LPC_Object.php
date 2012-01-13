@@ -3512,7 +3512,7 @@ fclose($fp);
 				$cell->content="<a href='objectEdit.php?c=".$this->dataStructure['fields'][$key]['link_class']."&amp;id=".rawurlencode($rowData[$key])."'>".$cell->content."</a>";
 		} elseif (!in_array($key,$this::$scaffoldingSortableAttributesCache)) {
 			if (strlen($rowData[$key])>10)
-				$cell->content=htmlspecialchars(substr($rowData[$key],0,10)."…");
+				$cell->content=htmlspecialchars(mb_substr($rowData[$key],0,10)."…");
 		}
 		return true;
 	}
