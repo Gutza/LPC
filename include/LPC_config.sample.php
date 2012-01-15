@@ -1,7 +1,6 @@
 <?php
 
-// Include your own project's library (which presumably registers the proper
-// SPL autoloaders for your classes)
+// Include your own project's library.
 // require dirname(dirname(dirname(__FILE__)))."/include/MY_lib.php";
 
 if (!function_exists('LPC_skip')) {
@@ -99,6 +98,9 @@ define('LPC_CACHE_TYPE','session');
 
 // The port to use for memcache cache; not needed otherwise
 //define('LPC_CACHE_MC_PORT',11211);
+
+// Change this if you need to. You typically don't need to.
+mb_internal_encoding("UTF-8");
 
 // This value identifies this particular LPC_config.php file on this
 // server. This key is used to identify this particular LPC deployment
