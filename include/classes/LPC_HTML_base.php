@@ -12,6 +12,9 @@ abstract class LPC_HTML_base implements iLPC_HTML
 	public $doctype;
 	public $parentNode=NULL;
 	public $ownerDocument=NULL;
+	public $id=NULL;
+
+	public static $uid_counter=0;
 
 	public function show()
 	{
@@ -146,5 +149,10 @@ abstract class LPC_HTML_base implements iLPC_HTML
 	public function qstr($string)
 	{
 		return '"'.htmlspecialchars($string).'"';
+	}
+
+	public function getUID()
+	{
+		return self::$uid_counter++;
 	}
 }

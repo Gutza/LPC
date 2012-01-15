@@ -25,6 +25,9 @@ class LPC_HTML_node extends LPC_HTML_base
 	{
 		parent::render();
 
+		if (isset($this->id))
+			$this->setAttr('id',$this->id);
+
 		if (!$this->doctype)
 			$this->doctype=$this->ownerDocument->doctype;
 
@@ -150,4 +153,17 @@ class LPC_HTML_node extends LPC_HTML_base
 		return $this->attributes[$key];
 	}
 
+	public function setUID()
+	{
+		if (isset($this->id))
+			return $this->id;
+		return $this->setID('LPC_'.$this->getUID());
+	}
+
+	public function setID($id)
+	{
+		$this->id=$id;
+		$this->setAttr('id',$id);
+		return $id;
+	}
 }
