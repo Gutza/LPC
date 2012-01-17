@@ -161,6 +161,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 	{
 		$page_param=$this->getParam('p');
 		$link=new LPC_HTML_node('a');
+		$link->compact=true;
 		$url=LPC_Url::add_GET_var($_SERVER['REQUEST_URI'],$page_param,$page);
 		$link->setAttr('href',$url);
 		$link->a((string) $page);
