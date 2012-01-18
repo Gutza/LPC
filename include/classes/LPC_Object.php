@@ -3591,6 +3591,9 @@ fclose($fp);
 			case 'integer':
 				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrF($attName)."\">".$link;
 				break;
+			case 'date':
+				$input="<input type='text' name='attr[$attName]' value=\"".date('Y-m-d',$this->getAttr($attName))."\" class='input-date'>";
+				break;
 			case 'longtext':
 			case 'html':
 				$input="<textarea name='attr[$attName]' rows='5' style='width:100%'>".$this->getAttrH($attName)."</textarea>";
