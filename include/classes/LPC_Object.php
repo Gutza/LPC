@@ -2010,9 +2010,14 @@ abstract class LPC_Object implements Serializable
 	{
 		if ($attName===0)
 			$fld=$this->dataStructure['id_field'];
-		elseif (empty($attName) || empty($this->dataStructure['fields'][$attName]['fld_name']))
-			throw new RuntimeException("Attribute to retrieve the field for (\"".$attName."\") wasn't defined in this class!");
-		else
+		elseif (empty($attName))
+			throw new RuntimeException("The atribute name is mandatory!");
+		elseif (empty($this->dataStructure['fields'][$attName]['fld_name'])) {
+			if (empty($this::$i18n_class))
+				throw new RuntimeException("Attribute to retrieve the field for (\"".$attName."\") wasn't defined in this class!");
+			$this->initI18n();
+			return $this->i18n_object->getFieldName($attName);
+		} else
 			$fld=$this->dataStructure['fields'][$attName]['fld_name'];
 
 		if ($simple)
@@ -3150,11 +3155,15 @@ fclose($fp);
 			'from'=>array(
 				$this->getTableName(),
 			),
+			'join'=>array(),
 			'where'=>array(
 				'type'=>'AND',
 				'conditions'=>array(),
 			),
 		);
+		if ($this::$i18n_class)
+			$query['join'][]=$this->_getI18nJoin();
+		
 		if ($attName===NULL)
 			return $query;
 
@@ -3198,6 +3207,21 @@ fclose($fp);
 				$where[]=$field." = ".$Sval;
 		}
 		return $where;
+	}
+	// }}}
+	// {{{ _getI18nJoin()
+	function _getI18nJoin()
+	{
+		static $i18n_obj;
+		if (!isset($i18n_obj))
+			$i18n_obj=new $this::$i18n_class();
+		return array(
+			'type'=>'left',
+			'table'=>$i18n_obj->getTableName(),
+			'condition'=>
+				$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_parent'])."=".$this->getFieldName(0)." AND ".
+				$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_language'])."=".LPC_Language::getCurrent()->id,
+		);
 	}
 	// }}}
 // }}}
@@ -3439,14 +3463,9 @@ fclose($fp);
 		$l->legalSortKeys=$this->getScaffoldingSortableAttributes();
 		$l->legalSortKeys[]=$this->getFieldName(0,true);
 		if ($this::$i18n_class) {
+			$query['join'][]=$this->_getI18nJoin();
+
 			$i18n_obj=new $this::$i18n_class();
-			$query['join'][]=array(
-				'type'=>'left',
-				'table'=>$i18n_obj->getTableName(),
-				'condition'=>
-					$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_parent'])."=".$this->getFieldName(0)." AND ".
-					$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_language'])."=".LPC_Language::getCurrent()->id,
-			);
 			$attrs=$i18n_obj->getScaffoldingAttributes();
 			$attrs=array_diff($attrs,$this->scaffoldingHiddenAttributes);
 			$query['select']=array_merge($query['select'],$i18n_obj->getFieldNames($attrs));
