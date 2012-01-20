@@ -23,18 +23,22 @@ if (isset($_GET['rt']))
 else
 	$return="[<a href='objectList.php?c=".rawurlencode($class)."'>"._LS('scaffoldingSwitchObject')."</a>]";
 
-$p->a(
-"<p>".
-	$return." &bull; ".
-	"[<a href='index.php'>"._LS('scaffoldingSwitchClass')."</a>]".
-"</p>"
-);
-
 $id=0;
 if (isset($_POST['LPC_scaffolding_id']))
 	$id=$_POST['LPC_scaffolding_id'];
 elseif (isset($_GET['id']))
 	$id=$_GET['id'];
+
+$newSame="";
+if ($id)
+	$newSame="[<a href='?c=$class'>"._LS('scaffoldingCreateObject',$class)."</a>] &bull; ";
+$p->a(
+"<p>".
+	$return." &bull; ".
+	$newSame.
+	"[<a href='index.php'>"._LS('scaffoldingSwitchClass')."</a>]".
+"</p>"
+);
 
 $refdata=array('rd','rc','rid');
 foreach($refdata as $refatom) {
