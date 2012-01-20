@@ -2201,10 +2201,8 @@ fclose($fp);
 		if (!$result) {
 			global $_LFX;
 			$_LFX['global']['queries']['errors']++;
-			if ($_LFX['global']['queries']['errors']>50) {
-				echo("Too many errors in queries!");
-				exit;
-			}
+			if ($_LFX['global']['queries']['errors']>50)
+				throw new RuntimeException("Too many errors in queries!");
 		}
 		return $result;
 	}
@@ -2228,37 +2226,36 @@ fclose($fp);
 	*/
 	function query_ex($query,$values=false)
 	{
-		// Parsing the atoms;
-		// TODO: parse arrays as well!
+		// Let's be nice and accept a query manager structure as well
 		if (is_array($query)) {
-			$queryData=$query;
-		} else {
-			$queryData=$this->parseQuery_ex($query);
+			$qb=new LPC_Query_builder($query);
+			$query=$qb->buildSQL();
 		}
-		if (is_array($queryData)) {
+
+		// Parsing the atoms;
+		$queryData=$this->parseQuery_ex($query);
+		if (is_array($queryData))
 			$query=$queryData['query'];
-		} else {
+		else
 			$query=$queryData;
-		}
+
 		#echo "Final query (in query_ex):\n".$query."\n";
 		if (!empty($queryData['meta']['parameters'])) {
-			if (!$values) {
+			if (!$values)
 				throw new InvalidArgumentException("Parameters used in query but not passed as parameters!");
-			}
-			if ($queryData['meta']['parameters_associative']) {
-				$param_array=$values;
-			} else {
-				$param_arr=array();
-				for($i=0;$i<count($queryData['meta']['parameters']);$i++) {
-					$param=$queryData['meta']['parameters'][$i];
-					$param_arr[$param]=$values[$param];
-				}
+
+			$param_array=$values;
+			if (!$queryData['meta']['parameters_associative']) {
+				$param_array=array();
+				foreach($queryData['meta']['parameters'] as $param)
+					$param_array[]=$values[$param];
 			}
 		}
-		if (!$res=$this->query($query,$values)) {
+
+		if (!$res=$this->query($query,$param_array))
 			// SC::query will complain, we don't need to here
 			return false;
-		}
+
 		$queryData['resource']=$res;
 		$this->db->LPC_queryData=$queryData;
 		return $res;
@@ -2291,7 +2288,7 @@ fclose($fp);
 		$old_query=$query;
 
 		// Let's first identify the atoms -- they're the text in the curly brackets
-		if (!preg_match_all("/\{[^\}]+\}/",$query,$all_matches))
+		if (!preg_match_all("/\{[^\}]+\}/",$query,$all_matches) && !preg_match_all("/\:[^\:\{\}\(\)\"']+\:/",$query,$parameters))
 			// No atoms? Simply return the string.
 			return $query;
 
@@ -2330,7 +2327,7 @@ fclose($fp);
 		//echo("<h2>Field -- no aliases</h2>".vardump($field_non_alias_def_matches));
 
 		// Ok, and now parameters...
-		preg_match_all("/\:[^\:\{\}\(\)\"']+\:/",$query,$parameters);
+//		preg_match_all("/\:[^\:\{\}\(\)\"']+\:/",$query,$parameters);
 		$parameters=$parameters[0];
 
 		// Ok, now we have all atoms broken down into categories.
