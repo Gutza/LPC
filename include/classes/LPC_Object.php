@@ -3098,9 +3098,17 @@ fclose($fp);
 		$this->dbInit();
 		$tbl = $dep['table_name'];
 		$myId = $this->db->qstr($id);
+		$otherObj=new $dep['class']();
 		$query=array(
 			'select'=>array($link_fld),
 			'from'=>array($tbl),
+			'join'=>array(
+				array(
+					'type'=>'left',
+					'table'=>$otherObj->getTableName(),
+					'condition'=>$otherObj->getFieldName(0)."=".$link_fld,
+				),
+			),
 			'where'=>array(
 				'type'=>'AND',
 				'conditions'=>array(
@@ -3111,7 +3119,7 @@ fclose($fp);
 		if ($order_att!==NULL)
 			$query['order']=array(
 				array(
-					'field'=>$this->getFieldName($order_att),
+					'field'=>$otherObj->getFieldName($order_att),
 					'type'=>($reverse?'DESC':'ASC'),
 				),
 			);
