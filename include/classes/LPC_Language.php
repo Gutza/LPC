@@ -29,6 +29,7 @@ class LPC_Language extends LPC_Base
 	public static function setCurrent($object=NULL)
 	{
 		if (!isset($object) || !$object->id) {
+			unset(self::$currentInstance);
 			unset($_SESSION['LPC']['current_language_id']);
 			return true;
 		}
@@ -51,9 +52,6 @@ class LPC_Language extends LPC_Base
 		if (isset(self::$currentInstance))
 			return self::$currentInstance;
 
-		if (!defined('LPC_default_language'))
-			throw new RuntimeException("You have to define constant LPC_default_language if you want to rely on LPC defaults.");
-
 		$default=self::getDefault();
 		self::setCurrent($default);
 		return self::$currentInstance;
@@ -61,6 +59,9 @@ class LPC_Language extends LPC_Base
 
 	public static function getDefault()
 	{
+		if (!defined('LPC_default_language'))
+			throw new RuntimeException("You have to define constant LPC_default_language if you want to rely on LPC defaults.");
+
 		if (isset(self::$defaultInstance))
 			return self::$defaultInstance;
 		$lang=self::newLanguage(LPC_default_language);
