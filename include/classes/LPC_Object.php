@@ -1948,14 +1948,14 @@ abstract class LPC_Object implements Serializable
 				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
 			elseif (in_array($type[0],array('html')))
 				$this->dataStructure['fields'][$attName]['base_type']='text';
-			elseif (in_array($type[0],array('integer','email','float','date'))) {
+			elseif (in_array($type[0],array('integer','email','float','date','boolean'))) {
 				$rules[]=$type[0];
 				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
 			} elseif ($type[0]=='datetime') {
 				$rules[]='date'; // <- we use the date rule for datetime
 				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
 			} else
-				throw new RuntimeException("Unknown field type ".$type[0]." for field ".$attName."; valid types are 'integer','email','float','date','datetime','text','longtext','html'.");
+				throw new RuntimeException("Unknown field type ".$type[0]." for field ".$attName."; valid types are 'integer','boolean','email','float','date','datetime','text','longtext','html'.");
 
 			if (isset($type[1])) {
 				if ($type[1]=='required') {
@@ -3621,6 +3621,18 @@ fclose($fp);
 			case 'longtext':
 			case 'html':
 				$input="<textarea name='attr[$attName]' rows='5' style='width:100%'>".$this->getAttrH($attName)."</textarea>";
+				break;
+			case 'boolean':
+				if ($this->getAttr($attName)) {
+					$checked_yes=" checked";
+					$checked_no="";
+				} else {
+					$checked_yes="";
+					$checked_no=" checked";
+				}
+				$input=
+					"<input type='radio' name='attr[$attName]' value='1'$checked_yes id='{$attName}_yes'> <label for='{$attName}_yes'>"._LH('scaffoldingBooleanYes')."</label><br>".
+					"<input type='radio' name='attr[$attName]' value='0'$checked_no id='{$attName}_no'> <label for='{$attName}_no'>"._LH('scaffoldingBooleanNo')."</label>";
 				break;
 			default:
 				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrF($attName)."\" style='width:100%'>".$link;
