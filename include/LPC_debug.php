@@ -11,6 +11,7 @@ function LPC_HTML_exceptionHandler($exception)
 {
 	echo "<h1>LPC: Uncaught exception</h1>";
 	echo "<h2 style='color:red'>", htmlspecialchars($exception->getMessage()), "</h2>";
+	echo "<p style='color:red'>Thrown in <tt>".$exception->getFile().":".$exception->getLine()."</tt></p>";
 	echo "<p>Exception trace:<ul>";
 	$trace=$exception->getTrace();
 	foreach($trace as $atom) {
@@ -25,6 +26,7 @@ function LPC_CLI_exceptionHandler($exception)
 {
 	echo "LPC: Uncaught exception: ";
 	echo $exception->getMessage()."\n\n";
+	echo "Thrown in ".$exception->getFile().":".$exception->getLine()."\n\n";
 	echo "Exception trace:\n";
 	$trace=$exception->getTrace();
 	foreach($trace as $atom) {
