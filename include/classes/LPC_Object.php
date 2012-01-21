@@ -1946,7 +1946,7 @@ abstract class LPC_Object implements Serializable
 
 			if (in_array($type[0],array('text','longtext')))
 				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
-			elseif (in_array($type[0],array('html')))
+			elseif (in_array($type[0],array('html','set','enum')))
 				$this->dataStructure['fields'][$attName]['base_type']='text';
 			elseif (in_array($type[0],array('integer','email','float','date','boolean'))) {
 				$rules[]=$type[0];
@@ -1955,7 +1955,7 @@ abstract class LPC_Object implements Serializable
 				$rules[]='date'; // <- we use the date rule for datetime
 				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
 			} else
-				throw new RuntimeException("Unknown field type ".$type[0]." for field ".$attName."; valid types are 'integer','boolean','email','float','date','datetime','text','longtext','html'.");
+				throw new RuntimeException("Unknown field type ".$type[0]." for field ".$attName."; valid types are 'integer','boolean','email','float','date','datetime','text','longtext','html','set','enum'.");
 
 			if (isset($type[1])) {
 				if ($type[1]=='required') {
@@ -3634,6 +3634,27 @@ fclose($fp);
 					"<input type='radio' name='attr[$attName]' value='1'$checked_yes id='{$attName}_yes'> <label for='{$attName}_yes'>"._LH('scaffoldingBooleanYes')."</label><br>".
 					"<input type='radio' name='attr[$attName]' value='0'$checked_no id='{$attName}_no'> <label for='{$attName}_no'>"._LH('scaffoldingBooleanNo')."</label>";
 				break;
+			case 'enum':
+			case 'set':
+				if (!isset($this->dataStructure['fields'][$attName]['options']))
+					throw new RuntimeException("You need to define the options explicitly for enum and set fields (key 'options' in the data structure).");
+				$input=new LPC_HTML_select("attr[$attName]");
+				if ($type=='set') {
+					$input->setAttr('name',"attr[$attName][]");
+					$input->setAttr('multiple','multiple');
+					$input->setAttr('size',min(5,count($this->dataStructure['fields'][$attName]['options'])));
+				}
+				$values=explode(",",$this->getAttr($attName));
+				foreach($this->dataStructure['fields'][$attName]['options'] as $option) {
+					$optionH=new LPC_HTML_node('option');
+					$optionH->compact=true;
+					if (in_array($option,$values))
+						$optionH->setAttr('selected',1);
+					$optionH->setAttr('value',addslashes($option));
+					$optionH->a(htmlspecialchars($option));
+					$input->a($optionH);
+				}
+				break;
 			default:
 				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrF($attName)."\" style='width:100%'>".$link;
 		}
@@ -3652,8 +3673,11 @@ fclose($fp);
 	// {{{ processScaffoldingAttributes()
 	protected function processScaffoldingAttributes()
 	{
-		foreach($_POST['attr'] as $attName=>$attValue)
+		foreach($_POST['attr'] as $attName=>$attValue) {
+			if (is_array($attValue))
+				$attValue=implode(",",$attValue);
 			$this->setAttr($attName,$attValue);
+		}
 	}
 	// }}}
 	// {{{ processScaffoldingFile()
