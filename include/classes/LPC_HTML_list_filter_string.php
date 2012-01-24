@@ -11,10 +11,7 @@ class LPC_HTML_list_filter_string extends LPC_HTML_list_filter
 {
 	function prepare()
 	{
-		if (isset($_REQUEST[$this->GET_key]))
-			$default=addslashes($_REQUEST[$this->GET_key]);
-		else
-			$default="";
+		$default=addslashes($this->getCurrentValue());
 
 		$form=new LPC_HTML_form(false,'get');
 		$this->a($form);
@@ -26,11 +23,13 @@ class LPC_HTML_list_filter_string extends LPC_HTML_list_filter
 				continue;
 			$form->a("<input type='hidden' name='$key' value=\"".addslashes($value)."\">");
 		}
-		$form->a("<table class='table_filter'><tr><td class='table_filter' style='width:100%'>");
+		$form->a("<table class='table_filter' style='margin: 0px auto'><tr><td class='table_filter'>");
 		$form->a("<input type='hidden' name='".$this->listObject->getParam('p')."' value='1'>");
-		$form->a("<input type='text' name='".$this->GET_key."' value=\"".$default."\" style='width:100%'>");
+		$form->a("<input type='text' name='".$this->GET_key."' value=\"".$default."\" size='20'>");
 		$form->a("</td><td class='table_filter'>");
 		$form->a("<input type='image' src='".LPC_ICON_MAGNIFIER."' alt='Filter'>");
+		if (strlen($default))
+			$form->a("<a href='".LPC_Url::remove_get_var($_SERVER['REQUEST_URI'],$this->GET_key)."'><img src='".LPC_ICON_ERASER."' alt='Remove filter'></a>");
 		$form->a("</td></tr></table>");
 	}
 
