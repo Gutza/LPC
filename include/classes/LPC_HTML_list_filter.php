@@ -38,4 +38,15 @@ abstract class LPC_HTML_list_filter extends LPC_HTML_widget
 	*/
 	abstract public function getSQL();
 
+
+	public function getCurrentValue()
+	{
+		if (!isset($this->GET_key))
+			throw new RuntimeException("You need to define the GET_key if you want to use getCurrentValue()");
+
+		if (isset($_REQUEST[$this->GET_key]))
+			return $_REQUEST[$this->GET_key];
+		else
+			return;
+	}
 }

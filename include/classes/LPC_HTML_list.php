@@ -110,8 +110,23 @@ class LPC_HTML_list extends LPC_HTML_widget
 		$this->a($this->msgEmptyList);
 		if (!$this->filters->content)
 			return;
+
+		$anyFilter=false;
+		foreach($this->filters->content as $key=>$filter) {
+			if (!strlen($filter->getCurrentValue()))
+				continue;
+			$anyFilter=true;
+			break;
+		}
+
+		if (!$anyFilter)
+			return;
+
 		$this->a($this->msgEditFilters);
 		foreach($this->filters->content as $key=>$filter) {
+			if (!strlen($filter->getCurrentValue()))
+				continue;
+
 			if (isset($this->labelMapping[$key]))
 				$label=$this->labelMapping[$key];
 			else
@@ -254,6 +269,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 			if (in_array($key,$this->hiddenFields))
 				continue;
 			$cell=new LPC_HTML_node("TH");
+			$cell->setAttr('style','vertical-align: top');
 			$cell->compact=true;
 
 			$newOrder=0;
