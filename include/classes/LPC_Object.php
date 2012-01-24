@@ -2223,6 +2223,10 @@ fclose($fp);
 	*   FROM {DMO_Definition||d1}
 	*   LEFT JOIN {DMO_Definition||d2} ON {DMO_Definition|d1/childDef|d2}
 	*   WHERE {DMO_Definition|d1.name}=:name:
+	*
+	* Sample 3:
+	* SELECT id FROM table WHERE id IN (:!myIds:)
+	*
 	*/
 	function query_ex($query,$values=false)
 	{
@@ -2233,7 +2237,7 @@ fclose($fp);
 		}
 
 		// Parsing the atoms;
-		$queryData=$this->parseQuery_ex($query);
+		$queryData=$this->parseQuery_ex($query,$values);
 		if (is_array($queryData))
 			$query=$queryData['query'];
 		else
@@ -2266,7 +2270,7 @@ fclose($fp);
 	* This method parses a query formatted for SC::{@link query_ex}() into
 	* proper SQL.
 	*/
-	function parseQuery_ex($query,$atom_meta=false)
+	function parseQuery_ex($query,$values,$atom_meta=false)
 	{
 		// TODO: {f:date_add({u.creation_date},:lala:)}
 		// Warning! the format must always be "{f:<function_name>([paramterer]*)}"
@@ -2287,7 +2291,7 @@ fclose($fp);
 		$new_query='';
 		$old_query=$query;
 
-		// Let's first identify the atoms -- they're the text in the curly brackets
+		// Let's first identify the atoms (curly brackets) and the parameters (columns)
 		if (!preg_match_all("/\{[^\}]+\}/",$query,$all_matches) && !preg_match_all("/\:[^\:\{\}\(\)\"']+\:/",$query,$parameters))
 			// No atoms? Simply return the string.
 			return $query;
@@ -2580,17 +2584,27 @@ fclose($fp);
 		$atom_meta['parameters_associative']=($object->db->databaseType=='oci8');
 		$param_array=array();
 
-		for($i=0;$i<count($parameters);$i++) {
-			$param=$parameters[$i];
+		foreach($parameters as $param) {
 			$new_query.=substr($old_query,0,strpos($old_query,$param));
 			$old_query=substr($old_query,strpos($old_query,$param)+strlen($param));
 			$param=substr($param,1,-1);
-			if ($atom_meta['parameters_associative']) {
-				$new_query.=":$param";
+			if (substr($param,0,1)=='!') {
+				if (is_array($values[$param])) {
+					$myValues=array();
+					foreach($values[$param] as $myValue)
+						$myValues[]=$object->db->qstr($myValue);
+					$myValue=implode(",",$myValues);
+				} else
+					$myValue=$object->db->qstr($values[$param]);
+				$new_query.=$myValue;
 			} else {
-				$new_query.="?";
+				if ($atom_meta['parameters_associative']) {
+					$new_query.=":$param";
+				} else {
+					$new_query.="?";
+				}
+				$atom_meta['parameters'][]=$param;
 			}
-			$atom_meta['parameters'][]=$param;
 		}
 		$new_query.=$old_query;
 		//echo("After parameter parsing: <pre>$new_query</pre>");
