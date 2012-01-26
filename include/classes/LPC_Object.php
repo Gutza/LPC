@@ -2018,7 +2018,7 @@ abstract class LPC_Object implements Serializable
 			if (empty($this::$i18n_class))
 				throw new RuntimeException("Attribute to retrieve the field for (\"".$attName."\") wasn't defined in this class!");
 			$this->initI18n();
-			return $this->i18n_object->getFieldName($attName);
+			return $this->i18n_object->getFieldName($attName,$simple);
 		} else
 			$fld=$this->dataStructure['fields'][$attName]['fld_name'];
 
@@ -3231,18 +3231,34 @@ fclose($fp);
 	}
 	// }}}
 	// {{{ _getI18nJoin()
-	function _getI18nJoin()
+	function _getI18nJoin($myAlias=NULL,$i18nAlias=NULL)
 	{
 		static $i18n_obj;
 		if (!isset($i18n_obj))
 			$i18n_obj=new $this::$i18n_class();
-		return array(
+
+		$join=array(
 			'type'=>'left',
 			'table'=>$i18n_obj->getTableName(),
-			'condition'=>
-				$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_parent'])."=".$this->getFieldName(0)." AND ".
-				$i18n_obj->getFieldName($i18n_obj->user_fields['i18n_language'])."=".LPC_Language::getCurrent()->id,
 		);
+		$iParentAttr=$i18n_obj->user_fields['i18n_parent'];
+		$iLanguageAttr=$i18n_obj->user_fields['i18n_language'];
+		if ($myAlias && $i18nAlias) {
+			$join['table'].=" AS ".$i18nAlias;
+			$iParentField=$i18nAlias.".".$i18n_obj->getFieldName($iParentAttr,true);
+			$iLanguageField=$i18nAlias.".".$i18n_obj->getFieldName($iLanguageAttr,true);
+			$mIdField=$myAlias.'.'.$this->getFieldName(0,true);
+		} else {
+			$iParentField=$i18n_obj->getFieldName($iParentAttr);
+			$iLanguageField=$i18n_obj->getFieldName($iLanguageAttr);
+			$mIdField=$this->getFieldName(0);
+		}
+		$join['condition']=
+			$iParentField.'='.$mIdField." AND ".
+			$iLanguageField.'='.LPC_Language::getCurrent()->id
+		;
+
+		return $join;
 	}
 	// }}}
 // }}}
@@ -3480,7 +3496,47 @@ fclose($fp);
 					$attrs[]=$attName;
 		}
 		$attrs=array_diff($attrs,$this->scaffoldingHiddenAttributes);
-		$query['select']=$this->getFieldNames($attrs);
+
+		// Process attributes; make sure we join the linked table, and the link table's i18n table where needed
+		$linkData=array();
+		foreach($attrs as $attrName) {
+			if (empty($this->dataStructure['fields'][$attrName]['link_class'])) {
+				$query['select'][]=$this->getFieldName($attrName);
+				continue;
+			}
+			$parent=new $this->dataStructure['fields'][$attrName]['link_class']();
+			if (empty($parent->dataStructure['title_attr'])) {
+				$query['select'][]=$this->getFieldName($attrName);
+				continue;
+			}
+			$parentAlias="link_".$attrName;
+			$parentAttr=$parent->dataStructure['title_attr'];
+			$query['join'][]=array(
+				'type'=>'left',
+				'table'=>$parent->getTableName()." AS ".$parentAlias,
+				'condition'=>$this->getFieldName($attrName)."=".$parentAlias.'.'.$parent->getFieldName(0,true),
+			);
+
+			if (isset($parent->dataStructure['fields'][$parentAttr])) {
+				$sql_field=$parentAlias.'.'.$parent->getFieldName($parentAttr,true);
+				$query['select'][]=$sql_field." AS ".$attrName;
+				$linkData[$attrName]=array(
+					'meta'=>$parent->dataStructure['fields'][$parentAttr],
+					'SQL_key'=>$sql_field,
+				);
+			} else {
+				$parentI18nAlias=$parentAlias.'_i18n';
+				$sql_field=$parentI18nAlias.'.'.$parent->getFieldName($parentAttr,true);
+				$query['join'][]=$parent->_getI18nJoin($parentAlias,$parentI18nAlias);
+				$query['select'][]=$sql_field." AS ".$attrName;
+
+				$parentI18n=new $parent::$i18n_class();
+				$linkData[$attrName]=array(
+					'meta'=>$parentI18n->dataStructure['fields'][$parentAttr],
+					'SQL_key'=>$sql_field,
+				);
+			}
+		}
 		$l->legalSortKeys=$this->getScaffoldingSortableAttributes();
 		$l->legalSortKeys[]=$this->getFieldName(0,true);
 		if ($this::$i18n_class) {
@@ -3499,21 +3555,33 @@ fclose($fp);
 			'sort'=>$this->dataStructure['id_field'],
 			'order'=>0,
 		);
-		$l->filters=$this->getScaffoldingFilters();
+		$l->filters=$this->getScaffoldingFilters($linkData);
 		return $l;
 	}
 	// }}}
 	// {{{ getScaffoldingFilters()
-	function getScaffoldingFilters()
+	function getScaffoldingFilters($linkData)
 	{
 		$filters=new LPC_HTML_fragment();
 		$attrs=$this->getScaffoldingAttributes();
 		foreach($attrs as $attName) {
-			if (!empty($this->dataStructure['fields'][$attName]['link_class']))
-				// no filters for links
+			if (!empty($this->dataStructure['fields'][$attName]['link_class'])) {
+				if (!isset($linkData[$attName]))
+					// no filters for anonymous links
+					continue;
+				if (empty($linkData[$attName]['meta']['type'])) {
+					$filter=new LPC_HTML_list_filter_string();
+					$filter->SQL_key=$linkData[$attName]['SQL_key'];
+					$filter->input_size=10;
+					$filters->a($filter,$attName);
+				}
 				continue;
-			if (empty($this->dataStructure['fields'][$attName]['type']))
-				$filters->a(new LPC_HTML_list_filter_string(),$attName);
+			}
+			if (empty($this->dataStructure['fields'][$attName]['type'])) {
+				$filter=new LPC_HTML_list_filter_string();
+				$filter->input_size=10;
+				$filters->a($filter,$attName);
+			}
 		}
 		if ($this::$i18n_class) {
 			$i18n_obj=new $this::$i18n_class();
