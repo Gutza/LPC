@@ -2075,7 +2075,7 @@ abstract class LPC_Object implements Serializable
 			$timestamp = time();
 
 		$current_default_timezone=date_default_timezone_get();
-		date_default_timezone_set('');
+		date_default_timezone_set(ini_get('date.timezone'));
 		$sqlDate=$this->db->DBTimeStamp($timestamp);
 		date_default_timezone_set($current_default_timezone);
 		return $sqlDate;
