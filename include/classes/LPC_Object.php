@@ -3610,6 +3610,8 @@ fclose($fp);
 	public function onScaffoldingHeaderRow($row)
 	{
 		foreach($this->dataStructure['files'] as $fname=>$fmeta) {
+			if (in_array($fname,$this->scaffoldingHiddenAttributes))
+				continue;
 			$th=new LPC_HTML_node('th');
 			$row->a($th);
 			$th->a($fname);
@@ -3644,6 +3646,8 @@ fclose($fp);
 	{
 		$id=$rowData[$this->dataStructure['id_field']];
 		foreach($this->dataStructure['files'] as $fname=>$fmeta) {
+			if (in_array($fname,$this->scaffoldingHiddenAttributes))
+				continue;
 			$td=new LPC_HTML_node('td');
 			$row->a($td);
 			$td->a("<a href='fileDownload.php?c=".get_class($this)."&amp;id=".$id."&amp;file=".rawurlencode($fname)."'>"._LS('scaffoldingDownloadFile')."</a>");
