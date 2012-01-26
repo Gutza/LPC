@@ -156,6 +156,11 @@ abstract class LPC_Object implements Serializable
 	*/
 	var $loaded=false;
 
+	/**
+	* An associative array which stores $attrName=>$attrAlias for linked fields
+	*/
+	private $scaffoldingIDs=array();
+
 	static protected $scaffoldingSortableAttributesCache;
 // }}}
 // {{{ CONSTRUCTOR
@@ -3461,6 +3466,7 @@ fclose($fp);
 		$l->onProcessBodyCell=array($this,'onScaffoldingBodyCell');
 		$l->onProcessBodyRow=array($this,'onScaffoldingBodyRow');
 		$l->msgEmptyList=_LH("scaffoldingMessageNoObjectsInClass");
+		$l->hiddenFields=array_values($this->scaffoldingIDs);
 		return $l;
 	}
 	// }}}
@@ -3509,6 +3515,9 @@ fclose($fp);
 				$query['select'][]=$this->getFieldName($attrName);
 				continue;
 			}
+
+			$query['select'][]=$this->getFieldName($attrName)." AS ".$attrName."_hidden_ID";
+			$this->scaffoldingIDs[$attrName]=$attrName."_hidden_ID";
 			$parentAlias="link_".$attrName;
 			$parentAttr=$parent->dataStructure['title_attr'];
 			$query['join'][]=array(
@@ -3616,8 +3625,13 @@ fclose($fp);
 	{
 		$cell->content=htmlspecialchars($rowData[$key]);
 		if (!empty($this->dataStructure['fields'][$key]['link_class'])) {
-			if ($rowData[$key])
-				$cell->content="<a href='objectEdit.php?c=".$this->dataStructure['fields'][$key]['link_class']."&amp;id=".rawurlencode($rowData[$key])."'>".$cell->content."</a>";
+			if ($rowData[$key]) {
+				if (empty($this->scaffoldingIDs[$key]))
+					$idKey=$key;
+				else
+					$idKey=$this->scaffoldingIDs[$key];
+				$cell->content="<a href='objectEdit.php?c=".$this->dataStructure['fields'][$key]['link_class']."&amp;id=".rawurlencode($rowData[$idKey])."'>".$cell->content."</a>";
+			}
 		} elseif (!in_array($key,$this::$scaffoldingSortableAttributesCache)) {
 			if (strlen($rowData[$key])>10)
 				$cell->content=htmlspecialchars(mb_substr($rowData[$key],0,10)."…");
