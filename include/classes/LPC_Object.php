@@ -1365,14 +1365,13 @@ abstract class LPC_Object implements Serializable
 	// {{{ getName()
 	function getName()
 	{
-		if ($this->dataStructure['title_attr']) {
-			if ($name=$this->getAttr($this->dataStructure['title_attr'])) {
-				return $name;
-			} else {
-				return __L('n/a');
-			}
-		}
-		return false;
+		if (empty($this->dataStructure['title_attr']))
+			return false;
+
+		if ($name=$this->getAttr($this->dataStructure['title_attr']))
+			return $name;
+
+		return _LS('genericNoName');
 	}
 	// }}}
 	// {{{ getNameH()
@@ -1400,14 +1399,13 @@ abstract class LPC_Object implements Serializable
 	 */
 	function getNameH()
 	{
-		if ($this->dataStructure['title_attr']) {
-			if ($name=$this->getAttrH($this->dataStructure['title_attr'])) {
-				return $name;
-			} else {
-				return __L('n/a');
-			}
-		}
-		return false;
+		if (empty($this->dataStructure['title_attr']))
+			return false;
+
+		if ($name=$this->getAttrH($this->dataStructure['title_attr']))
+			return $name;
+
+		return _LS('genericNoName');
 	}
 	// }}}
 	// {{{ getUrlH()
@@ -1976,6 +1974,10 @@ abstract class LPC_Object implements Serializable
 				$this->dataStructure['title_attr']='title';
 			elseif (isset($this->dataStructure['fields']['name']))
 				$this->dataStructure['title_attr']='name';
+			elseif ($this::$i18n_class) {
+				$child=new $this::$i18n_class();
+				$this->dataStructure['title_attr']=$child->dataStructure['title_attr'];
+			}
 		}
 
 		LPC_dataStructure::registerDataStructure($myClass,$this->dataStructure);
@@ -3616,8 +3618,13 @@ fclose($fp);
 			if (
 				$this->id &&
 				$this->getAttr($attName)
-			)
-				$link=" <a href='objectEdit.php?c=".rawurlencode($class)."&amp;id=".rawurlencode($this->getAttr($attName))."'>"._LS('scaffoldingEditLink',htmlspecialchars($class),$this->getAttrH($attName))."</a>";
+			) {
+				$obj=$this->getObject($attName);
+				$name=$obj->getNameH();
+				if ($name)
+					$name=" (".$name.")";
+				$link=$name." <a href='objectEdit.php?c=".rawurlencode($class)."&amp;id=".rawurlencode($this->getAttr($attName))."'>"._LS('scaffoldingEditLink',htmlspecialchars($class),$this->getAttrH($attName))."</a>";
+			}
 			$link.=" <a href='#' onClick='return LPC_scaffolding_pickObject(\"".addslashes($class)."\",$(this).prevAll(\"input\").get(0))'>☞</a>";
 		}
 		if (!$this->id)
@@ -3627,7 +3634,7 @@ fclose($fp);
 			$type=$this->dataStructure['fields'][$attName]['type'];
 		switch($type) {
 			case 'integer':
-				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrF($attName)."\">".$link;
+				$input="<input type='text' name='attr[$attName]' size='6' value=\"".$this->getAttrF($attName)."\">".$link;
 				break;
 			case 'date':
 				$input="<input type='text' name='attr[$attName]' value=\"".date('Y-m-d',$this->getAttr($attName))."\" class='input-date'>";
