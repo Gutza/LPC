@@ -7,6 +7,10 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU Public License v3 or later
  * @version $Id$
  */
+
+/**
+* A singleton used for defining dependencies from external classes.
+*/
 class LPC_Foreign_dependency_manager
 {
 	static private $dependencies=array();
