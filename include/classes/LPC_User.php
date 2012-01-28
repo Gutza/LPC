@@ -133,7 +133,7 @@ The %4\$s team";
 
 	public function getUserClass()
 	{
-		if (!defined("LPC_user_class"))
+		if (!defined("LPC_user_class") || !strlen(LPC_user_class))
 			throw new RuntimeException("Please define constant LPC_user_class if you want to use users.");
 
 		return LPC_user_class;
