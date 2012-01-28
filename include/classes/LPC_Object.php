@@ -1134,7 +1134,7 @@ abstract class LPC_Object implements Serializable
 		if (empty($this->dataStructure['fields'][$attName]))
 			return $this->setI18nAttr($attName,$attValue);
 
-		if ($this->dataStructure['fields'][$attName]['flags']['trim'])
+		if (!empty($this->dataStructure['fields'][$attName]['flags']['trim']))
 			$attValue = trim($attValue);
 
 		if (!isset($this->attr[$attName]) || ($this->attr[$attName]!==$attValue)) {
@@ -1877,7 +1877,7 @@ abstract class LPC_Object implements Serializable
 		}
 		// Now we need to work on the dependencies. But first let's read in
 		// the foreign dependencies, if any.
-		$foreignDeps=LPC_foreign_dependency_manager::getDependencies($myClass);
+		$foreignDeps=LPC_Foreign_dependency_manager::getDependencies($myClass);
 		if ($foreignDeps) {
 			$this->dataStructure['depend']=array_merge(
 				$foreignDeps,$this->dataStructure['depend']
@@ -2762,7 +2762,7 @@ fclose($fp);
 		foreach($this->dataStructure['fields'] as $attName=>$dataEntry) {
 			if (
 				!$force &&
-				!$dataEntry['flags']['forceSave'] &&
+				empty($dataEntry['flags']['forceSave']) &&
 				(
 					//!isset($this->attr[$attName]) || // commented out because we want to save NULL values for null fields
 					!$this->attr_flags[$attName]['modified']
@@ -2771,7 +2771,7 @@ fclose($fp);
 				continue;
 			}
 
-			if (!$dataEntry['flags']['noLogging'])
+			if (empty($dataEntry['flags']['noLogging']))
 				$this->loggableChange=true;
 
 			$fld_name=$dataEntry['fld_name'];
@@ -2780,7 +2780,7 @@ fclose($fp);
 
 			if ($fld_data===NULL && $dataEntry['flags']['NULL'])
 				$q_values[]='NULL';
-			elseif ($dataEntry['flags']['sqlDate'])
+			elseif (!empty($dataEntry['flags']['sqlDate']))
 				$q_values[]=$this->sqlDate($fld_data);
 			else
 				$q_values[]=$this->db->qstr($fld_data);
@@ -3745,11 +3745,17 @@ fclose($fp);
 			case 'set':
 				if (!isset($this->dataStructure['fields'][$attName]['options']))
 					throw new RuntimeException("You need to define the options explicitly for enum and set fields (key 'options' in the data structure).");
-				$input=new LPC_HTML_select("attr[$attName]");
+				$input=new LPC_HTML_node('div');
+
+				$inputS=new LPC_HTML_select("attr[$attName]");
+				$input->a($inputS);
 				if ($type=='set') {
-					$input->setAttr('name',"attr[$attName][]");
-					$input->setAttr('multiple','multiple');
-					$input->setAttr('size',min(5,count($this->dataStructure['fields'][$attName]['options'])));
+					// Allow for an empty set by providing an empty option which will be processed on POST
+					$input->a("<input type='hidden' name=\"attr[$attName][]\" value='NULL'>");
+
+					$inputS->setAttr('name',"attr[$attName][]");
+					$inputS->setAttr('multiple','multiple');
+					$inputS->setAttr('size',min(5,count($this->dataStructure['fields'][$attName]['options'])));
 				}
 				$values=explode(",",$this->getAttr($attName));
 				foreach($this->dataStructure['fields'][$attName]['options'] as $option) {
@@ -3759,7 +3765,7 @@ fclose($fp);
 						$optionH->setAttr('selected',1);
 					$optionH->setAttr('value',addslashes($option));
 					$optionH->a(htmlspecialchars($option));
-					$input->a($optionH);
+					$inputS->a($optionH);
 				}
 				break;
 			default:
