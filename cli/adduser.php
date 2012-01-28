@@ -24,10 +24,8 @@ if (
 	empty($u->user_fields['password']) ||
 	empty($u->dataStructure['fields'][$u->user_fields["user"]]) ||
 	empty($u->dataStructure['fields'][$u->user_fields['password']])
-) {
-	echo "Your user class must properly define both user_fields['user'] and user_fields['password'].\n";
-	exit;
-}
+)
+	throw new RuntimeException("Your user class must properly define both user_fields['user'] and user_fields['password'].");
 	
 echo "WARNING! The password will be visible on screen!\n";
 $password="";
@@ -56,6 +54,11 @@ else {
 
 echo "Make this a hyperuser? [y/N] ";
 if (strtolower(trim(fgets(STDIN)))=='y') {
+	$grp=new LPC_Group(1);
+	if (!$grp->probe()) {
+		$grp->setAttr('name','Superusers');
+		$grp->insertWithId();
+	}
 	$u->addToGroup(1,0);
 	echo "Ok, now this is a hyperuser.\n";
 }
