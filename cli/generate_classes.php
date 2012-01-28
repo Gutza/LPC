@@ -142,25 +142,29 @@ class LPC_Class_Generator
 				$flags['NULL']=true;
 			}
 
+			$str=array();
+
 			// Other types
-			if (in_array($db_type,array('tinyint','smallint','mediumint','bigint'))) {
+			if (in_array($db_type,array('tinyint','smallint','mediumint','bigint')))
 				$type='integer';
-			} elseif (in_array($db_type,array('float','double','real','decimal','numeric'))) {
+			elseif (in_array($db_type,array('float','double','real','decimal','numeric')))
 				$type='float';
+			elseif (in_array($db_type,array('enum','set'))) {
+				$type=$db_type;
+				$str[]="\n\t\t\t\t'options'=>array".substr($rs->fields['Type'],strlen($type));
 			}
 
-			$str=array();
-			if ($flags) {
+			if ($flags)
 				$str[]="\n\t\t\t\t'flags'=>".$this->exportArray($flags,4,true);
-			}
-			if ($type) {
+
+			if ($type)
 				$str[]="\n\t\t\t\t'type'=>".$this->exportArray($type,4,true);
-			}
-			if ($str) {
+
+			if ($str)
 				$str=implode(",",$str).",\n\t\t\t";
-			} else {
+			else
 				$str="";
-			}
+
 			fputs($fp,"\t\t\t\"".addslashes($rs->fields['Field'])."\"=>array(".$str."),\n");
 			$rs->MoveNext();
 		}
