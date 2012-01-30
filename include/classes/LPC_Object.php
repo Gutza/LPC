@@ -1362,6 +1362,39 @@ abstract class LPC_Object implements Serializable
 		return $this->fromKey($array,$key);
 	}
 	// }}}
+	// {{{ isValidFile()
+	/**
+	* Checks whether this object contains any valid file entries
+	* named $fileName
+	* @teturn boolean true if the file exists and is valid, false otherwise
+	*/
+	function isValidFile($fileName)
+	{
+		if (
+			empty($this->dataStructure['files']) ||
+			empty($this->dataStructure['files'][$fileName]) ||
+			empty($this->dataStructure['files'][$fileName]['content'])
+		)
+			return false;
+
+		return true;
+	}
+	// }}}
+	// {{{ isPopulatedFile()
+	/**
+	* Checks whether this object's file entry named $fileName
+	* has been filled in with data.
+	* @return boolean true if it has been filled in, false otherwise
+	*/
+	function isPopulatedFile($fileName)
+	{
+		if (!$this->isValidFile($fileName))
+			return false;
+		if (!strlen($this->getAttr($this->dataStructure['files'][$fileName]['content'])))
+			return false;
+		return true;
+	}
+	// }}}
 // }}}
 // {{{ LISTING METHODS
 	// ----------------------------------
@@ -3683,9 +3716,14 @@ fclose($fp);
 					continue;
 				if ($type!='content')
 					return "";
+				$download="";
+				if ($this->isPopulatedFile($fname))
+					$download=" <a href='".LPC_url."/scaffolding/fileDownload.php?c=".
+						get_class($this)."&amp;id=".$this->id."&amp;file=".rawurlencode($fname).
+						"'>Download</a>";
 				return new LPC_HTML_form_row(array(
-					'label'=>$fname."<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt>LPC file</tt></div>",
-					'input'=>"<input type='file' name='file[".$fname."]'>",
+					'label'=>$fname."<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt><i>LPC file</i></tt></div>",
+					'input'=>"<input type='file' name='file[".$fname."]'>".$download,
 				));
 			}
 		}

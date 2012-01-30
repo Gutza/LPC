@@ -52,9 +52,10 @@ if (isset($meta['mime']))
 header("Content-type: ".$mime);
 
 $name="";
-if (isset($meta['name']))
+if (isset($meta['name'])) {
 	$name="; filename=\"".addslashes($obj->getAttr($meta['name']))."\"";
-header("Content-disposition: attachment".$name);
+	header("Content-disposition: inline".$name);
+}
 
 header("Content-length: ".strlen($obj->getAttr($meta['content'])));
 
