@@ -3589,6 +3589,7 @@ fclose($fp);
 			if (empty($this->dataStructure['fields'][$attName]['type'])) {
 				$filter=new LPC_HTML_list_filter_string();
 				$filter->input_size=10;
+				$filter->SQL_key=$this->getFieldName($attName);
 				$filters->a($filter,$attName);
 			}
 		}
