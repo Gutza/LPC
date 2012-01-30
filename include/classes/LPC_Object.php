@@ -3720,7 +3720,7 @@ fclose($fp);
 				if ($this->isPopulatedFile($fname))
 					$download=" <a href='".LPC_url."/scaffolding/fileDownload.php?c=".
 						get_class($this)."&amp;id=".$this->id."&amp;file=".rawurlencode($fname).
-						"'>Download</a>";
+						"'>"._LS('scaffoldingDownloadFile')."</a>";
 				return new LPC_HTML_form_row(array(
 					'label'=>$fname."<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt><i>LPC file</i></tt></div>",
 					'input'=>"<input type='file' name='file[".$fname."]'>".$download,
