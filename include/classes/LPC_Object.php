@@ -3170,13 +3170,16 @@ fclose($fp);
 				),
 			),
 		);
-		if ($order_att!==NULL)
+		if ($order_att!==NULL) {
 			$query['order']=array(
 				array(
 					'field'=>$otherObj->getFieldName($order_att),
 					'type'=>($reverse?'DESC':'ASC'),
 				),
 			);
+			if (!isset($otherObj->dataStructure['fields'][$order_att]))
+				$query['join'][]=$otherObj->_getI18nJoin();
+		}
 		return $query;
 	}
 	// }}}
