@@ -35,7 +35,7 @@ if (!isset($_GET['file'])) {
 	return;
 }
 $fileKey=$_GET['file'];
-if (empty($obj->dataStructure['files'][$fileKey])) {
+if (!$obj->isValidFile($fileKey)) {
 	$p->a(new LPC_HTML_error(_LH('scaffoldingErrorNeedValidFile',$fileKey)));
 	return;
 }
@@ -44,20 +44,6 @@ if ($id && !$obj->probe()) {
 	return;
 }
 
-$meta=$obj->dataStructure['files'][$fileKey];
-
-$mime="application/octet-stream";
-if (isset($meta['mime']))
-	$mime=$obj->getAttr($meta['mime']);
-header("Content-type: ".$mime);
-
-$name="";
-if (isset($meta['name'])) {
-	$name="; filename=\"".addslashes($obj->getAttr($meta['name']))."\"";
-	header("Content-disposition: inline".$name);
-}
-
-header("Content-length: ".strlen($obj->getAttr($meta['content'])));
-
-echo $obj->getAttr($meta['content']);
-exit;
+$file=new LPC_HTTP_base();
+$file->fromObject($obj,$fileKey);
+$file->show();
