@@ -3870,6 +3870,9 @@ fclose($fp);
 				case 'name':
 					$this->setAttr($attr,$_FILES['file']['name'][$key]);
 					break;
+				case 'date':
+					$this->setAttr($attr,time());
+					break;
 				default:
 					throw new RuntimeException("Unknown file entry type (\"".$type."\") for file key \"".$key."\"");
 			}
