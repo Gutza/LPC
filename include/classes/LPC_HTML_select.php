@@ -77,7 +77,7 @@ class LPC_HTML_select extends LPC_HTML_widget
 			if ($option->getAttr('value')!=$selected)
 				continue;
 
-			$option->setAttr('selected','1');
+			$option->setAttr('selected','selected');
 			break;
 		}
 	}
