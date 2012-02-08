@@ -25,6 +25,8 @@ class LPC_HTML_node extends LPC_HTML_base
 	{
 		parent::render();
 
+		$result="";
+
 		if (isset($this->id))
 			$this->setAttr('id',$this->id);
 
@@ -32,20 +34,40 @@ class LPC_HTML_node extends LPC_HTML_base
 			$this->doctype=$this->ownerDocument->doctype;
 
 		$short=$this->shortTag && !$this->content && $this->determineTagEnd();
-		$result=$this->renderTagStart($short);
+		$result.=$this->renderTagStart($short);
 		if ($short)
-			return $result;
+			return $this->debugify($result);
 		if (!$this->content && !is_numeric($this->content)) {
 			if ($this->endTagAllowed)
-				return rtrim($result).ltrim($this->renderTagEnd());
+				return $this->debugify(rtrim($result).ltrim($this->renderTagEnd()));
 			else
-				return $result;
+				return $this->debugify($result);
 		}
 
 		$result.=$this->renderContent();
 		if ($this->endTagAllowed)
 			$result.=$this->renderTagEnd();
-		return $result;
+		return $this->debugify($result);
+	}
+
+	protected function debugify($payload)
+	{
+		if (!LPC_debug)
+			return $payload;
+
+		$commentTag=get_class($this);
+		if (isset($this->arrayKey)) {
+			if (is_numeric($this->arrayKey))
+				$key=$this->arrayKey;
+			else
+				$key='"'.addslashes($this->arrayKey).'"';
+			$commentTag.="[".$key."]";
+		}
+
+		return
+			$this->output("<!-- ".$commentTag." -->",self::tagStart+self::tagEnd).
+			$payload.
+			$this->output("<!-- /".$commentTag." -->",self::tagStart+self::tagEnd);
 	}
 
 	/**
@@ -113,7 +135,7 @@ class LPC_HTML_node extends LPC_HTML_base
 		if ($tagType==self::tagBody)
 			return $this->renderString($html);
 
-		$indent=str_repeat("\t",$this->indent_count);
+		$indent=str_repeat("\t",$this->indentCount);
 		if ($tagType & self::tagBody)
 			$indent.="\t";
 

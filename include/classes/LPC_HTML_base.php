@@ -7,7 +7,7 @@ abstract class LPC_HTML_base implements iLPC_HTML
 	public $compact=false;
 	public $compactParent=false;
 
-	public $indent_count=0;
+	public $indentCount=0;
 
 	public $doctype;
 	public $parentNode=NULL;
@@ -15,6 +15,8 @@ abstract class LPC_HTML_base implements iLPC_HTML
 	public $id=NULL;
 
 	public static $uid_counter=0;
+
+	protected $arrayKey;
 
 	public function show()
 	{
@@ -109,30 +111,35 @@ abstract class LPC_HTML_base implements iLPC_HTML
 		return $this->renderItem($this->content);
 	}
 
-	public function renderItem($item)
+	public function renderItem($item,$arrayKey=NULL)
 	{
 		if (empty($item) && !is_numeric($item))
 			return "";
 		if (is_string($item) || is_numeric($item))
 			return $this->outputString($item);
 		if (is_object($item)) {
-			if ($item instanceof iLPC_HTML) {
-				$item->compactParent=$this->compact;
-				$item->indent_count=$this->indent_count+1;
-				if ($item instanceof LPC_HTML_node && (!isset($item->doctype) || !$item->doctype) && $this->doctype)
-					$item->doctype=$this->doctype;
-				$result=$item->render();
-				if (is_string($result))
-					return $result;
-				return $this->renderItem($result);
-			} else
+			if (!$item instanceof iLPC_HTML)
 				throw new RuntimeException("Unknown item class in HTML content (".get_class($item).")".var_export($item,true));
+
+			$item->compactParent=$this->compact;
+			$item->indentCount=$this->indentCount+1;
+			$item->arrayKey=$arrayKey;
+			if ($item instanceof LPC_HTML_node && (!isset($item->doctype) || !$item->doctype) && $this->doctype)
+				$item->doctype=$this->doctype;
+			$result=$item->render();
+			if (is_string($result))
+				return $result;
+			return $this->renderItem($result);
 		}
 		if (is_array($item)) {
-			$result="";
-			foreach($item as $atom)
-				$result.=$this->renderItem($atom);
-			return $result;
+			$result=array();
+			foreach($item as $key=>$atom)
+				$result[]=$this->renderItem($atom,$key);
+			if (LPC_debug)
+				$glue="\n";
+			else
+				$glue="";
+			return implode($glue,$result);
 		}
 		throw new RuntimeException("Unknown item type in HTML content (".gettype($item).")");
 	}
@@ -142,7 +149,7 @@ abstract class LPC_HTML_base implements iLPC_HTML
 		if ($this->compact)
 			return $html;
 
-		$indent=str_repeat("\t",$this->indent_count+1);
+		$indent=str_repeat("\t",$this->indentCount+1);
 		return $indent.str_replace("\n","\n".$indent,$html)."\n";
 	}
 
