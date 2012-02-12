@@ -27,8 +27,8 @@ class LPC_I18n_message extends LPC_Base
 
 	function onSave($new)
 	{
-		if ($new)
-			return;
+		// Yes, even for new translations!
+		// We may have cached the message in the default language.
 		$this->clearCache();
 	}
 
