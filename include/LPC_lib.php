@@ -24,9 +24,6 @@ if (LPC_GUI)
 if (LPC_GUI_OB)
 	ob_start();
 
-if (LPC_debug)
-	require LPC_include."/LPC_debug.php";
-
 if (
 	getenv("LPC_auth") &&
 	isset($_SERVER['REMOTE_ADDR']) && // not for CLI
