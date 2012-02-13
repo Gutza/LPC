@@ -1014,6 +1014,12 @@ abstract class LPC_Object implements Serializable
 		return htmlspecialchars($this->getAttr($attName),ENT_QUOTES);
 	}
 	// }}}
+	// {{{ hasAttr()
+	function hasAttr($attName)
+	{
+		return isset($this->dataStructure['fields'][$attName]);
+	}
+	// }}}
 	// {{{ getAttrF()
 	function getAttrF($attName)
 	{
@@ -1037,7 +1043,7 @@ abstract class LPC_Object implements Serializable
 		if (!$attName)
 			throw new InvalidArgumentException("Please specify a non-empty attribute name!");
 
-		if (empty($this->dataStructure['fields'][$attName]))
+		if (!$this->hasAttr($attName))
 			return $this->getI18nAttr($attName);
 
 		if (
@@ -1131,7 +1137,7 @@ abstract class LPC_Object implements Serializable
 	 */
 	function setAttr($attName, $attValue)
 	{
-		if (empty($this->dataStructure['fields'][$attName]))
+		if (!$this->hasAttr($attName))
 			return $this->setI18nAttr($attName,$attValue);
 
 		if (!empty($this->dataStructure['fields'][$attName]['flags']['trim']))
@@ -1572,9 +1578,9 @@ abstract class LPC_Object implements Serializable
 	// {{{ getAttrName()
 	function getAttrName($attName)
 	{
-		if (!empty($this->dataStructure['fields'][$attName]['attr_name'])) {
+		if (!empty($this->dataStructure['fields'][$attName]['attr_name']))
 			return $this->dataStructure['fields'][$attName]['attr_name'];
-		}
+
 		return $attName;
 	}
 	// }}}
@@ -1587,9 +1593,9 @@ abstract class LPC_Object implements Serializable
 	// {{{ getAttrDesc()
 	function getAttrDesc($attName)
 	{
-		if (!empty($this->dataStructure['fields'][$attName]['attr_desc'])) {
+		if (!empty($this->dataStructure['fields'][$attName]['attr_desc']))
 			return $this->dataStructure['fields'][$attName]['attr_desc'];
-		}
+
 		return '';
 	}
 	// }}}
@@ -1657,12 +1663,12 @@ abstract class LPC_Object implements Serializable
 	 */
 	function getParentAttribute($informal=false)
 	{
-		if (!$informal && empty($this->dataStructure['tree_link_attr'])) {
+		if (!$informal && empty($this->dataStructure['tree_link_attr']))
 			throw new BadMethodCallException('Parent attribute requested for an object with no tree_link_attr defined in dataStructure!');
-		}
-		if ($informal && empty($this->dataStructure['tree_link_attr'])) {
+
+		if ($informal && empty($this->dataStructure['tree_link_attr']))
 			return NULL;
-		}
+
 		return $this->dataStructure['tree_link_attr'];
 	}
 	// }}}
@@ -3948,7 +3954,11 @@ fclose($fp);
 	// {{{ getScaffoldingDefault()
 	function getScaffoldingDefault($attName)
 	{
-		return LPC_Scaffolding_default::getDefault(get_class($this),$attName,$this->i18n_langID);
+		if ($this->hasAttr($attName))
+			return LPC_Scaffolding_default::getDefault(get_class($this),$attName,$this->i18n_langID);
+		if (empty($this::$i18n_class))
+			throw new RuntimeException("Attribute $attName is not defined in this object!");
+		return LPC_Scaffolding_default::getDefault($this::$i18n_class,$attName,$this->i18n_langID);
 	}
 	// }}}
 // }}}
