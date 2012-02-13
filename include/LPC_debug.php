@@ -106,3 +106,7 @@ function LPC_backtrace()
 	}
 	return "<div style='padding: 5px; border: 1px solid red'><h2>LPC Backtrace</h2><ol><li>".implode("</li><li>",$simple)."</li></ol></div>";
 }
+
+error_reporting(E_ERROR | E_PARSE);
+ini_set('display_errors',1);
+ini_set('display_startup_errors',1);
