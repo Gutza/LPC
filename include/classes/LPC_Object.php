@@ -1707,9 +1707,9 @@ abstract class LPC_Object implements Serializable
 		$tmp=$this;
 		while ($tmp2=$tmp->getParent()) {
 			$tmp=&$tmp2;
-			if (in_array($tmp->id,$ids)) {
+			if (in_array($tmp->id,$ids))
 				throw new RuntimeException("Loop in tree structure at ID ".$tmp->id);
-			}
+
 			$ids[]=$tmp->id;
 		}
 		return array_reverse($ids);
