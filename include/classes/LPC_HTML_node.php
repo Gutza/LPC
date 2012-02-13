@@ -13,6 +13,8 @@ class LPC_HTML_node extends LPC_HTML_base
 	const tagEnd=2;
 	const tagBody=4;
 
+	public $classes=array();
+
 	public function __construct($nodeName=NULL,$shortTag=NULL)
 	{
 		if ($nodeName!==NULL)
@@ -90,8 +92,45 @@ class LPC_HTML_node extends LPC_HTML_base
 		return $this->endTagAllowed && LPC_HTML_doctype::$HTML4_spec[$nn]['end']=='O';
 	}
 
+	private function _classesFromAttr()
+	{
+		if (!strlen($this->getAttr('classes')))
+			return;
+
+		$this->classes=array_unique(array_merge($this->classes,explode(" ",$this->getAttr('classes'))));
+		$this->setAttr('class');
+	}
+
+	public function setClass($classes)
+	{
+		$this->classes=explode(" ",$classes);
+	}
+
+	public function addClass($classes)
+	{
+		$this->_classesFromAttr();
+		$this->classes=array_unique(array_merge($this->classes,explode(" ",$classes)));
+	}
+
+	public function removeClass($classes)
+	{
+		$this->_classesFromAttr();
+		$this->classes=array_diff(array_unique($this->classes),explode(" ",$classes));
+	}
+
+	private function _processClasses()
+	{
+		if (empty($this->classes))
+			return;
+
+		$this->_classesFromAttr();
+		$this->setAttr('class',implode(" ",$this->classes));
+	} 
+
 	public function renderTagStart($closed=false)
 	{
+		$this->_processClasses();
+
 		$result="<".strtolower($this->nodeName);
 		if ($this->attributes) {
 			foreach($this->attributes as $key=>$attribute) {
