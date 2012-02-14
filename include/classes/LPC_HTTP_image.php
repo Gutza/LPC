@@ -6,7 +6,7 @@
 * @copyright Copyright (c) January 2012, Bogdan Stancescu
 * @license http://www.gnu.org/licenses/gpl.html GNU Public License v3 or later
 */
-class LPC_HTTP_image extends LPC_HTTP_base
+class LPC_HTTP_image extends LPC_HTTP_file
 {
 	/**
 	* The GD image resource.

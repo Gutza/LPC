@@ -5,7 +5,7 @@
 * @copyright Copyright (c) February 2012, Bogdan Stancescu
 * @license http://www.gnu.org/licenses/gpl.html GNU Public License v3 or later
 */
-class LPC_HTTP_base
+class LPC_HTTP_file
 {
 	/**
 	* The MIME type associated with this file.

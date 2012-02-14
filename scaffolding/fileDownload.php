@@ -44,6 +44,6 @@ if ($id && !$obj->probe()) {
 	return;
 }
 
-$file=new LPC_HTTP_base();
+$file=new LPC_HTTP_file();
 $file->fromObject($obj,$fileKey);
 $file->show();
