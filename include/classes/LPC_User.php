@@ -27,29 +27,10 @@ abstract class LPC_User extends LPC_Base
 	var $token_delay=7; // token validity, in days (you can use fractions if you want shorter delays)
 	var $token_email_email='nobody'; // The originating e-mail address for token-related messages
 	var $token_email_name=LPC_project_full_name; // The originating name for token-related messages
-	var $token_invite_subject="%1\$s -- Account creation invitation";
-	var $token_invite_body="Dear %1\$s,
-
-Please create an account on %2\$s by clicking the following link:
-
-%3\$s
-
-This is an automated message, please do not reply.
-
-Thank you,
-The %4\$s team
-";
-	var $token_recover_subject="%1\$s -- Password retrieval";
-	var $token_recover_body="Dear %1\$s,
-
-Someone has initiated the password recovery procedure on %2\$s.
-Please click on the link below regardless of whether you have initiated the procedure or not
-(you will have an opportunity to cancel the password retrieval process, in case you haven't initiated it.)
-
-%3\$s
-
-Thank you,
-The %4\$s team";
+	var $token_invite_subject="lpcAuthInviteSubject"; // The translation key for the subject
+	var $token_invite_body="lpcAuthInviteBody"; // The translation key for the body
+	var $token_recover_subject="lpcAuthRecoverSubject";
+	var $token_recover_body="lpcAuthRecoverBody";
 
 	const HU_KEY='perm_H'; // Cache key for whether this guy's a hyperuser
 	const SU_KEY='perm_S'; // Cache key for whether this guy's a superuser in the current project
@@ -201,24 +182,29 @@ The %4\$s team";
 
 	protected function populateLogin($p)
 	{
-		$p->title="Authentication";
-		$p->a("<h1 style='text-align:center'>Authentication</h1>");
+		$p->title=_LS("lpcAuthTitle");
+		$p->a("<h1 style='text-align:center'>"._LS("lpcAuthTitle")."</h1>");
+
+		if ($this->user_fields['user']==$this->user_fields['email'])
+			$uname_key='lpcAuthEmail';
+		else
+			$uname_key='lpcAuthUsername';
 
 		$p->a("<form method='POST' action=''>");
 		$p->a("  <table class='login_form'>");
 		$p->a("    <tr>");
-		$p->a("      <td style='text-align:right; width:50%'>Username/email</td>");
+		$p->a("      <td style='text-align:right; width:50%'>"._LH($uname_key)."</td>");
 		$p->a("    <td><input type='text' name='username' id='username'></td>");
 		$p->a("    </tr>");
 		$p->a("    <tr>");
-		$p->a("      <td style='text-align:right'>Password</td>");
+		$p->a("      <td style='text-align:right'>"._LH('lpcAuthPassword')."</td>");
 		$p->a("      <td><input type='password' name='password'></td>");
 		$p->a("    </tr>");
 		$p->a("    <tr>");
 		$p->a("      <td>&nbsp;</td>");
 		$p->a("      <td>");
-		$p->a("        <input type='submit' name='login' value='Log in'>");
-		$p->a("        <small><a href='".$this->recoverPasswordURL()."'>Recover password</a></small>");
+		$p->a("        <input type='submit' name='login' value='"._LS('lpcAuthLogIn')."'>");
+		$p->a("        <small><a href='".$this->recoverPasswordURL()."'>"._LS('lpcAuthRecover')."</a></small>");
 		$p->a("      </td>");
 		$p->a("    </tr>");
 		$p->a("  </table>");
@@ -778,11 +764,7 @@ EOJS;
 		if (mail(
 			$this->getAttr($this->user_fields['email']),
 			$subject,
-			sprintf(
-				$body,
-				$this->getName(),		// %1$s
-				$this->processTokenURL()	// %2$s
-			),
+			$body,
 			"From: ".$this->token_email_name." <".$this->token_email_email.">\r\n".
 			"Reply-To: ".$this->token_email_name." <".$this->token_email_email.">\r\n".
 			"X-Mailer: LPC Token manager",
@@ -799,13 +781,20 @@ EOJS;
 		if (!$this->generateToken())
 			return false;
 
-		$tis=$this->token_invite_subject;
-		$tis=sprintf(__L($tis),LPC_project_name);
+		$subject=_LS(
+			$this->token_invite_subject,
+			LPC_project_name // {0}
+		);
+		$body=_LS(
+			$this->token_invite_body,
+			$this->getName(), // {0}
+			LPC_project_name, // {1}
+			LPC_project_full_name, // {2}
+			$this->processTokenURL(), // {3}
+			$this->getAttr($this->user_fields['email']) // {4}
+		);
 
-		$tib=$this->token_invite_body;
-		$tib=sprintf(__L($tib),"%1\$s",LPC_project_full_name,"%2\$s",LPC_project_name);
-
-		return $this->sendTokenMail($tis,$tib);
+		return $this->sendTokenMail($subject,$body);
 	}
 
 	function sendRecover()
@@ -813,29 +802,36 @@ EOJS;
 		if (!$this->generateToken())
 			return false;
 
-		$trs=$this->token_recover_subject;
-		$trs=sprintf(__L($trs),LPC_project_name);
+		$subject=_LS(
+			$this->token_recover_subject,
+			LPC_project_name // {0}
+		);
+		$body=_LS(
+			$this->token_recover_body,
+			$this->getName(), // {0}
+			LPC_project_name, // {1}
+			LPC_project_full_name, // {2}
+			$this->processTokenURL(), // {3}
+			$this->getAttr($this->user_fields['email']) // {4}
+		);
 
-		$trb=$this->token_recover_body;
-		$trb=sprintf(__L($trb),"%1\$s",LPC_project_full_name,"%2\$s",LPC_project_name);
-
-		return $this->sendTokenMail($trs,$trb);
+		return $this->sendTokenMail($subject,$body);
 	}
 
 	function passwordProblems($pwd1,$pwd2)
 	{
 		if ($pwd1!==$pwd2)
-			return __L("Please make sure you type the exact same password twice!");
+			return _LH('lpcAuthErrConfirm');
 
 		$min=$this->password_conditions['min_length'];
 		if (strlen($pwd1)<$min)
-			return __L("The password must be at least %d characters long.",$min);
+			return _LH('lpcAuthErrMinLength',$min);
 
 		if ($this->password_conditions['need_alpha'] && !preg_match("/[a-zA-Z]/",$pwd1))
-			return __L("At least one of the characters must be a letter.");
+			return _LH('lpcAuthErrNeedAlpha');
 
 		if ($this->password_conditions['need_numeric'] && !preg_match("/[0-9]/",$pwd1))
-			return __L("At least one of the characters in the password must be a number.");
+			return _LH('lpcAuthErrNeedNumber');
 
 		return false;
 	}
@@ -847,6 +843,11 @@ EOJS;
 
 	function getName()
 	{
-		return $this->getAttr($this->user_fields['fname']).' '.$this->getAttr($this->user_fields['lname']);
+		$name=array();
+		if ($this->user_fields['fname'])
+			$name[]=$this->getAttr($this->user_fields['fname']);
+		if ($this->user_fields['lname'])
+			$name[]=$this->getAttr($this->user_fields['lname']);
+		return implode(" ",$name);
 	}
 }
