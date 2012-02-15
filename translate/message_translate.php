@@ -6,6 +6,10 @@ if (empty($_REQUEST['m'])) {
 	header("Location: index.php");
 	exit;
 }
+if (empty($_SESSION['LPC_target_lang'])) {
+	header("Location: lang_select.php?m=".rawurlencode($msgKey));
+	exit;
+}
 
 $p->title="Message translator";
 $p->st();
