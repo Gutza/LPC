@@ -143,6 +143,8 @@
       */
     function buildSQLConditions($where,$indent=0)
     {
+      if (empty($where['conditions']))
+        return "";
       // Must first clear out empty arrays, as to avoid ending up with queries
       // such as "WHERE (id=5) AND () AND () AND (status!='resolved')".
       $where=$this->cleanupSQLConditions($where);

@@ -27,7 +27,7 @@ $result=array(
 
 // Languages
 $langs=new LPC_Language();
-$langs=$langs->search('translated',1,0);
+$langs=$langs->search(NULL,NULL,0);
 foreach($langs as $lang)
 	$result['languages'][]=array(
 		'id'=>$lang->id,

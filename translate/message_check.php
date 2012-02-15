@@ -43,7 +43,7 @@ foreach($obsolete as $obso) {
 function find_message($message_key)
 {
 	exec(
-		"grep -rnq --include=\*.php ".
+		"grep -rnq --include=\*.php --exclude-dir=".escapeshellarg(LPC_path."/docs")." ".
 			escapeshellarg($message_key)." ".
 			escapeshellarg(LPC_base_path),
 		$devnull,
