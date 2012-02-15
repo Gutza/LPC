@@ -10,7 +10,7 @@ abstract class LPC_JSON
 	{
 		if (function_exists('json_encode')) {
 			$options=0;
-			if ($purty)
+			if ($purty && defined('JSON_PRETTY_PRINT'))
 				$options+=JSON_PRETTY_PRINT;
 			return json_encode($var,$options);
 		}
