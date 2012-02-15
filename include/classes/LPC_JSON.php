@@ -6,10 +6,14 @@
 */
 abstract class LPC_JSON
 {
-	public function encode($var)
+	public function encode($var,$purty=false)
 	{
-		if (function_exists('json_encode'))
-			return json_encode($var);
+		if (function_exists('json_encode')) {
+			$options=0;
+			if ($purty)
+				$options+=JSON_PRETTY_PRINT;
+			return json_encode($var,$options);
+		}
 
 		require_once "PEAR.php";
 		require_once "Services/JSON.php";
