@@ -1,18 +1,18 @@
 <?php
 
 $p=LPC_Page::getCurrent();
-$p->title=__L("Password retrieval");
+$p->title=_LS('lpcAuthRecoverTitle');
 
 if (LPC_User::getCurrent(true)) {
 	$p->st();
-	$p->a(new LPC_HTML_error(__L("You are already authenticated!")));
+	$p->a(new LPC_HTML_error(_LH('lpcAuthErrAlreadyLoggedOn')));
 	return;
 }
 
 $u=LPC_User::newUser();
 $us=$u->search(array($u->user_fields['email'],$u->user_fields['token']),array($_REQUEST['e'],$_REQUEST['t']));
 if (!$us || $us[0]->getAttr($u->user_fields['token_date'])<time()) {
-	$p->a(new LPC_HTML_error(__L("The data you're trying to use is invalid. Either they have already been used for access, or the token has expired, or you haven't copied the complete URL from the e-mail message.")));
+	$p->a(new LPC_HTML_error(_LH('lpcAuthInvalidToken')));
 
 	// Get them to authenticate
 	LPC_User::getCurrent();
@@ -24,15 +24,15 @@ if (!$us || $us[0]->getAttr($u->user_fields['token_date'])<time()) {
 $u=$us[0];
 
 if ($u->getAttr($u->user_fields['password']))
-	$p->title=__L("Password reset");
+	$p->title=_LS('lpcAuthResetPasswordTitle');
 else
-	$p->title=__L("Create your password");
+	$p->title=_LS('lpcAuthCreatePasswordTitle');
 
 $p->st();
 if (isset($_POST['reset_password']) && $_POST['reset_password']) {
 	$u->resetToken();
 	if ($u->save()) {
-		$p->a(new LPC_HTML_confirm(__L("You have successfully cancelled the password retrieval request.")));
+		$p->a(new LPC_HTML_confirm(_LH('lpcAuthDoneCancel')));
 		return;
 	}
 }
@@ -45,7 +45,7 @@ if (isset($_POST['process_password'])) {
 		$u->resetToken();
 		$u->save();
 		LPC_User::setCurrent($u);
-		$p->a(new LPC_HTML_confirm(__L("Congratulations! You have successfully changed your password! You will be able to log in with username %1\$s and the password you just entered.",$u->getAttr($u->user_fields['user']))));
+		$p->a(new LPC_HTML_confirm(_LH('lpcAuthDoneResetConfirm',$u->getAttrH($u->user_fields['user']))));
 		return;
 	}
 
@@ -58,16 +58,13 @@ $p->a($form);
 
 $info=new LPC_HTML_node('div');
 if ($u->getAttr($u->user_fields['password'])) {
-	$info->a(__L(
-		"<p>Please use the form below to change the password for your account.</p>".
-		"<p>If you have NOT requested a password reset, please click the button labeled &quot;<i>Cancel the password reset</i>&quot; at the bottom of the form.</p>"
-	));
-	$reset="<input type='button' name='reset' value='".__L("Cancel the password reset")."' onClick='document.forms[0].reset_password.value=1; document.forms[0].submit()'>";
-	$label=__L("Reset the password");
+	$info->a(_LH('lpcAuthResetFormInfo',_LS('lpcAuthCancelResetButton')));
+	$reset="<input type='button' name='reset' value='"._LS('lpcAuthCancelResetButton')."' onClick='document.forms[0].reset_password.value=1; document.forms[0].submit()'>";
+	$label=_LS('lpcAuthResetPasswordButton');
 } else {
-	$info->a(__L("<p>Please create a password for this project."));
+	$info->a(_LH('lpcAuthCreatePasswordFormInfo'));
 	$reset="&nbsp;";
-	$label=__L("Create the account");
+	$label=_LS('lpcAuthCreatePasswordLabel');
 }
 $info->a(<<<EOINFO
 <input type='hidden' name='e' value="{$_REQUEST['e']}">
@@ -84,21 +81,21 @@ $form->a($table);
 
 $table->a("
 <tr>
-	<th>".__L("Password")."<br><small>".__L("Enter the password you want to use")."</small></th>
+	<th>"._LH('lpcAuthPassword')."<br><small>"._LH('lpcAuthPasswordFieldExplain')."</small></th>
 	<td><input type='password' name='pwd' id='pwd'></td>
 	<td rowspan='3' style='width: 500px; padding: 10px'>
-		<h2>".__L("Password validation conditions")."</h2>".
+		<h2>"._LH('lpcAuthValidConditionsTitle')."</h2>".
 		validation_conditions().
 		"
 	</td>
 </tr>
 <tr>
-	<th>".__L("Confirm the password")."<br><small>".__L("Enter the same password again")."</small></th>
+	<th>"._LH('lpcAuthPasswordConfirm')."<br><small>"._LH('lpcAuthPasswordConfirmExplain')."</small></th>
 	<td><input type='password' name='pwd2'></td>
 </tr>
 <tr>
-	<th>$reset</th>
-	<td><input type='submit' name='process_password' value='$label'></td>
+	<th style='text-align: center'>$reset</th>
+	<td style='text-align: center'><input type='submit' name='process_password' value='$label'></td>
 </tr>
 ");
 
@@ -108,11 +105,11 @@ function validation_conditions()
 {
 	$u=LPC_User::newUser();
 	$conds=array();
-	$conds[]=__L("The password must be at least %d characters long.",$u->password_conditions['min_length']);
+	$conds[]=_LH('lpcAuthValidCondMinLength',$u->password_conditions['min_length']);
 	if ($u->password_conditions['need_alpha'])
-		$conds[]=__L("At least one of the characters must be a letter.");
+		$conds[]=_LH('lpcAuthValidCondAlpha');
 	if ($u->password_conditions['need_numeric'])
-		$conds[]=__L("At least one of the characters in the password must be a number.");
+		$conds[]=_LH('lpcAuthValidCondNumeric');
 	return "<ul><li>".implode($conds,"</li><li>")."</li></ul>";
 }
 
