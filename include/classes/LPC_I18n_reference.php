@@ -1,11 +1,14 @@
 <?php
 
-class LPC_i18n_reference extends LPC_Base
+class LPC_I18n_reference extends LPC_Base
 {
 	function registerDataStructure()
 	{
 		$fields=array(
 			"comment"=>array(),
+			"system"=>array(
+				"type"=>"boolean",
+			),
 		);
 
 		$depend=array(
