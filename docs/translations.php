@@ -1,6 +1,6 @@
 <?php
 
-// Automated export on Wed, 15 Feb 2012 21:13:38 +0000
+// Automated export on Wed, 15 Feb 2012 22:13:52 +0000
 
 return array (
   'languages' => 
@@ -23,6 +23,7 @@ return array (
     'genericErrorMissingObject' => 
     array (
       'comment' => 'A generic error message shown when the user is trying to access an object that wasn\'t found in the database. Takes two parameters, the class name and the object ID.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -40,6 +41,7 @@ return array (
     'genericErrorRights' => 
     array (
       'comment' => 'A very generic error message shown when users try to access a page or perform an action they don\'t have enough permissions for.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -57,6 +59,7 @@ return array (
     'genericErrorSessionKey' => 
     array (
       'comment' => 'Warning and explanation regarding session keys. Shown only when there is a mismatch.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -74,6 +77,7 @@ return array (
     'genericNoName' => 
     array (
       'comment' => 'Fără nume',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -86,6 +90,7 @@ return array (
     'lpcAuthCancelResetButton' => 
     array (
       'comment' => 'The label on the button used for canceling the password reset request.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -98,6 +103,7 @@ return array (
     'lpcAuthConfirmRecoverEmail' => 
     array (
       'comment' => 'The confirmation message shown when the password recovery e-mail is sent (or not sent, if the e-mail wasn\'t found in the database). Takes one parameter, the e-mail address supplied by the user.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -110,6 +116,7 @@ return array (
     'lpcAuthCreatePasswordFormInfo' => 
     array (
       'comment' => 'The introductory message shown on the password creation form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -122,6 +129,7 @@ return array (
     'lpcAuthCreatePasswordLabel' => 
     array (
       'comment' => 'The label of the button at the end of the password creation form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -134,6 +142,7 @@ return array (
     'lpcAuthCreatePasswordTitle' => 
     array (
       'comment' => 'The title of the password creation page.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -146,6 +155,7 @@ return array (
     'lpcAuthDoneCancel' => 
     array (
       'comment' => 'The confirmation message shown when the password reset request is successfully cancelled.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -158,6 +168,7 @@ return array (
     'lpcAuthDoneResetConfirm' => 
     array (
       'comment' => 'The confirmation message shown when the password reset succeeds. Takes one parameter, the username for the user who changed their password. Be advised the username may actually be their e-mail address; also, they have already been logged in automatically at this point.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -170,6 +181,7 @@ return array (
     'lpcAuthEmail' => 
     array (
       'comment' => 'The label for the authentication field "e-mail"',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -182,6 +194,7 @@ return array (
     'lpcAuthErrAlreadyLoggedOn' => 
     array (
       'comment' => 'The error shown to authenticated users who want to recover a password.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -194,6 +207,7 @@ return array (
     'lpcAuthErrConfirm' => 
     array (
       'comment' => 'The authentication-related error message shown when the password confirmation differs from the password field',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -208,6 +222,7 @@ return array (
       'comment' => 'The error message shown when the password recovery e-mail couldn\'t be sent. Takes one parameter, the e-mail address supplied by the user.
 
 Be advised this is always related to an existing account, and properly identified by the code based on the e-mail address supplied by the user.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -225,6 +240,7 @@ Be advised this is always related to an existing account, and properly identifie
     'lpcAuthErrMinLength' => 
     array (
       'comment' => 'The authentication-related error message shown when the password is too short. Takes one parameter, the minimum valid length.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -237,6 +253,7 @@ Be advised this is always related to an existing account, and properly identifie
     'lpcAuthErrNeedAlpha' => 
     array (
       'comment' => 'The authentication-related error message shown when the password doesn\'t contain any letters.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -249,6 +266,7 @@ Be advised this is always related to an existing account, and properly identifie
     'lpcAuthErrNeedNumber' => 
     array (
       'comment' => 'The authentication-related error message shown when the password doesn\'t contain any numbers.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -261,6 +279,7 @@ Be advised this is always related to an existing account, and properly identifie
     'lpcAuthInvalidToken' => 
     array (
       'comment' => 'The error message shown when a user tries to recover a password with an invalid token/e-mail combination.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -285,6 +304,7 @@ Be advised this is always related to an existing account, and properly identifie
 {4} -- the e-mail address this e-mail was sent to
 
 It is recommended that you do not overwrite this translation just in order to customize it -- instead, you should redefine your LPC_User\'s descendant variable token_invite_body to point to another translation key, specific to your project.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -306,6 +326,7 @@ Echipa {1}',
       'comment' => 'The invitation e-mail\'s subject. Takes one parameter: the name of the project (the value of constant LPC_full_project_name).
 
 It is recommended that you do not overwrite this translation just in order to customize it -- instead, you should redefine your LPC_User\'s descendant variable token_invite_subject to point to another translation key, specific to your project.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -318,6 +339,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthLogIn' => 
     array (
       'comment' => 'The label for the authentication "Log in" button',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -330,6 +352,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthPassword' => 
     array (
       'comment' => 'The label for the authentication field "password"',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -342,6 +365,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthPasswordConfirm' => 
     array (
       'comment' => 'The label for the password confirmation field in the password reset form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -354,6 +378,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthPasswordConfirmExplain' => 
     array (
       'comment' => 'The explanations for the password confirmation field shown in the password reset form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -366,6 +391,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthPasswordFieldExplain' => 
     array (
       'comment' => 'The explanation for the first password field in the password reset form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -378,6 +404,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthRecover' => 
     array (
       'comment' => 'The label for the authentication link "recover password"',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -397,6 +424,7 @@ It is recommended that you do not overwrite this translation just in order to cu
 {4} -- the e-mail address this e-mail was sent to
 
 It is recommended that you do not overwrite this translation just in order to customize it -- instead, you should redefine your LPC_User\'s descendant variable token_recover_body to point to another translation key, specific to your project.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -416,6 +444,7 @@ Echipa {1}',
     'lpcAuthRecoverButton' => 
     array (
       'comment' => 'The label for the the button at the bottom of the password recovery form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -428,6 +457,7 @@ Echipa {1}',
     'lpcAuthRecoverEmailField' => 
     array (
       'comment' => 'The label for the the user\'s e-mail address field, shown in the password recovery form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -442,6 +472,7 @@ Echipa {1}',
       'comment' => 'The subject of the recover password message. Takes one parameter: the name of the project (the value of constant LPC_full_project_name).
 
 It is recommended that you do not overwrite this translation just in order to customize it -- instead, you should redefine your LPC_User\'s descendant variable token_recover_subject to point to another translation key, specific to your project.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -454,6 +485,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthRecoverTitle' => 
     array (
       'comment' => 'The title of the password recovery page',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -466,6 +498,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthResetFormInfo' => 
     array (
       'comment' => 'The introductory message shown above the form used for changing the password (the form where the actual password is filled in). Takes one parameter, the label of the reset button.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -479,6 +512,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthResetPasswordButton' => 
     array (
       'comment' => 'The button shown at the bottom of the password reset form (the one where the actual password is being entered).',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -491,6 +525,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthResetPasswordTitle' => 
     array (
       'comment' => 'The title of the page showing the form for inputting the new password.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -503,6 +538,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthTitle' => 
     array (
       'comment' => 'The title of the authentication page',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -515,6 +551,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthValidCondAlpha' => 
     array (
       'comment' => 'The password validation condition for alphabetic characters.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -527,6 +564,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthValidConditionsTitle' => 
     array (
       'comment' => 'The title of the validation conditions list shown in the password reset form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -539,6 +577,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthValidCondMinLength' => 
     array (
       'comment' => 'The password validation condition for minimum password length. Takes one parameter, the minimum length.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -551,6 +590,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'lpcAuthValidCondNumeric' => 
     array (
       'comment' => 'The password validation condition for numeric characters.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -563,6 +603,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingActionHeader' => 
     array (
       'comment' => 'The label shown in the header of the scaffolding object list table, on top of the column containing the actions (edit, delete).',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -580,6 +621,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingAddThis' => 
     array (
       'comment' => 'The label shown when picking many to many dependencies, prompting the user to add this object to the dependency list.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -597,6 +639,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingBackToList' => 
     array (
       'comment' => 'The label shown at the top of the object edit page when the "rt" variable is present.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -614,6 +657,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingBooleanNo' => 
     array (
       'comment' => 'The label for boolean "No" in the scaffolding edit interface.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -631,6 +675,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingBooleanYes' => 
     array (
       'comment' => 'The label for boolean "Yes" in the scaffolding edit interface.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -648,6 +693,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingButtonCreate' => 
     array (
       'comment' => 'The label of the "Create" button at the bottom of the scaffolding form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -665,6 +711,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingButtonEdit' => 
     array (
       'comment' => 'The label of the "Edit" button at the bottom of the scaffolding form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -682,6 +729,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingButtonEditPlus' => 
     array (
       'comment' => 'The label for the "submit and attach a new one" button at the bottom of the scaffolding edit form, when attaching a new object.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -699,6 +747,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingCancelPick' => 
     array (
       'comment' => 'The label of the link shown in the scaffolding object picking form.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -716,6 +765,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingCreateDependency' => 
     array (
       'comment' => 'The label of the link for attaching one dependency in the scaffolding list. Takes one parameter, the name of the dependency.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -733,6 +783,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingCreateObject' => 
     array (
       'comment' => 'Label for "Create new object" link in scaffolding lists. It takes one parameter -- the name of the class.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -750,6 +801,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingDeleteAction' => 
     array (
       'comment' => 'The label associated with object deletion in the scaffolding object list.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -767,6 +819,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingDownloadFile' => 
     array (
       'comment' => 'The label of the link to a file download in the scaffolding object list.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -784,6 +837,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingEditAction' => 
     array (
       'comment' => 'The label associated with object editing in the scaffolding object list.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -801,6 +855,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingEditLink' => 
     array (
       'comment' => 'The label of the link towards the link object while editing an object in scaffolding. Takes two parameters, the class name of the link and the object ID.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -818,6 +873,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingLocalizedSection' => 
     array (
       'comment' => 'The title of the localized section of the scaffolding edit table. Feel free to hardcode the language name you\'re translating to, since that\'s ',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -835,6 +891,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingMessageNoObjectsInClass' => 
     array (
       'comment' => 'The label shown in the scaffolding object list when there are no objects in the database.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -852,6 +909,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingMsgAvailableClasses' => 
     array (
       'comment' => 'The label shown at the top of the scaffolding class list.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -869,6 +927,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingPickThis' => 
     array (
       'comment' => 'The label of the scaffolding link in the object picking sub-table associated with picking the current object (for linking to in the object being edited).',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -886,6 +945,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingRemoveThis' => 
     array (
       'comment' => 'The label shown when picking many to many dependencies, prompting the user to remove this object from the dependency list.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -903,6 +963,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingSaveError' => 
     array (
       'comment' => 'The message shown when there\'s an exception thrown while trying to save an object in scaffolding. Takes one parameter, the exception message.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -920,6 +981,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingSelectLang' => 
     array (
       'comment' => 'The label shown at the top of the scaffolding edit page, prompting the user to change their language (for i18n objects).',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -937,6 +999,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingSwitchClass' => 
     array (
       'comment' => 'The label shown on scaffolding pages for the link leading to the class list.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -954,6 +1017,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingSwitchObject' => 
     array (
       'comment' => 'The label of the scaffolding link to the object list.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 
@@ -971,6 +1035,7 @@ It is recommended that you do not overwrite this translation just in order to cu
     'scaffoldingTitle' => 
     array (
       'comment' => 'Generic page title for LPC scaffolding pages.',
+      'system' => '1',
       'translations' => 
       array (
         0 => 

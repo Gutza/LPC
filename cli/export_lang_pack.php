@@ -50,6 +50,7 @@ foreach($refs as $ref) {
 		continue;
 	$result['messages'][$ref->id]=array(
 		'comment'=>$ref->getAttr('comment'),
+		'system'=>$ref->getAttr('system'),
 		'translations'=>$transData,
 	);
 }
