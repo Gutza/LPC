@@ -180,10 +180,11 @@ abstract class LPC_User extends LPC_Base
 		return true;
 	}
 
-	protected function populateLogin($p)
+	protected function populateLogin()
 	{
+		$p=LPC_Page::getCurrent();
 		$p->title=_LS("lpcAuthTitle");
-		$p->a("<h1 style='text-align:center'>"._LS("lpcAuthTitle")."</h1>");
+		$p->a("<h1>"._LS("lpcAuthTitle")."</h1>");
 
 		if ($this->user_fields['user']==$this->user_fields['email'])
 			$uname_key='lpcAuthEmail';
@@ -213,15 +214,17 @@ abstract class LPC_User extends LPC_Base
 
 	protected function showLoginForm()
 	{
+		$this->populateLogin();
+		$this->postShowLogin();
+
 		$p=LPC_Page::getCurrent();
-		$this->populateLogin($p);
-		$this->postShowLogin($p);
 		$p->show();
 		exit;
 	}
 
-	function postShowLogin($p)
+	protected function postShowLogin()
 	{
+		$p=LPC_Page::getCurrent();
 		$js=new LPC_HTML_script();
 		$p->a($js);
 
@@ -783,7 +786,7 @@ EOJS;
 
 		$subject=_LS(
 			$this->token_invite_subject,
-			LPC_project_name // {0}
+			LPC_project_full_name // {0}
 		);
 		$body=_LS(
 			$this->token_invite_body,
@@ -804,7 +807,7 @@ EOJS;
 
 		$subject=_LS(
 			$this->token_recover_subject,
-			LPC_project_name // {0}
+			LPC_project_full_name // {0}
 		);
 		$body=_LS(
 			$this->token_recover_body,
