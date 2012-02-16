@@ -35,7 +35,10 @@ if (isset($_POST['submit'])) {
 	LPC_HTML_form::enforceSK();
 	$msg->setAttr('translation',$_POST['translation']);
 	$msg->save();
-	$ref->setAttr('comment',$_POST['comment']);
+	$ref->setAttrs(array(
+		'comment'=>$_POST['comment'],
+		'system'=>isset($_POST['system']),
+	));
 	$ref->save();
 }
 
@@ -89,6 +92,15 @@ $t->a(new LPC_HTML_form_row(array(
 $t->a(new LPC_HTML_form_row(array(
 	'label'=>'Comment',
 	'input'=>"<textarea name='comment' rows='5' style='width:100%; font-size: 85%'>".$ref->getAttrH('comment')."</textarea>",
+)));
+$sysChecked="";
+if ($ref->getAttr('system'))
+	$sysChecked=' checked';
+$t->a(new LPC_HTML_form_row(array(
+	'label'=>'Message options',
+	'input'=>
+		"<input type='checkbox' name='system' value='1'$sysChecked id='system'> ".
+		"<label for='system'>System message (not specific to this project)</label>"
 )));
 $t->a(new LPC_HTML_form_row(array(
 	'label'=>'&nbsp;',
