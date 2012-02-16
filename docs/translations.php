@@ -1,6 +1,6 @@
 <?php
 
-// Automated export on Wed, 15 Feb 2012 22:36:14 +0000
+// Automated export on Thu, 16 Feb 2012 00:04:29 +0000
 
 return array (
   'languages' => 
@@ -432,7 +432,7 @@ It is recommended that you do not overwrite this translation just in order to cu
           'language' => '2',
           'translation' => 'Doamnă/domnule {0},
 
-Cineva a solicitat recuperarea parolei pentru contul asociat adresei dumneavoastră e-mail ({4}) pe site-ul clinicbouquet.ro. Indiferent dacă aţi solicitat recuperarea parolei sau nu, vă rugăm apăsaţi pe legătura de mai jos (dacă nu aţi solicitat recuperarea parolei veţi avea ocazia să indicaţi acest lucru).
+Cineva a solicitat recuperarea parolei pentru contul asociat adresei dumneavoastră e-mail ({4}). Indiferent dacă aţi solicitat recuperarea parolei sau nu, vă rugăm apăsaţi pe legătura de mai jos (dacă nu aţi solicitat recuperarea parolei veţi avea ocazia să indicaţi acest lucru).
 
 {3}
 
