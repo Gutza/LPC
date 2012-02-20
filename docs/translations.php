@@ -1,6 +1,6 @@
 <?php
 
-// Automated export on Thu, 16 Feb 2012 00:04:29 +0000
+// Automated export
 
 return array (
   'languages' => 

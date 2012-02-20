@@ -55,7 +55,7 @@ foreach($refs as $ref) {
 	);
 }
 
-$outData="<?php\n\n// Automated export on ".gmdate('r')."\n\nreturn ".var_export($result,true).";";
+$outData="<?php\n\n// Automated export\n\nreturn ".var_export($result,true).";";
 
 fputs($fp,$outData);
 fclose($fp);
