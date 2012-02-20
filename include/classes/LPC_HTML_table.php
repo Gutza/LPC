@@ -8,7 +8,7 @@ class LPC_HTML_table extends LPC_HTML_node
 	function __construct($debug=false)
 	{
 		// Most of the time, this is what we need
-		$this->setAttr('class','default');
+		$this->setClass('default');
 		if (!$debug)
 			$this->compact=true;
 	}
@@ -19,9 +19,8 @@ class LPC_HTML_table extends LPC_HTML_node
 		foreach($rows as $row) {
 			$tr=new LPC_HTML_node('tr');
 			$this->a($tr);
-			foreach($row as $cell) {
+			foreach($row as $cell)
 				$tr->a($this->buildTD($cell));
-			}
 		}
 	}
 
@@ -46,4 +45,14 @@ class LPC_HTML_table extends LPC_HTML_node
 		return $td;
 	}
 
+	function appendFormRow($rowData)
+	{
+		return $this->afr($rowData);
+	}
+
+	function afr($rowData)
+	{
+		$this->addClass('two-column');
+		$this->a(new LPC_HTML_form_row($rowData));
+	}
 }

@@ -13,13 +13,7 @@ $u=LPC_User::newUser();
 $us=$u->search(array($u->user_fields['email'],$u->user_fields['token']),array($_REQUEST['e'],$_REQUEST['t']));
 if (!$us || $us[0]->getAttr($u->user_fields['token_date'])<time()) {
 	$p->a(new LPC_HTML_error(_LH('lpcAuthInvalidToken')));
-
-	// Get them to authenticate
-	LPC_User::getCurrent();
-
-	// Once they do authenticate, send them to the project
-	header("Location: ".LPC_project_url."/");
-	exit;
+	return;
 }
 $u=$us[0];
 
@@ -46,6 +40,8 @@ if (isset($_POST['process_password'])) {
 		$u->save();
 		LPC_User::setCurrent($u);
 		$p->a(new LPC_HTML_confirm(_LH('lpcAuthDoneResetConfirm',$u->getAttrH($u->user_fields['user']))));
+		if ($u->includeAfterReset)
+			include $u->includeAfterReset;
 		return;
 	}
 

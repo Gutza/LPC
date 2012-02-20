@@ -82,7 +82,7 @@ class LPC_HTTP_status
 
 	private function not_found()
 	{
-		header("HTTP/1.0 404 Not found");
+		header("HTTP/1.1 404 Not found");
 		echo <<<EOERR
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html><head>
@@ -97,7 +97,7 @@ EOERR
 
 	private function forbidden()
 	{
-		header("HTTP/1.0 403 Forbidden");
+		header("HTTP/1.1 403 Forbidden");
 		echo <<<EOERR
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html><head>
@@ -115,7 +115,7 @@ EOERR
 		if (empty(self::$allCodes[$statusCode]))
 			self::other(500);
 		$codeName=self::$allCodes[$statusCode];
-		header("HTTP/1.0 ".$statusCode." ".$codeName);
+		header("HTTP/1.1 ".$statusCode." ".$codeName);
 		echo <<<EOERR
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html><head>

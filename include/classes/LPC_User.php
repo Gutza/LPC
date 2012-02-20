@@ -26,7 +26,7 @@ abstract class LPC_User extends LPC_Base
 
 	var $token_delay=7; // token validity, in days (you can use fractions if you want shorter delays)
 	var $token_email_email='nobody'; // The originating e-mail address for token-related messages
-	var $token_email_name=LPC_project_full_name; // The originating name for token-related messages
+	var $token_email_name=LPC_project_name; // The originating name for token-related messages
 	var $token_invite_subject="lpcAuthInviteSubject"; // The translation key for the subject
 	var $token_invite_body="lpcAuthInviteBody"; // The translation key for the body
 	var $token_recover_subject="lpcAuthRecoverSubject";

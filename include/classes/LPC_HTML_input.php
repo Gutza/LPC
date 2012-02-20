@@ -10,7 +10,10 @@ class LPC_HTML_input extends LPC_HTML_uid
 			$this->setAttr('type',$type);
 		if (!empty($name))
 			$this->setAttr('name',$name);
-		if (!empty($value))
+		if (is_array($value)) {
+			if (isset($value[$name]))
+				$this->setAttr('value',$value[$name]);
+		} elseif (!empty($value))
 			$this->setAttr('value',$value);
 	}
 }

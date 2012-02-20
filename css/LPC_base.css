@@ -45,13 +45,17 @@ table.spaced {
 	margin-bottom:10px;
 }
 
-.th-explain {
+th div.explain {
 	font-weight: normal;
 	font-size: 80%;
 }
 
 table.default th.simple {
 	font-weight: normal;
+}
+
+table.two-column td {
+	width: 50%;
 }
 
 table.numeric td, td.numeric, th.numeric {
