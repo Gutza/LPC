@@ -50,7 +50,7 @@ abstract class LPC_Menu extends LPC_HTML_widget
 		$menu=new LPC_HTML_node("UL");
 		$menu->attributes=array("class"=>"sf-menu");
 		$menu->a($this->processNodes($this->structure));
-		$this->a($menu);
+		$this->a($menu,'menu');
 	}
 
 	function processNodes($structure,$level=0)
