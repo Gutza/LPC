@@ -1855,6 +1855,23 @@ abstract class LPC_Object implements Serializable
 	// ----------------------------------
 	//        AUXILIARY METHODS
 	// ----------------------------------
+	// {{{ cloneObject()
+	/**
+	* Creates a clone of this object, by populating all attributes from this
+	* object in the new one.
+	*
+	* Returns the clone. The clone doesn't have an ID set and it is not
+	* automatically saved.
+	*/
+	function cloneObject()
+	{
+		$class=get_class($this);
+		$clone=new $class();
+		foreach($this->dataStructure['fields'] as $attName=>$attMeta)
+			$clone->setAttr($attName,$this->getAttr($attName));
+		return $clone;
+	}
+	// }}}
 	// {{{ fillDataStructure()
 	/**
 	 * Auxiliary method which pre-digests ${@link dataStructure}.
@@ -3177,7 +3194,7 @@ fclose($fp);
 			'where'=>array(
 				'type'=>'AND',
 				'conditions'=>array(
-					$my_fld."=".$myId
+					$tbl.'.'.$my_fld."=".$myId
 				),
 			),
 		);
