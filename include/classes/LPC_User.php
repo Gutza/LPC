@@ -50,13 +50,12 @@ abstract class LPC_User extends LPC_Base
 
 	public static function setCurrent($object)
 	{
-		if (isset(self::$currentInstance)) {
-			return false;
-		}
 		if (!isset($object) || !$object->id) {
-			unset($_SESSION['LPC']['current_user_id']);
+			self::$currentInstance=NULL;
+			$_SESSION['LPC']['current_user_id']=0;
 			return true;
 		}
+
 		self::$currentInstance=$object;
 		$_SESSION['LPC']['current_user_id']=$object->id;
 		return true;
@@ -66,9 +65,7 @@ abstract class LPC_User extends LPC_Base
 	{
 		if (!self::getCurrent(true))
 			return;
-
-		self::$currentInstance=NULL;
-		session_destroy();
+		self::setCurrent();
 	}
 
 	/**
