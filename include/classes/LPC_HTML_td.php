@@ -27,7 +27,7 @@ class LPC_HTML_td extends LPC_HTML_widget
 		}
 
 		$meta=new LPC_HTML_node('span');
-		$meta->setAttr('class',$this->metaClass);
+		$meta->setClass($this->metaClass);
 		$meta->setAttr('style','display:none');
 		$meta->compact=true;
 		$meta->a(LPC_JSON::encode($this->excel));
