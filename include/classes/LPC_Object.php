@@ -634,20 +634,16 @@ abstract class LPC_Object implements Serializable
 	{
 		$obj_type=$this->dataStructure['fields'][$attName]['link_class'];
 		if (!$obj_type) {
-			if ($flex=$this->getFlexObject($attName)) {
+			if ($flex=$this->getFlexObject($attName))
 				return $flex;
-			}
+
 			throw new InvalidArgumentException("Link $attName not available in attribute list!");
 		}
 		$obj_id=$this->getAttr($attName);
-		if (!$obj_id) {
+		if (!$obj_id)
 			return NULL;
-		}
-		//echo("Instantiating an $obj_type");
-		//%% LFX_include_class($obj_type);
-		$tmp=&new $obj_type();
-		$tmp->id=$obj_id;
-		return $tmp;
+
+		return new $obj_type($obj_id);
 	}
 	// }}}
 	// {{{ getFlexObject()
@@ -662,12 +658,12 @@ abstract class LPC_Object implements Serializable
 	function getFlexObject($attName)
 	{
 		$att_val=$this->getAttr($attName);
-		if (!$att_val) {
+		if (!$att_val || is_numeric($att_val))
 			return NULL;
-		}
-		if (!preg_match("/^([a-zA-Z_0-9]+)#([0-9]+)$/",$att_val,$matches)) {
+
+		if (!preg_match("/^([a-zA-Z_0-9]+)#([0-9]+)$/",$att_val,$matches))
 			return NULL;
-		}
+
 		return new $matches[1]($matches[2]);
 	}
 	// }}}
@@ -2877,6 +2873,15 @@ fclose($fp);
 			return true;
 
 		return NULL;
+	}
+	// }}}
+	// {{{ probeLink()
+	function probeLink($attr)
+	{
+		$obj=$this->getObject($attr);
+		if (!$obj)
+			return false;
+		return $obj->probe();
 	}
 	// }}}
 	// {{{ _doLoad()
