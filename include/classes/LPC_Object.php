@@ -1955,7 +1955,9 @@ abstract class LPC_Object implements Serializable
 					$dep['on_mod']='MISTRESS';
 				else
 					$dep['on_mod']='WIFE';
-			}
+			} elseif (!in_array($dep['on_mod'],array('WIFE','MISTRESS','STRANGER')))
+				throw new RuntimeException("Unknown dependency on_mod (".$dep['on_mod'].")!");
+
 			switch($dep['type']) {
 				case 'one':
 					if (empty($dep['class']))
