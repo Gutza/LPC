@@ -88,6 +88,62 @@ CREATE TABLE `LPC_user_membership` (
   KEY `project` (`project`,`member_to`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table `LPC_language`
+--
+
+DROP TABLE IF EXISTS `LPC_language`;
+CREATE TABLE `LPC_language` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT 'unknown',
+  `translated` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `locale_POSIX` varchar(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `locale_POSIX` (`locale_POSIX`),
+  KEY `translated` (`translated`,`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `LPC_i18n_message`
+--
+
+DROP TABLE IF EXISTS `LPC_i18n_message`;
+CREATE TABLE `LPC_i18n_message` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `language` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `message_key` varchar(100) NOT NULL DEFAULT '',
+  `translation` text,
+  PRIMARY KEY (`id`),
+  KEY `message_key` (`message_key`,`language`)
+) ENGINE=MyISAM AUTO_INCREMENT=102 DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `LPC_i18n_reference`
+--
+
+DROP TABLE IF EXISTS `LPC_i18n_reference`;
+CREATE TABLE `LPC_i18n_reference` (
+  `message_key` varchar(100) NOT NULL DEFAULT '',
+  `comment` mediumtext,
+  `system` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`message_key`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `LPC_scaffolding_default`
+--
+
+DROP TABLE IF EXISTS `LPC_scaffolding_default`;
+CREATE TABLE `LPC_scaffolding_default` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `className` varchar(100) NOT NULL DEFAULT '',
+  `language` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `defaultValue` mediumtext,
+  `attName` varchar(100) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `className` (`className`,`attName`,`language`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 SET character_set_client = @saved_cs_client;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
