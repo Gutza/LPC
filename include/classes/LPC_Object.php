@@ -3738,7 +3738,7 @@ fclose($fp);
 	}
 	// }}}
 	// {{{ getScaffoldingFileRow()
-	protected function getScaffoldingFileRow($attName)
+	protected function getScaffoldingFileRow($attName,$options=array())
 	{
 		if (!isset($this->dataStructure['files']))
 			return false;
@@ -3754,8 +3754,11 @@ fclose($fp);
 					$download=" <a href='".LPC_url."/scaffolding/fileDownload.php?c=".
 						get_class($this)."&amp;id=".$this->id."&amp;file=".rawurlencode($fname).
 						"'>"._LS('scaffoldingDownloadFile')."</a>";
+				$desc=$fname;
+				if (empty($options['NO_SQL_DESC']))
+					$desc.="<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt><i>LPC file</i></tt></div>";
 				return new LPC_HTML_form_row(array(
-					'label'=>$fname."<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt><i>LPC file</i></tt></div>",
+					'label'=>$desc,
 					'input'=>"<input type='file' name='file[".$fname."]'>".$download,
 				));
 			}
@@ -3764,9 +3767,9 @@ fclose($fp);
 	}
 	// }}}
 	// {{{ getScaffoldingEditRow()
-	public function getScaffoldingEditRow($attName)
+	public function getScaffoldingEditRow($attName,$options=array())
 	{
-		$row=$this->getScaffoldingFileRow($attName);
+		$row=$this->getScaffoldingFileRow($attName,$options);
 		if ($row!==false)
 			return $row;
 
@@ -3844,8 +3847,10 @@ fclose($fp);
 				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrF($attName)."\" style='width:100%'>".$link;
 		}
 		$attDesc=$attName;
-		$rs=$this->query("DESCRIBE ".$this->getTableName()." ".$this->getFieldName($attName,true));
-		$attDesc.="<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt>".htmlspecialchars($rs->fields['Type'])."</tt></div>";
+		if (empty($options['NO_SQL_DESC'])) {
+			$rs=$this->query("DESCRIBE ".$this->getTableName()." ".$this->getFieldName($attName,true));
+			$attDesc.="<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt>".htmlspecialchars($rs->fields['Type'])."</tt></div>";
+		}
 
 		$row=new LPC_HTML_form_row(array(
 			'label'=>$attDesc,
