@@ -1386,15 +1386,13 @@ abstract class LPC_Object implements Serializable
 	/**
 	* Checks whether this object's file entry named $fileName
 	* has been filled in with data.
-	* @return boolean true if it has been filled in, false otherwise
+	* @return mixed false if invalid, the length of the file content otherwise
 	*/
 	function isPopulatedFile($fileName)
 	{
 		if (!$this->isValidFile($fileName))
 			return false;
-		if (!strlen($this->getAttr($this->dataStructure['files'][$fileName]['content'])))
-			return false;
-		return true;
+		return strlen($this->getAttr($this->dataStructure['files'][$fileName]['content']));
 	}
 	// }}}
 // }}}
