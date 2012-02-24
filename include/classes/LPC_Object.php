@@ -3793,7 +3793,7 @@ fclose($fp);
 			$type=$this->dataStructure['fields'][$attName]['type'];
 		switch($type) {
 			case 'integer':
-				$input="<input type='text' name='attr[$attName]' size='6' value=\"".$this->getAttrF($attName)."\">".$link;
+				$input="<input type='text' name='attr[$attName]' size='6' value=\"".$this->getAttrH($attName)."\">".$link;
 				break;
 			case 'date':
 				$input="<input type='text' name='attr[$attName]' value=\"".date('Y-m-d',$this->getAttr($attName))."\" class='input-date'>";
@@ -3842,7 +3842,7 @@ fclose($fp);
 				}
 				break;
 			default:
-				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrF($attName)."\" style='width:100%'>".$link;
+				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrH($attName)."\" style='width:100%'>".$link;
 		}
 		$attDesc=$attName;
 		if (empty($options['NO_SQL_DESC'])) {
