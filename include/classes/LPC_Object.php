@@ -1104,6 +1104,8 @@ abstract class LPC_Object implements Serializable
 	 */
 	function touchAttr($attName)
 	{
+		if (!isset($this->attr_flags[$attName]))
+			throw new RuntimeException("The attribute to touch ($attName) was never defined in this class!");
 		$this->attr_flags[$attName]['modified']=true;
 		$this->modified=true;
 		return true;
