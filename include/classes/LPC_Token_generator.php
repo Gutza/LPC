@@ -13,6 +13,15 @@ class LPC_Token_generator
 	var $method="sha1"; // the only one supported right now -- 40 characters long
 	var $encoding="base64"; // plain or base64; applied before trimming
 	var $length=40; // Specifies the maximum length
+	var $options=0;
+
+	const OPT_NO_ZERO=1;
+	const OPT_NO_O=2;
+	const OPT_NO_ONE=4;
+	const OPT_NO_L=8;
+	const OPT_ALL_UPPERCASE=16;
+	const OPT_ALL_LOWERCASE=32;
+
 	private $object;
 	private $field;
 
@@ -46,6 +55,24 @@ class LPC_Token_generator
 		$token=$this->encode(sha1(rand().microtime()));
 		if ($this->length<strlen($token))
 			$token=substr($token,0,$this->length);
+		$token=$this->processOptions($token);
+		return $token;
+	}
+
+	function processOptions($token)
+	{
+		if ($this->options & self::OPT_NO_ZERO)
+			$token=str_replace('0','Z',$token);
+		if ($this->options & self::OPT_NO_O)
+			$token=str_replace('O','E',str_replace('o','m',$token));
+		if ($this->options & self::OPT_NO_ONE)
+			$token=str_replace('1','X',$token);
+		if ($this->options & self::OPT_NO_L)
+			$token=str_replace('L','U',str_replace('o','t',$token));
+		if ($this->options & self::OPT_ALL_UPPERCASE)
+			$token=strtoupper($token);
+		elseif ($this->options & self::OPT_ALL_LOWERCASE)
+			$token=strtolower($token);
 		return $token;
 	}
 
