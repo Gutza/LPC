@@ -40,6 +40,8 @@ abstract class LPC_Object implements Serializable
 	 */
 	var $scaffoldingHiddenAttributes=array();
 
+	static $scaffoldingDesc=array();
+
 	/**
 	 * Field mappings for user-defined fields
 	 */
@@ -3778,9 +3780,14 @@ fclose($fp);
 						"'>"._LS('scaffoldingDownloadFile')."</a>";
 					$delete="<div><input type='checkbox' name='del_file[".$fname."]' value='1' id='del_file_".$fname."'> <label for='del_file_".$fname."'>"._LH('scaffoldingDeleteFile')."</label></div>";
 				}
-				$desc=$fname;
+				if (isset($this::$scaffoldingDesc[$fname]))
+					$desc=_LS($this::$scaffoldingDesc[$fname]['name']);
+				else
+					$desc=$fname;
+				if (isset($this::$scaffoldingDesc[$fname]['desc']) && empty($options['NO_LPC_DESC']))
+					$desc.="<div style='font-weight:normal; font-size:80%'>"._LS($this::$scaffoldingDesc[$fname]['desc'])."</div>";
 				if (empty($options['NO_SQL_DESC']))
-					$desc.="<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt><i>LPC file</i></tt></div>";
+					$desc.="<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt><i>"._LS('scaffoldingFileDesc')."</i></tt></div>";
 				return new LPC_HTML_form_row(array(
 					'label'=>$desc,
 					'input'=>"<input type='file' name='file[".$fname."]'>".$download.$delete,
@@ -3870,7 +3877,12 @@ fclose($fp);
 			default:
 				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrH($attName)."\" style='width:100%'>".$link;
 		}
-		$attDesc=$attName;
+		if (isset($this::$scaffoldingDesc[$attName]))
+			$attDesc=_LS($this::$scaffoldingDesc[$attName]['name']);
+		else
+			$attDesc=$attName;
+		if (isset($this::$scaffoldingDesc[$attName]['desc']) && empty($options['NO_LPC_DESC']))
+			$attDesc.="<div style='font-weight:normal; font-size:80%'>"._LS($this::$scaffoldingDesc[$attName]['desc'])."</div>";
 		if (empty($options['NO_SQL_DESC'])) {
 			$rs=$this->query("DESCRIBE ".$this->getTableName()." ".$this->getFieldName($attName,true));
 			$attDesc.="<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt>".htmlspecialchars($rs->fields['Type'])."</tt></div>";
