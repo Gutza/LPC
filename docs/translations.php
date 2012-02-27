@@ -310,13 +310,13 @@ It is recommended that you do not overwrite this translation just in order to cu
         0 => 
         array (
           'language' => '2',
-          'translation' => 'Doamnă/domnule {0},
+          'translation' => 'Doamna/domnule {0},
 
-Bun venit la {2}! Pentru a finaliza procesul de înregistrare, vă rugăm apăsaţi pe legătura de dedesubt, sau copiaţi-o în bara de adrese a navigatorului dumneavoastră web:
+Bun venit la {2}! Pentru a finaliza procesul de inregistrare, va rugam apasati pe legatura de dedesubt, sau copiati-o in bara de adrese a navigatorului dumneavoastra web:
 
 {3}
 
-Vă mulţumim,
+Va multumim,
 Echipa {1}',
         ),
       ),
