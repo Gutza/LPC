@@ -31,7 +31,6 @@ foreach($inData['languages'] as $langData) {
 	$lang->save();
 	$langMapping[$langData['id']]=$lang->id;
 }
-var_dump($langMapping);
 
 // Messages
 foreach($inData['messages'] as $msgKey=>$msgData) {
@@ -71,3 +70,5 @@ foreach($inData['messages'] as $msgKey=>$msgData) {
 		$msg->save();
 	}
 }
+
+echo "Clean exit, all messages from $filename imported into the local database.\n";
