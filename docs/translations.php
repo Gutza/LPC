@@ -82,6 +82,11 @@ return array (
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => '(no name)',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => '(nume indisponibil)',
         ),
@@ -94,6 +99,11 @@ return array (
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Reset the password recovery request',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Anulează cererea de recuperare a parolei',
@@ -108,6 +118,11 @@ return array (
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'If there is any registered user with the e-mail address you have indicated (<tt>{0}</tt>) then the message was sent successfully.',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Dacă există vreun utilizator înregistrat care foloseşte adresa e-mail pe care aţi indicat-o (<tt>{0}</tt>) atunci mesajul a fost trimis cu succes.',
         ),
@@ -120,6 +135,11 @@ return array (
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Congratulations, you almost finished the registration process! Please enter the password you want to use in the form below.',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Felicitări, aproape aţi terminat procesul de înregistrare! Vă rugăm introduceţi parola pe care doriţi să o folosiţi în formularul de dedesubt.',
@@ -134,6 +154,11 @@ return array (
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Create account',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Creare cont',
         ),
@@ -146,6 +171,11 @@ return array (
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Account creation',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Creare cont',
@@ -160,6 +190,11 @@ return array (
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'The password recovery request was successfully reset.',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Cererea de recuperare a parolei a fost anulată cu succes.',
         ),
@@ -172,6 +207,11 @@ return array (
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'The password was changed successfully. You have already been authenticated as {0}, and in the future you can authenticate with the password you just entered.',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Parola a fost schimbată cu succes. Aţi fost deja autentificat ca {0}, iar în viitor vă puteţi autentifica cu parola pe care tocmai aţi introdus-o.',
@@ -186,6 +226,11 @@ return array (
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'E-mail address',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Adresa e-mail',
         ),
@@ -199,6 +244,11 @@ return array (
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'You are already authenticated!',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Deja sunteţi autentificat!',
         ),
@@ -211,6 +261,11 @@ return array (
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Please make sure you type exactly the same password twice!',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Vă rugăm asiguraţi-vă că scrieţi exact aceeaşi parolă de două ori!',
@@ -245,6 +300,11 @@ Be advised this is always related to an existing account, and properly identifie
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'The password is too short! Please make sure the password you choose is at least {0} characters long.',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Parola este prea scurtă! Vă rugăm asiguraţi-vă că parola pe care o alegeţi are cel puţin {0} caractere.',
         ),
@@ -258,6 +318,11 @@ Be advised this is always related to an existing account, and properly identifie
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Please make sure the password you choose contains at least one letter!',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Vă rugăm asiguraţi-vă că parola pe care o alegeţi conţine cel puţin o literă!',
         ),
@@ -270,6 +335,11 @@ Be advised this is always related to an existing account, and properly identifie
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Please make sure the password you choose contains at least one number!',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Vă rugăm asiguraţi-vă că parola pe care o alegeţi conţine cel puţin o cifră!',
@@ -309,6 +379,18 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Dear {0},
+
+Welcome to {2}! In order to finalize the registration process please click on the link below, or copy it to your web browser\'s address bar:
+
+{3}
+
+Thank you,
+The {1} team',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Doamna/domnule {0},
 
@@ -331,6 +413,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'New {0} account',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Cont nou {0}',
         ),
@@ -344,6 +431,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Log in',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Autentificare',
         ),
@@ -351,11 +443,16 @@ It is recommended that you do not overwrite this translation just in order to cu
     ),
     'lpcAuthPassword' => 
     array (
-      'comment' => 'The label for the authentication field "password"',
+      'comment' => 'The label for the authentication field "Password"',
       'system' => '1',
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Password',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Parola',
@@ -370,6 +467,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Confirm the password',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Confirmaţi parola',
         ),
@@ -382,6 +484,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Enter the same password again, for confirmation',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Introduceţi din nou aceeaşi parolă pentru confirmare',
@@ -396,6 +503,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Enter the new password you want to use',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Introduceţi noua parolă pe care doriţi să o utilizaţi',
         ),
@@ -408,6 +520,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'I lost my password',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Mi-am pierdut parola',
@@ -429,6 +546,18 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Dear {0},
+
+Someone requested the password recovery for the account associated with your e-mail address ({4}). Please click on the link below regardless of whether you have requested it or not (you will have the opportunity to indicate that at the link):
+
+{3}
+
+Thank you,
+The {1} team',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Doamnă/domnule {0},
 
@@ -449,6 +578,11 @@ Echipa {1}',
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Change the password',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Schimbă parola',
         ),
@@ -461,6 +595,11 @@ Echipa {1}',
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'E-mail address',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Adresa e-mail',
@@ -477,6 +616,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Password recovery for {0}',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Recuperare parola {0}',
         ),
@@ -490,6 +634,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Password recovery',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Recuperare parolă',
         ),
@@ -502,6 +651,12 @@ It is recommended that you do not overwrite this translation just in order to cu
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => '<p>Please fill in the form below in order to change your password.</p>
+<p>If you haven\'t requested the password recovery, please click on the &quot;<i>{0}</i>&quot; button at the end of the form (in this case you don\'t have to fill in the form).</p>',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => '<p>Vă rugăm completaţi formularul de dedesubt pentru a vă schimba parola.</p>
@@ -517,6 +672,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Change the password',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Schimbă parola',
         ),
@@ -529,6 +689,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Password reset',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Schimbare parolă',
@@ -543,6 +708,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Authentication',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Autentificare',
         ),
@@ -555,6 +725,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'The password must contain at least one letter.',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Parola trebuie să conţină cel puţin o literă.',
@@ -569,6 +744,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'Password validation conditions',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Condiţii de validare a parolei',
         ),
@@ -582,6 +762,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       array (
         0 => 
         array (
+          'language' => '1',
+          'translation' => 'The password must be at least {0} characters long.',
+        ),
+        1 => 
+        array (
           'language' => '2',
           'translation' => 'Parola trebuie să conţină cel puţin {0} caractere.',
         ),
@@ -594,6 +779,11 @@ It is recommended that you do not overwrite this translation just in order to cu
       'translations' => 
       array (
         0 => 
+        array (
+          'language' => '1',
+          'translation' => 'The password must contain at least one number.',
+        ),
+        1 => 
         array (
           'language' => '2',
           'translation' => 'Parola trebuie să conţină cel puţin o cifră.',
@@ -885,6 +1075,24 @@ It is recommended that you do not overwrite this translation just in order to cu
         array (
           'language' => '2',
           'translation' => 'Modifică {0} #{1}',
+        ),
+      ),
+    ),
+    'scaffoldingFileDesc' => 
+    array (
+      'comment' => 'The description shown for LPC files.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'LPC file',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Fişier LPC',
         ),
       ),
     ),
