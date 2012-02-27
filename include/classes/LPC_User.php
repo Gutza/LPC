@@ -504,11 +504,11 @@ EOJS;
 
 	function isSuperuser($project=0,$id=0)
 	{
+		$userID=$this->defaultID($id);
 		if ($this->isHyperuser($userID))
 			return true;
 
 		static $local_cache=array(); // A local cache, used just for runtime
-		$userID=$this->defaultID($id);
 		if (!isset($local_cache[$userID]))
 			$local_cache[$userID]=array();
 
