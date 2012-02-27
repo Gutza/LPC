@@ -1397,6 +1397,27 @@ abstract class LPC_Object implements Serializable
 		return strlen($this->getAttr($this->dataStructure['files'][$fileName]['content']));
 	}
 	// }}}
+	// {{{ deleteFile()
+	function deleteFile($fileName)
+	{
+		if (!$this->isPopulatedFile($fileName))
+			return;
+		$meta=$this->dataStructure['files'][$fileName];
+		foreach($meta as $type=>$attr)
+			switch($type) {
+				case 'content':
+				case 'mime':
+				case 'name':
+					$this->setAttr($attr,"");
+					break;
+				case 'date':
+					$this->setAttr($attr,strtotime('1975-01-24'));
+					break;
+				default:
+					throw new RuntimeException("Unknown file entry type (\"".$type."\") for file key \"".$key."\"");
+			}
+	}
+	// }}}
 // }}}
 // {{{ LISTING METHODS
 	// ----------------------------------
@@ -3749,17 +3770,20 @@ fclose($fp);
 					continue;
 				if ($type!='content')
 					return "";
+				$delete="";
 				$download="";
-				if ($this->isPopulatedFile($fname))
+				if ($this->isPopulatedFile($fname)) {
 					$download=" <a href='".LPC_url."/scaffolding/fileDownload.php?c=".
 						get_class($this)."&amp;id=".$this->id."&amp;file=".rawurlencode($fname).
 						"'>"._LS('scaffoldingDownloadFile')."</a>";
+					$delete="<div><input type='checkbox' name='del_file[".$fname."]' value='1' id='del_file_".$fname."'> <label for='del_file_".$fname."'>"._LH('scaffoldingDeleteFile')."</label></div>";
+				}
 				$desc=$fname;
 				if (empty($options['NO_SQL_DESC']))
 					$desc.="<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt><i>LPC file</i></tt></div>";
 				return new LPC_HTML_form_row(array(
 					'label'=>$desc,
-					'input'=>"<input type='file' name='file[".$fname."]'>".$download,
+					'input'=>"<input type='file' name='file[".$fname."]'>".$download.$delete,
 				));
 			}
 		}
@@ -3917,9 +3941,18 @@ fclose($fp);
 	// {{{ processScaffoldingFiles()
 	protected function processScaffoldingFiles()
 	{
+		$deleted=array();
+		if (!empty($_POST['del_file'])) {
+			foreach($_POST['del_file'] as $key=>$tmp) {
+				$this->deleteFile($key);
+				$deleted[$key]=true;
+			}
+		}
 		if (empty($_FILES) || empty($_FILES['file']))
 			return;
 		foreach($_FILES['file']['tmp_name'] as $key=>$tmp_name) {
+			if (isset($deleted[$key]))
+				continue;
 			if (!is_uploaded_file($tmp_name))
 				continue;
 			$this->processScaffoldingFile($key);
