@@ -816,6 +816,24 @@ It is recommended that you do not overwrite this translation just in order to cu
         ),
       ),
     ),
+    'scaffoldingDeleteFile' => 
+    array (
+      'comment' => 'The label of the "delete file" checkbox shown in the scaffolding interface.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Delete this file',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Şterge acest fişier',
+        ),
+      ),
+    ),
     'scaffoldingDownloadFile' => 
     array (
       'comment' => 'The label of the link to a file download in the scaffolding object list.',
