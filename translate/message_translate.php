@@ -83,7 +83,7 @@ $t->a(new LPC_HTML_form_row(array(
 )));
 $t->a(new LPC_HTML_form_row(array(
 	'label'=>'Message in reference language ('.$reference_lang->getAttrH('name').')',
-	'input'=>$ref_trans->getAttrH('translation'),
+	'input'=>nl2br($ref_trans->getAttrH('translation')),
 )));
 $t->a(new LPC_HTML_form_row(array(
 	'label'=>'Translation to target language ('.$target_lang->getAttrH('name').')',
