@@ -8,7 +8,7 @@ return array (
     0 => 
     array (
       'id' => '1',
-      'name' => 'English (US)',
+      'name' => 'English',
       'locale_POSIX' => 'en_US.UTF-8',
     ),
     1 => 
