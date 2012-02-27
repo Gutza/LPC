@@ -32,6 +32,9 @@ function _LH($message)
 */
 function _LS($message)
 {
+	if (!strlen($message))
+		return "";
+
 	$args=func_get_args();
 	array_shift($args);
 
