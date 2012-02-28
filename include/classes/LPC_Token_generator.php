@@ -92,7 +92,7 @@ class LPC_Token_generator
 	{
 		$data='';
 		while(strlen($plain_data)) {
-			$data.=chr(substr($plain_data,0,2));
+			$data.=chr(hexdec(substr($plain_data,0,2)));
 			$plain_data=substr($plain_data,2);
 		}
 		return $data;
