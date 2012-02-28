@@ -3829,7 +3829,14 @@ fclose($fp);
 				$input="<input type='text' name='attr[$attName]' size='6' value=\"".$this->getAttrH($attName)."\">".$link;
 				break;
 			case 'date':
-				$input="<input type='text' name='attr[$attName]' value=\"".date('Y-m-d',$this->getAttr($attName))."\" class='input-date'>";
+				if ($val=$this->getAttr($attName))
+					$val=date('Y-m-d',$val);
+				$input="<input type='text' name='attr[$attName]' value=\"".$val."\" class='input-date'>";
+				break;
+			case 'datetime':
+				if ($val=$this->getAttr($attName))
+					$val=date('Y-m-d H:i',$val);
+				$input="<input type='text' name='attr[$attName]' value=\"".$val."\" class='input-date'>";
 				break;
 			case 'longtext':
 			case 'html':
@@ -3902,6 +3909,16 @@ fclose($fp);
 		foreach($_POST['attr'] as $attName=>$attValue) {
 			if (is_array($attValue))
 				$attValue=implode(",",$attValue);
+			$type="";
+			if (isset($this->dataStructure['fields'][$attName]['type']))
+				$type=$this->dataStructure['fields'][$attName]['type'];
+			switch($type) {
+				case 'datetime':
+				case 'date':
+					if ($attValue)
+						$attValue=strtotime($attValue);
+					break;
+			}
 			$this->setAttr($attName,$attValue);
 		}
 	}
