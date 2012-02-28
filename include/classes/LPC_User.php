@@ -48,9 +48,9 @@ abstract class LPC_User extends LPC_Base
 		");
 	}
 
-	public static function setCurrent($object)
+	public static function setCurrent($object=NULL)
 	{
-		if (!isset($object) || !$object->id) {
+		if (empty($object) || !$object->id) {
 			self::$currentInstance=NULL;
 			$_SESSION['LPC']['current_user_id']=0;
 			return true;
