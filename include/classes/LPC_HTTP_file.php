@@ -51,6 +51,9 @@ class LPC_HTTP_file
 		if (!$object->isValidFile($fileName))
 			throw new RuntimeException("File identifier is invalid (".$fileName.")!");
 
+		if (!$object->isPopulatedFile($fileName))
+			return false;
+
 		$this->content=$object->getAttr($object->dataStructure['files'][$fileName]['content']);
 		if (isset($object->dataStructure['files'][$fileName]['mime']))
 			$this->mimeType=$object->getAttr($object->dataStructure['files'][$fileName]['mime']);
@@ -58,6 +61,8 @@ class LPC_HTTP_file
 			$this->fileName=$object->getAttr($object->dataStructure['files'][$fileName]['name']);
 		if (isset($object->dataStructure['files'][$fileName]['date']))
 			$this->date=$object->getAttr($object->dataStructure['files'][$fileName]['date']);
+
+		return true;
 	}
 
 	/**
