@@ -844,6 +844,24 @@ It is recommended that you do not overwrite this translation just in order to cu
         ),
       ),
     ),
+    'scaffoldingBackToParent' => 
+    array (
+      'comment' => 'The label of the link back to the parent object when adding dependencies. Takes two parameters, the class of the parent and its id.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => '&uarr; Back to {0}#{1} &uarr;',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => '&uarr; Înapoi la {0}#{1} &uarr;',
+        ),
+      ),
+    ),
     'scaffoldingBooleanNo' => 
     array (
       'comment' => 'The label for boolean "No" in the scaffolding edit interface.',

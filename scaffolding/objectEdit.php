@@ -23,6 +23,9 @@ if (isset($_GET['rt']))
 else
 	$return="[<a href='objectList.php?c=".rawurlencode($class)."'>"._LS('scaffoldingSwitchObject')."</a>]";
 
+if (isset($_GET['rc']) && isset($_GET['rid']))
+	$return.=" &bull; [<a href='?c=".$_GET['rc']."&amp;id=".$_GET['rid']."'>"._LS('scaffoldingBackToParent',htmlspecialchars($_GET['rc']),htmlspecialchars($_GET['rid']))."</a>]";
+
 $id=0;
 if (isset($_POST['LPC_scaffolding_id']))
 	$id=$_POST['LPC_scaffolding_id'];
