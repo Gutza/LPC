@@ -1420,6 +1420,21 @@ abstract class LPC_Object implements Serializable
 			}
 	}
 	// }}}
+	// {{{ getSnapshot()
+	/**
+	* Exports all of this object's fields into an associative array, which it then
+	* returns.
+	*
+	* You can load a snapshot using {@link setAttrs()}.
+	*/
+	function getSnapshot()
+	{
+		$result=array();
+		foreach($this->dataStructure['fields'] as $attName=>$attMeta)
+			$result[$attName]=$this->getAttr($attName);
+		return $result;
+	}
+	// }}}
 // }}}
 // {{{ LISTING METHODS
 	// ----------------------------------
