@@ -100,6 +100,21 @@ if (withAttach()) {
 	$skipAttr=$link->dataStructure['depend'][$rd]['attr'];
 }
 
+if ($obj->id && !empty($obj->dataStructure['depend'])) {
+	$depDiv=new LPC_HTML_node('p');
+	$p->a($depDiv);
+	$links=array();
+	foreach($obj->dataStructure['depend'] as $depName=>$depData) {
+		$suffix="";
+		if ($depData['type']=='many')
+			$suffix.=" <a href='objectMany.php?c=".rawurlencode($depData['class'])."&amp;rd=".rawurlencode($depName)."&amp;rc=".rawurlencode($class)."&amp;rid=".rawurlencode($obj->id)."&amp;rt=".rawurlencode($_SERVER['REQUEST_URI'])."'>☞</a>";
+		if ($depCount=$obj->getLinks($depName,NULL,false,true,$obj->id))
+			$suffix.=" (<a href='objectList.php?c=".rawurlencode($depData['class'])."&amp;rd=".rawurlencode($depName)."&amp;rc=".rawurlencode($class)."&amp;rid=".rawurlencode($obj->id)."'>".$depCount."</a>)";
+		$links[]="[<a href='objectEdit.php?c=".rawurlencode($depData['class'])."&amp;rd=".rawurlencode($depName)."&amp;rc=".rawurlencode($class)."&amp;rid=".rawurlencode($obj->id)."'>"._LS('scaffoldingCreateDependency',htmlspecialchars($depName))."</a>".$suffix."]";
+	}
+	$depDiv->a(implode(" &bull; ",$links));
+}
+
 $form=new LPC_HTML_form($_SERVER['REQUEST_URI'],'post',true);
 $p->a($form);
 $form->addSK();
