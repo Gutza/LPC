@@ -1937,34 +1937,35 @@ abstract class LPC_Object implements Serializable
 	{
 		$myClass=get_class($this);
 		// Default ID field
-		if (empty($this->dataStructure['id_field'])) {
+		if (empty($this->dataStructure['id_field']))
 			$this->dataStructure['id_field']='id';
-		}
-		if (empty($this->dataStructure['table_name'])) {
+
+		if (empty($this->dataStructure['table_name']))
 			throw new RuntimeException("Malformed data structure: no table specified! (array key 'table_name' in \$dataStructure)");
-		}
+
+		// Fill in default values for optional stuff
+		if (!isset($this->dataStructure['files']))
+			$this->dataStructure['files']=array();
+		if (!isset($this->dataStructure['depend']))
+			$this->dataStructure['depend']=array();
+
 		// We'll start by filling in the default field name for attributes
 		// which don't define it explicitly  
 		$fields=$this->dataStructure['fields'];
 		$allFlags=array('NULL','sqlDate','forceSave','noLogging','trim');
 		foreach($fields as $attName=>$dataDef) {
-			if (empty($fields[$attName]['fld_name'])) {
+			if (empty($fields[$attName]['fld_name']))
 				$fields[$attName]['fld_name']=$attName;
-			}
-			if (!isset($fields[$attName]['flags'])) {
+
+			if (!isset($fields[$attName]['flags']))
 				$fields[$attName]['flags']=array();
-			}
-			foreach($allFlags as $flag1) {
-				if (!isset($fields[$attName]['flags'][$flag1])) {
+
+			foreach($allFlags as $flag1)
+				if (!isset($fields[$attName]['flags'][$flag1]))
 					$fields[$attName]['flags'][$flag1]=false;
-				}
-			}
 		}
 		$this->dataStructure['fields']=$fields;
 
-		if (!isset($this->dataStructure['depend'])) {
-			$this->dataStructure['depend']=array();
-		}
 		// Now we need to work on the dependencies. But first let's read in
 		// the foreign dependencies, if any.
 		$foreignDeps=LPC_Foreign_dependency_manager::getDependencies($myClass);
