@@ -21,12 +21,12 @@ class LPC_HTML_form extends LPC_HTML_node
 	*/
 	function addSK($name='__LPC_SK')
 	{
-		$this->p("<input type='hidden' name=\"".addslashes($name)."\" value='".LPC_Session_key::get()."'>");
+		$this->p("<input type='hidden' name=\"".addslashes($name)."\" value='".session_id()."'>");
 	}
 
 	function checkSK($name='__LPC_SK')
 	{
-		return !empty($_REQUEST[$name]) && $_REQUEST[$name]==LPC_Session_key::get();
+		return !empty($_REQUEST[$name]) && $_REQUEST[$name]==session_id();
 	}
 
 	function enforceSK($name='__LPC_SK')

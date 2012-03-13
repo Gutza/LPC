@@ -3762,7 +3762,7 @@ fclose($fp);
 		$row->a($td);
 		$td->a("[<a href='objectEdit.php?c=".get_class($this)."&amp;id=".$id."&amp;rt=".rawurlencode($_SERVER['REQUEST_URI'])."'>"._LS('scaffoldingEditAction')."</a>]");
 		$td->a("&bull;");
-		$td->a("[<a href='objectDelete.php?c=".get_class($this)."&amp;id=".$id."&amp;k=".LPC_Session_key::get()."'>"._LS('scaffoldingDeleteAction')."</a>]");
+		$td->a("[<a href='objectDelete.php?c=".get_class($this)."&amp;id=".$id."&amp;k=".session_id()."'>"._LS('scaffoldingDeleteAction')."</a>]");
 		foreach($this->dataStructure['depend'] as $depName=>$depData) {
 			$td->a("&bull;");
 			$suffix="";

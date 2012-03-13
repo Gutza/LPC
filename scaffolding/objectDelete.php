@@ -32,6 +32,6 @@ if (
 
 if (
 	isset($_GET['k']) &&
-	$_GET['k']==LPC_Session_key::get()
+	$_GET['k']==session_id()
 )
 	$obj->processScaffoldingDelete();
