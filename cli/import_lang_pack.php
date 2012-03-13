@@ -72,3 +72,5 @@ foreach($inData['messages'] as $msgKey=>$msgData) {
 }
 
 echo "Clean exit, all messages from $filename imported into the local database.\n";
+if (defined('LPC_CACHE_TYPE') && in_array(LPC_CACHE_TYPE,array('session','apc')))
+	echo "WARNING! You're using ".LPC_CACHE_TYPE." caching, which means that messages updated by this import (if any) might still be cached in the old form!\n";
