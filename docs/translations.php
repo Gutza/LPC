@@ -70,7 +70,7 @@ return array (
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Eroare a cheiei de sesiun! Fie aţi încercat să continuaţi o sesiune mai veche sau, dacă veniţi aici de la o sursă externă (website, e-mail), cineva încearcă să se folosească în mod abuziv de drepturile dumneavoastră.',
+          'translation' => 'Eroare a cheiei de sesiune! Fie aţi încercat să continuaţi o sesiune mai veche sau, dacă veniţi aici de la o sursă externă (website, e-mail), cineva încearcă să se folosească în mod abuziv de drepturile dumneavoastră.',
         ),
       ),
     ),
