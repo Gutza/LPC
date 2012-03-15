@@ -181,6 +181,7 @@ abstract class LPC_Menu extends LPC_HTML_widget
 
 	function noPermission($atom)
 	{
+		$u=LPC_User::getCurrent(); // Let's make sure you're logged in
 		header('HTTP/1.1 403 Forbidden');
 		echo $this->noPermMessage;
 		trigger_error("LPC: Access denied",E_USER_WARNING);
