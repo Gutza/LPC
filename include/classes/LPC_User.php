@@ -75,32 +75,33 @@ abstract class LPC_User extends LPC_Base
 	*/
 	public static function getCurrent($info=false)
 	{
-		if (isset(self::$currentInstance)) {
+		// Do we know the user from this page?
+		if (isset(self::$currentInstance))
 			return self::$currentInstance;
-		}
+
+		// Do we know the user from the session?
 		if (isset($_SESSION['LPC']['current_user_id'])) {
 			$u=self::newUser($_SESSION['LPC']['current_user_id']);
-			if ($u->probe())
+			if ($u->probe()) {
 				self::setCurrent($u);
-		}
-		if (isset(self::$currentInstance)) {
-			return self::$currentInstance;
-		}
-		if ($info) {
-			return NULL;
-		}
-		$u=self::newUser();
-		$u->authenticate();
-		if (isset(self::$currentInstance)) {
-			return self::$currentInstance;
+				return $u;
+			}
 		}
 
-		// We should NEVER end up executing this code!
-		throw new RuntimeException(
-			"Unexpected condition: ".
-			self::getUserClass()."::authenticate() ".
-			"returned without setting the current user!"
-		);
+		// Last chance: has user has just logged in?
+		$user=self::newUser();
+		if ($u=$user->validatePOST()) {
+			self::setCurrent($u);
+			return $u;
+		}
+
+		// Ok, we need to show the authentication page and exit if we really NEED
+		// a valid user. However, if you were only asking, no, there is none.
+		if ($info)
+			return NULL;
+
+		$user->showLoginForm();
+		exit;
 	}
 
 	public static function newUser($id=0)
@@ -134,38 +135,33 @@ abstract class LPC_User extends LPC_Base
 		return $u[0];
 	}
 
+	/*
+
+	Feel free to override this in your user class for new projects.
+	
+	WARNING! DO NOT override this after storing users in the database,
+	         or they won't be able to log in any more!
+
+	*/
 	public function saltPassword($pass)
 	{
 		return sha1("Al".sha1($pass)."Pacino");
 	}
 
-	public function newSecret($field='',$length=40)
+	protected function validatePOST()
 	{
-		do {
-			if (isset($secret)) {
-				usleep(3);
-			}
-			$secret=substr(sha1("Robert".microtime()."De".rand()."Niro"),0,$length);
-		} while (!$this->validateSecret($secret,$field));
+		if (!isset($_POST['login']) || !isset($_POST['username']) || !isset($_POST['password']))
+			return false;
+
+		$me=$this->matchCredentials($_POST['username'],$_POST['password']);
+		if (!$me || !$me->canAuthenticate())
+			return false;
+
+		return $me;
 	}
 
-	private function validateSecret($secret,$field)
+	protected function authenticate()
 	{
-		if (!$field) {
-			return true;
-		}
-		return !$this->searchCount($field,$secret);
-	}
-
-	public function authenticate()
-	{
-		if (isset($_POST['login'])) {
-			$me=$this->matchCredentials($_POST['username'],$_POST['password']);
-			if ($me && $me->canAuthenticate()) {
-				LPC_User::setCurrent($me);
-				return LPC_User::getCurrent();
-			}
-		}
 		$this->showLoginForm();
 	}
 
@@ -216,7 +212,6 @@ abstract class LPC_User extends LPC_Base
 
 		$p=LPC_Page::getCurrent();
 		$p->show();
-		exit;
 	}
 
 	protected function postShowLogin()
