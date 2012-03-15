@@ -3965,7 +3965,6 @@ fclose($fp);
 					finfo_close($finfo);
 
 					$this->setAttr($attr,$mime);
-					finfo_close($finfo);
 
 					unlink($tname);
 					unlink($tfname);
