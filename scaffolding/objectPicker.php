@@ -27,6 +27,7 @@ $p->a($cancelDiv);
 $l=$obj->getBaseList();
 $l->onProcessHeaderRow='rhr';
 $l->onProcessBodyRow='rbr';
+$l->onProcessBodyCell='rbc';
 
 $p->a($l);
 
@@ -47,5 +48,11 @@ function rbr($row,&$rowData)
 	$td=new LPC_HTML_node('td');
 	$row->a($td);
 	$td->a("[<a href='#' onClick='return LPC_scaffolding_pick(\"".addslashes($rowData[$obj->dataStructure['id_field']])."\")'>"._LS('scaffoldingPickThis')."</a>]");
+	return true;
+}
+
+function rbc($key,$cell,&$rowData)
+{
+	$cell->content=htmlspecialchars($cell->content);
 	return true;
 }
