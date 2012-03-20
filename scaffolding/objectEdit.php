@@ -136,6 +136,8 @@ if ($class::$i18n_class) {
 }
 
 $submit="<input type='submit' name='LPC_scaffolding_submit_button' value=\"".addslashes(_LS($submitLabelKey))."\">";
+if ($id)
+	$submit.="<input type='button' value=\"".addslashes(_LS('scaffoldingDeleteAction'))."\" onClick=\"if (!confirm('".addslashes(_LS('scaffoldingDeleteConfirm'))."')) return false; location.href='objectDelete.php?c=".rawurlencode($class)."&amp;id=".rawurlencode($id)."&amp;k=".rawurlencode(session_id())."';\">";
 if (withAttach())
 	$submit.=" <input type='submit' name='LPC_scaffolding_submit_plus' value=\"".addslashes(_LS('scaffoldingButtonEditPlus'))."\">";
 $t->a(new LPC_HTML_form_row(array(

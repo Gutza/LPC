@@ -1024,6 +1024,24 @@ It is recommended that you do not overwrite this translation just in order to cu
         ),
       ),
     ),
+    'scaffoldingDeleteConfirm' => 
+    array (
+      'comment' => 'The confirmation message shown before deleting objects in LPC\'s scaffolding section.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Are you sure you want to delete this object?',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Sigur doriţi să ştergeţi acest obiect?',
+        ),
+      ),
+    ),
     'scaffoldingDeleteFile' => 
     array (
       'comment' => 'The label of the "delete file" checkbox shown in the scaffolding interface.',
