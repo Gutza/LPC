@@ -13,7 +13,7 @@ if (isset($_GET['langID'])) {
 }
 $langSelect=new LPC_HTML_node('div');
 $langSelect->setAttr('style','float: right');
-$langSelect->a(_LH('scaffoldingSelectLang'));
+$langSelect->a(_LH('scaffoldingSelectLang')." ");
 
 $langs=new LPC_HTML_select();
 $langSelect->a($langs);
