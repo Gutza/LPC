@@ -363,7 +363,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 				continue;
 			$cell=new LPC_HTML_node("TD",false);
 			$cell->compact=true;
-			$cell->content=$rowData[$key];
+			$cell->content=htmlspecialchars($rowData[$key]);
 			if ($this->onProcessBodyCell($key,$cell,$rowData))
 				$row->a($cell);
 		}
