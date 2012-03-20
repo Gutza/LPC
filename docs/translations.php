@@ -1258,6 +1258,24 @@ It is recommended that you do not overwrite this translation just in order to cu
         ),
       ),
     ),
+    'scaffoldingSetDateNow' => 
+    array (
+      'comment' => 'The label shown on the button which sets the date to the current time.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => '&larr; now',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => '&larr; acum',
+        ),
+      ),
+    ),
     'scaffoldingSwitchClass' => 
     array (
       'comment' => 'The label shown on scaffolding pages for the link leading to the class list.',

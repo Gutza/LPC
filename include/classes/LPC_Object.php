@@ -3847,12 +3847,12 @@ fclose($fp);
 			case 'date':
 				if ($val=$this->getAttr($attName))
 					$val=date('Y-m-d',$val);
-				$input="<input type='text' name='attr[$attName]' value=\"".$val."\" class='input-date'>";
-				break;
 			case 'datetime':
-				if ($val=$this->getAttr($attName))
+				if (!isset($val) && ($val=$this->getAttr($attName)))
 					$val=date('Y-m-d H:i',$val);
-				$input="<input type='text' name='attr[$attName]' value=\"".$val."\" class='input-date'>";
+				$input=
+					"<input type='text' name='attr[$attName]' value=\"".$val."\" class='input-date' id='attr_$attName'>".
+					"<input type='button' value=\"".addslashes(_LS('scaffoldingSetDateNow'))."\" onClick=\"$('#attr_$attName').val('+0 minutes')\">";
 				break;
 			case 'longtext':
 			case 'html':
