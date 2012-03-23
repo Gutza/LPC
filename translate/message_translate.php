@@ -44,7 +44,7 @@ if (isset($_POST['submit'])) {
 
 // The links on the top of  the page
 $links=array(
-	"[<a href='lang_select.php?m=".$msgKey."'>Translate this message to another language</a>]",
+	"[<a href='lang_select.php?m=".rawurlencode($msgKey)."'>Translate this message to another language</a>]",
 	"[<a href='message_select.php'>Message list</a>]"
 );
 
