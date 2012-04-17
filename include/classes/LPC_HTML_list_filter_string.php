@@ -25,7 +25,7 @@ class LPC_HTML_list_filter_string extends LPC_HTML_list_filter
 				continue;
 			$form->a("<input type='hidden' name='$key' value=\"".addslashes($value)."\">");
 		}
-		$form->a("<table class='table_filter' style='margin: 0px auto'><tr><td class='table_filter'>");
+		$form->a("<table class='table_filter'><tr><td class='table_filter'>");
 		$form->a("<input type='hidden' name='".$this->listObject->getParam('p')."' value='1'>");
 		$form->a("<input type='text' name='".$this->GET_key."' value=\"".$default."\" size='".$this->input_size."'>");
 		$form->a("</td><td class='table_filter'>");
