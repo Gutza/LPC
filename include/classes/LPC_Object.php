@@ -2040,9 +2040,7 @@ abstract class LPC_Object implements Serializable
 			$type=explode(".",$dataDef['type']);
 			$rules=array();
 
-			if (in_array($type[0],array('text','longtext')))
-				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
-			elseif (in_array($type[0],array('html','set','enum')))
+			if (in_array($type[0],array('text','longtext','html','set','enum')))
 				$this->dataStructure['fields'][$attName]['base_type']='text';
 			elseif (in_array($type[0],array('integer','email','float','date','boolean'))) {
 				$rules[]=$type[0];
@@ -3691,7 +3689,10 @@ fclose($fp);
 				}
 				continue;
 			}
-			if (empty($this->dataStructure['fields'][$attName]['type'])) {
+			if (
+				empty($this->dataStructure['fields'][$attName]['type']) ||
+				$this->dataStructure['fields'][$attName]['base_type']=='text'
+			) {
 				$filter=new LPC_HTML_list_filter_string();
 				$filter->input_size=10;
 				$filter->SQL_key=$this->getFieldName($attName);
@@ -4051,7 +4052,8 @@ fclose($fp);
 		foreach($attrs as $attName) {
 			if (
 				!isset($this->dataStructure['fields'][$attName]['type']) ||
-				$this->dataStructure['fields'][$attName]['type']!='longtext')
+				$this->dataStructure['fields'][$attName]['base_type']!='text'
+			)
 			$sortable[]=$attName;
 		}
 		return $sortable;
