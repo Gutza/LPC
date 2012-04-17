@@ -790,6 +790,42 @@ It is recommended that you do not overwrite this translation just in order to cu
         ),
       ),
     ),
+    'lpcFilterIcon' => 
+    array (
+      'comment' => 'The alternate text for the "filter" icon used in the LPC_HTML_list_filter class.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Filter',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Filtrează',
+        ),
+      ),
+    ),
+    'lpcRemoveFilterIcon' => 
+    array (
+      'comment' => 'The alternate text for the "remove filter" icon used in the LPC_HTML_list_filter class.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Remove filter',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Anulează filtrul',
+        ),
+      ),
+    ),
     'scaffoldingActionHeader' => 
     array (
       'comment' => 'The label shown in the header of the scaffolding object list table, on top of the column containing the actions (edit, delete).',
