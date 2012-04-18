@@ -808,6 +808,28 @@ It is recommended that you do not overwrite this translation just in order to cu
         ),
       ),
     ),
+    'lpcListFilterStringHelp' => 
+    array (
+      'comment' => 'The help message for the plain string filter in lists. Do NOT use HTML -- it will be shown as such.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'The list will be filtered to show only the records that contain in this field the value you enter here.
+
+The value you specify will be used as such.',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Vor fi afişate numai înregistrările care conţin în acest câmp valoarea pe care o introduceţi.
+
+Valoarea pe care o introduceţi va fi folosită ca atare.',
+        ),
+      ),
+    ),
     'lpcRemoveFilterIcon' => 
     array (
       'comment' => 'The alternate text for the "remove filter" icon used in the LPC_HTML_list_filter class.',

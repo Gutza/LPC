@@ -11,14 +11,14 @@ class LPC_HTML_list_filter_string extends LPC_HTML_list_filter
 {
 	var $input_size=20;
 
+	protected $helpKey="lpcListFilterStringHelp";
+
 	function prepare()
 	{
 		parent::prepare();
 		$form=$this->searchForm;
 
 		$default=addslashes($this->getCurrentValue());
-
-		$this->ownerDocument->content['head']->content['LPC list filter CSS']=new LPC_HTML_link('stylesheet','text/css',LPC_css."/LPC_list_filter.css");
 
 		$formContent=$form->content['filterTable']->content['filterTR']->content['filterTD'];
 		$formContent->a("<input type='text' name='".$this->GET_key."' value=\"".$default."\" size='".$this->input_size."'>");
