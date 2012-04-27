@@ -41,9 +41,41 @@ class LPC_HTTP_file
 	public $cacheMaxAge=0;
 
 	/**
+	* The constructor takes several sensible combinations of parmeters.
+	*
+	* If $object is not set, nothing happens automatically.
+	*
+	* If $object is a LPC_Excel_base object or descendant, {@link fromExcel()}
+	* is called, and, if specified, $filename is used to populate {@link $fileName}.
+	*
+	* If $object is a LPC_Object descendant, {@link fromObject()} is called,
+	* and $filename is used as its second parameter.
+	*
+	* In all other cases, exceptions are thrown.
+	*/
+	public function __construct($object=NULL, $filename=NULL)
+	{
+		if ($object===NULL)
+			return;
+		if (!is_object($object))
+			throw new RuntimeException("Expecting an object");
+		if ($object instanceof LPC_Excel_base) {
+			$this->fromExcel($object, $filename);
+			if ($filename!==NULL)
+				$this->fileName=$filename;
+			return;
+		}
+		if ($object instanceof LPC_Object) {
+			$this->fromObject($object, $filename);
+			return;
+		}
+		throw new RuntimeException("Unexpected object type: ".get_class($object));
+	}
+
+	/**
 	* Loads all relevant data from a LPC_Object descendant.
 	*/
-	public function fromObject($object,$fileName)
+	public function fromObject($object, $fileName)
 	{
 		if (!is_object($object) || !$object instanceof LPC_Object)
 			throw new RuntimeException("Expecting a LPC_Object instance!");
@@ -63,6 +95,29 @@ class LPC_HTTP_file
 			$this->date=$object->getAttr($object->dataStructure['files'][$fileName]['date']);
 
 		return true;
+	}
+
+	/**
+	* Loads the content of a LPC_Excel_base descendant.
+	* This method fills in three properties: fileName, mimeType and content.
+	*
+	* @return void, but exceptions are thrown on errors
+	*/
+	public function fromExcel($ExcelObject, $fileName)
+	{
+		if (!$ExcelObject instanceof LPC_Excel_base)
+			throw new RuntimeException("Expecting a LPC_Excel_base descendant!");
+
+		$pFilename = @tempnam(PHPExcel_Shared_File::sys_get_temp_dir(), 'phpxltmp');
+		if ($pFilename=='')
+			throw new RuntimeException("Failed creating temporary file");
+		$this->fileName=$fileName;
+		$ExcelObject->export($fileName, $pFilename);
+		$this->content=file_get_contents($pFilename);
+		unlink($pFilename);
+
+		// Really?
+		$this->mimeType='application/ms-excel';
 	}
 
 	/**
