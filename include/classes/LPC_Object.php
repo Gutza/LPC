@@ -347,6 +347,23 @@ abstract class LPC_Object implements Serializable
 		return $this->beforeDelete($id);
 	}
 	// }}}
+	// {{{ getDBObject()
+	/**
+	* Returns a new object of the same class with the same ID,
+	* which can be used to retrieve this very object's current
+	* status in the database.
+	*
+	* @return object a newly-instantiated object of the same class and the same ID as the current one
+	*/
+	public function getDBObject()
+	{
+		if (!isset($this->id))
+			throw new RuntimeException("This method has to be called on an object with an ID!");
+
+		$class=get_class($this);
+		return new $class($this->id);
+	}
+	// }}}
 
 	// TO DO (code duplication): save(), insert() and insertWithId() share
 	// quite a lot of duplicate code, should merge them or build extra
