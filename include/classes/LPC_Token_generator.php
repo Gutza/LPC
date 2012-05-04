@@ -21,6 +21,7 @@ class LPC_Token_generator
 	const OPT_NO_L=8;
 	const OPT_ALL_UPPERCASE=16;
 	const OPT_ALL_LOWERCASE=32;
+	const OPT_START_END_ALPHANUM=64;
 
 	private $object;
 	private $field;
@@ -61,6 +62,11 @@ class LPC_Token_generator
 
 	function processOptions($token)
 	{
+		if ($this->options & self::OPT_START_END_ALPHANUM) {
+			$token[0]=$this->to_alphanum($token[0]);
+			$last=strlen($token)-1;
+			$token[$last]=$this->to_alphanum($token[$last]);
+		}
 		if ($this->options & self::OPT_NO_ZERO)
 			$token=str_replace('0','Z',$token);
 		if ($this->options & self::OPT_NO_O)
@@ -74,6 +80,20 @@ class LPC_Token_generator
 		elseif ($this->options & self::OPT_ALL_LOWERCASE)
 			$token=strtolower($token);
 		return $token;
+	}
+
+	private function to_alphanum($char)
+	{
+		if (preg_match("/[0-9a-zA-Z]/",$char))
+			return $char;
+		$ascii=rand(0,61);
+		if ($ascii<10) // 0-9
+			return chr($ascii+ord('0'));
+		$ascii-=10;
+		if ($ascii<26) // upperrcase
+			return chr($ascii+ord('A'));
+		$ascii-=26;
+		return chr($ascii+ord('a'));
 	}
 
 	function encode($token)
