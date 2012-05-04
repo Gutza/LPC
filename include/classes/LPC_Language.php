@@ -89,4 +89,16 @@ class LPC_Language extends LPC_Base
 		$this->locale=$this->getAttr('locale_'.LPC_language_type);
 		return $this->locale;
 	}
+
+	public function strftime($format, $timestamp=NULL)
+	{
+		if ($timestamp===NULL)
+			$timestamp=time();
+
+		$clocale=setlocale(LC_TIME,0);
+		setlocale(LC_TIME,$this->getLocale());
+		$result=strftime($format, $timestamp);
+		setlocale(LC_TIME,$clocale);
+		return $result;
+	}
 }
