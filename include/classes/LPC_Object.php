@@ -1029,6 +1029,11 @@ abstract class LPC_Object implements Serializable
 		return htmlspecialchars($this->getAttr($attName),ENT_QUOTES);
 	}
 	// }}}
+	// {{{ getAttrHB()
+	function getAttrHB($attName)
+	{
+		return nl2br($this->getAttrH($attName));
+	}
 	// {{{ hasAttr()
 	function hasAttr($attName)
 	{
@@ -1528,12 +1533,12 @@ abstract class LPC_Object implements Serializable
 	 */
 	function getUrlH()
 	{
-		if (!$this->id) {
+		if (!$this->id)
 			return '';
-		}
-		if ($local=$this->dataStructure['object_page']) {
+
+		if ($local=$this->dataStructure['object_page'])
 			return LPC_url.sprintf($local,$this->id);
-		}
+
 		return false;
 	}
 	// }}}
@@ -1553,12 +1558,12 @@ abstract class LPC_Object implements Serializable
 	 */
 	function getFullUrlH()
 	{
-		if (!$this->id) {
+		if (!$this->id)
 			return '';
-		}
-		if ($local=$this->dataStructure['object_page']) {
+
+		if ($local=$this->dataStructure['object_page'])
 			return LPC_full_url.sprintf($local,$this->id);
-		}
+
 		return false;
 	}
 	// }}}
@@ -1577,12 +1582,12 @@ abstract class LPC_Object implements Serializable
 	 */
 	function getLinkH()
 	{
-		if (($name=$this->getNameH()) && ($url=$this->getUrlH())) {
-			return sprintf('<A HREF="%1$s">%2$s</A>',$url,$name);
-		} elseif ($name) {
+		if (($name=$this->getNameH()) && ($url=$this->getUrlH()))
+			return sprintf('<a href="%1$s">%2$s</a>',$url,$name);
+		elseif ($name)
 			// if I have a name, but I don't have an URL
 			return $name;
-		}
+
 		return false;
 	}
 	// }}}
@@ -1596,9 +1601,9 @@ abstract class LPC_Object implements Serializable
 	 */
 	function getFullLinkH()
 	{
-		if (($name=$this->getNameH()) && ($url=$this->getFullUrlH())) {
-			return sprintf('<A HREF="%1$s">%2$s</A>',$url,$name);
-		}
+		if (($name=$this->getNameH()) && ($url=$this->getFullUrlH()))
+			return sprintf('<a href="%1$s">%2$s</a>',$url,$name);
+
 		return false;
 	}
 	// }}}
