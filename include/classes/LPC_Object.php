@@ -1034,6 +1034,7 @@ abstract class LPC_Object implements Serializable
 	{
 		return nl2br($this->getAttrH($attName));
 	}
+	// }}}
 	// {{{ hasAttr()
 	function hasAttr($attName)
 	{
