@@ -845,4 +845,20 @@ EOJS;
 			$name[]=$this->getAttr($this->user_fields['lname']);
 		return implode(" ",$name);
 	}
+
+	/**
+	* Impersonate another user.
+	*
+	* You need to be a hyperuser in order to impersonate other users using this method.
+	*
+	* @param object $user LPC_User descendant
+	* @return boolean true on success, false on failure
+	*/
+	function impersonate($user)
+	{
+		if (!$this->isHyperuser())
+			return false;
+		self::setCurrent($user);
+		return true;
+	}
 }
