@@ -455,7 +455,6 @@ abstract class LPC_Object implements Serializable
 
 		$this->modified=false;
 
-		// **TODO** find out what loggableChange does
 		$this->loggableChange=true;
 		$this->log('insert');
 
@@ -613,7 +612,8 @@ abstract class LPC_Object implements Serializable
 	// }}}
 	// {{{ deleteDependencies()
 	/**
-	 * Deletes this object's dependencies (sets MISTRESSes to 0 and deletes WIFEs)
+	 * Deletes this object's dependencies (sets MISTRESS dependencies
+	 * to 0 and deletes WIFE objects)
 	 *
 	 * @return boolean true on success, false on failure
 	 */
@@ -623,18 +623,17 @@ abstract class LPC_Object implements Serializable
 		foreach($mistresses as $mistress)
 			$this->dropLink($mistress['dep'],$mistress['object']);
 		
-		$wives=$this->getAllObjects();
+		$wives=$this->getAllObjects('WIFE');
 		foreach($wives as $wife) {
 			$wife['object']->noLogging=$this->noLogging;
 			$tmp=get_class($wife['object']).'#'.$wife['object']->id;
 			if (@in_array($tmp, $stack))
 				continue;
-			if (($purpose=='archive') || ($wife['dep']!='lfx_log')) {
-				if (!$wife['object']->delete(0, $purpose, $stack))
-					return false;
-				else
-					$stack[]=$tmp;
-			}
+
+			if (!$wife['object']->delete(0, $purpose, $stack))
+				return false;
+
+			$stack[]=$tmp;
 		}
 		return $stack;
 	}
@@ -2837,6 +2836,10 @@ fclose($fp);
 	*/
 	function log($type)
 	{
+		if ($this->noLogging || !$this->loggableChange)
+			return;
+
+		LPC_Logger::doLog($type,$this);
 	}
 	// }}}
 	// {{{ debug()
