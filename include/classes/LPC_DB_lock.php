@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Database lock manager.
+ * @author Bogdan Stancescu <bogdan@moongate.ro>
+ * @copyright Copyright (c) August 2012, Bogdan Stancescu
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License v3 or later
+ */
 class LPC_DB_lock
 {
 	var $dbHandler;
