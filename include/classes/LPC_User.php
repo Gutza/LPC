@@ -34,8 +34,8 @@ abstract class LPC_User extends LPC_Base
 
 	const HU_KEY='perm_H'; // Cache key for whether this guy's a hyperuser
 	const SU_KEY='perm_S'; // Cache key for whether this guy's a superuser in the current project
-	const PD_KEY='perm_date'; // Cache key for the permissions date last read to cache
-	const PE_KEY='perm_exp'; // Cache key for the permissions date last write
+	const PD_KEY='perm_date'; // Permission date: the date when we saved to cache
+	const PE_KEY='perm_exp'; // Permission expiration: the date when the cache expired
 	const P_KEY='perms'; // Cache key which stores the permissions
 
 	function onDelete($id)
@@ -267,12 +267,12 @@ EOJS;
 
 		$userID=$this->defaultID($userID);
 		$projectID=$this->defaultProject($projectID)->id;
-		$cacheDate=$cache->getUPf(self::PD_KEY,$userID,$projectID);
+		$cacheDate=(float) $cache->getUPf(self::PD_KEY,$userID,$projectID);
 		if (!$cacheDate)
 			return NULL;
 
 		// !!! DO NOT REPLACE THE FOUR STATEMENTS BELOW WITH A SINGLE $cache->getUPf() !!!
-		// (Any of the cache expiration dates MUST expire the cache!
+		// Each of the cache expiration dates MUST be able to expire the cache!
 
 		// Validate global
 		if (
@@ -313,8 +313,7 @@ EOJS;
 			return false;
 
 		$validated[$userID][$projectID]=true;
-
-		return false;
+		return true;
 	}
 
 	public static function getNow()
@@ -521,9 +520,6 @@ EOJS;
 			return $local_cache[$userID][$projectID];
 		}
 
-		// We only need to set this here because isSuperuser() is always the first one to run in projects
-		$cache->setUP(self::PE_KEY,time(),$userID,$projectID);
-
 		$rs=$this->query("
 			SELECT member_to
 			FROM LPC_user_membership
@@ -532,11 +528,17 @@ EOJS;
 				user_member=".$userID." AND
 				member_to=1
 		");
-		$local_cache[$userID][$projectID]=$result=!$rs->EOF;
+		$isSuperuser=!$rs->EOF;
+		if ($isSuperuser)
+			// We just setUP() because isSuperuser() is always the first one to run in projects.
+			// We only set it when we FIND a superuser; if we did write it otherwise
+			// then all subsequent permissions tests would've used the old cache.
+			$cache->setUP(self::PD_KEY, self::getNow(), $userID, $projectID);
 
-		$cache->setUP(self::SU_KEY,(int) $result,$userID,$projectID);
+		$local_cache[$userID][$projectID]=$isSuperuser;
+		$cache->setUP(self::SU_KEY, (int) $isSuperuser, $userID, $projectID);
 
-		return $result;
+		return $isSuperuser;
 	}
 
 	function isHyperuser($id=0)
@@ -556,9 +558,6 @@ EOJS;
 
 		self::ensureCacheExpiration($userID,0);
 
-		// We only need to set this here because isHyperuser() is always the first one to run
-		$cache->setU(self::PD_KEY,time(),$userID);
-
 		$rs=$this->query("
 			SELECT member_to
 			FROM LPC_user_membership
@@ -567,10 +566,17 @@ EOJS;
 				user_member=".$userID." AND
 				member_to=1
 		");
-		$result=$local_cache[$userID]=!$rs->EOF;
-		$cache->setU(self::HU_KEY,(int) $result,$userID);
+		$isHyperuser=!$rs->EOF;
+		if ($isHyperuser)
+			// We just setU() because isHyperuser() is always the first one to run globally.
+			// We only set it when we FIND a hyperuser; if we did write it otherwise
+			// then all subsequent permissions tests would've used the old cache.
+			$cache->setU(self::PD_KEY, self::getNow(), $userID);
 
-		return $result;
+		$local_cache[$userID]=$isHyperuser;
+		$cache->setU(self::HU_KEY, (int) $isHyperuser, $userID);
+
+		return $isHyperuser;
 	}
 
 	/*
