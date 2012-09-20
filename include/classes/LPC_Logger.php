@@ -9,7 +9,7 @@ class LPC_Logger extends LPC_Base
 	function doLog($type, $obj)
 	{
 		$userID=0;
-		$u=LPC_User::getCurrent();
+		$u=LPC_User::getCurrent(true);
 		if ($u)
 			$userID=$u->id;
 
