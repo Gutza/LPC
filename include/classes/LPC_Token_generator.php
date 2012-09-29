@@ -10,10 +10,15 @@
 
 class LPC_Token_generator
 {
-	var $method="sha1"; // the only one supported right now -- 40 characters long
-	var $encoding="base64"; // plain or base64; applied before trimming
+	var $method=self::METHOD_SHA1; // the only one supported right now -- 40 characters long
+	var $encoding=self::ENCODING_BASE64; // plain or base64; applied before trimming
 	var $length=40; // Specifies the maximum length
 	var $options=0;
+
+	const METHOD_SHA1="sha1";
+
+	const ENCODING_BASE64="base64";
+	const ENCODING_PLAIN="plain";
 
 	const OPT_NO_ZERO=1;
 	const OPT_NO_O=2;
@@ -99,9 +104,9 @@ class LPC_Token_generator
 	function encode($token)
 	{
 		switch($this->encoding) {
-			case 'plain':
+			case self::ENCODING_PLAIN:
 				return $token;
-			case 'base64':
+			case self::ENCODING_BASE64:
 				return str_replace("+","-",str_replace("/","_",substr(base64_encode($this->to8bit($token)),0,-1)));
 			default:
 				throw new RuntimeException("Unknown encoding (".$this->encoding.")");
