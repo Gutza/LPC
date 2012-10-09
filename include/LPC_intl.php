@@ -39,6 +39,8 @@ function _LS($message)
 	array_shift($args);
 
 	$msgfmt=LPC_I18n_messageFormatter::get($message);
+	if (!$msgfmt)
+		return "";
 	return $msgfmt->format($args);
 
 	// ========== OLD ============
