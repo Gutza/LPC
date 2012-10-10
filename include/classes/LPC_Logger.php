@@ -9,9 +9,11 @@ class LPC_Logger extends LPC_Base
 	function doLog($type, $obj)
 	{
 		$userID=0;
-		$u=LPC_User::getCurrent(true);
-		if ($u)
-			$userID=$u->id;
+		if (LPC_User::configuredForUsers()) {
+			$u=LPC_User::getCurrent(true);
+			if ($u)
+				$userID=$u->id;
+		}
 
 		$attrs=serialize($obj->attr);
 		$this->query("

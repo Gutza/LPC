@@ -88,6 +88,9 @@ abstract class LPC_User extends LPC_Base
 			}
 		}
 
+		if ($info && !self::configuredForUsers())
+			return NULL;
+
 		// Last chance: has user has just logged in?
 		$user=self::newUser();
 		if ($u=$user->validatePOST()) {
@@ -104,6 +107,11 @@ abstract class LPC_User extends LPC_Base
 		exit;
 	}
 
+	public static function configuredForUsers()
+	{
+		return defined("LPC_user_class") && strlen(LPC_user_class);
+	}
+
 	public static function newUser($id=0)
 	{
 		$class=self::getUserClass();
@@ -112,7 +120,7 @@ abstract class LPC_User extends LPC_Base
 
 	public function getUserClass()
 	{
-		if (!defined("LPC_user_class") || !strlen(LPC_user_class))
+		if (!self::configuredForUsers())
 			throw new RuntimeException("Please define constant LPC_user_class if you want to use users.");
 
 		return LPC_user_class;
