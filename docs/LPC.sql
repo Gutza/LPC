@@ -155,6 +155,7 @@ CREATE TABLE `LPC_log` (
   `entry_type` varchar(20) DEFAULT NULL,
   `log_class` varchar(30) DEFAULT NULL,
   `log_id` varchar(20) DEFAULT NULL,
+  `log_user` mediumint(8) UNSIGNED NOT NULL DEFAULT 0,
   `entry_attrs` longblob,
   KEY `entry_date` (`entry_date`,`entry_type`),
   KEY `log_class` (`log_class`,`log_id`,`entry_date`)

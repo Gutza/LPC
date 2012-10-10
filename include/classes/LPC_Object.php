@@ -455,7 +455,6 @@ abstract class LPC_Object implements Serializable
 
 		$this->modified=false;
 
-		$this->loggableChange=true;
 		$this->log('insert');
 
 		$this->internal_onSave(true);
@@ -2840,6 +2839,8 @@ fclose($fp);
 			return;
 
 		LPC_Logger::doLog($type,$this);
+
+		$this->loggableChange=false; // reset for the next change
 	}
 	// }}}
 	// {{{ debug()
@@ -2880,13 +2881,9 @@ fclose($fp);
 			if (
 				!$force &&
 				empty($dataEntry['flags']['forceSave']) &&
-				(
-					//!isset($this->attr[$attName]) || // commented out because we want to save NULL values for null fields
-					!$this->attr_flags[$attName]['modified']
-				)
-			) {
+				!$this->attr_flags[$attName]['modified']
+			)
 				continue;
-			}
 
 			if (empty($dataEntry['flags']['noLogging']))
 				$this->loggableChange=true;
@@ -2902,23 +2899,18 @@ fclose($fp);
 			else
 				$q_values[]=$this->db->qstr($fld_data);
 		}
-		$query='';
-		if (!$insert) {
-			for($i=0;$i<count($q_fields);$i++)
-				$query.=$q_fields[$i]."=".$q_values[$i].", ";
 
-			$query=substr($query, 0, -2);
-		} else {
-			$q1=$q2='';
-			for($i=0;$i<count($q_fields);$i++) {
-				$q1.=$q_fields[$i].", ";
-				$q2.=$q_values[$i].", ";
-			}
-			$q1=substr($q1,0,-2);
-			$q2=substr($q2,0,-2);
-			$query="(".$q1.") VALUES (".$q2.")";
+		if ($insert)
+			return "(".implode($q_fields, ", ").") VALUES (".implode($q_values, ", ").")";
+
+		$query='';
+		$count=count($q_fields);
+		for($i=0;$i<$count;$i++) {
+			$query.=$q_fields[$i]."=".$q_values[$i].", ";
+			unset($q_fields[$i], $q_values[$i]);  // Free some memory
 		}
-		return $query;
+
+		return substr($query, 0, -2);
 	}
 	// }}}
 	// {{{ probe()
