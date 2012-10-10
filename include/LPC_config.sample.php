@@ -1,6 +1,17 @@
 <?php
 
-// Include your own project's library.
+/**
+ * LPC configuration sample file.
+ *
+ * You need to copy this file as LPC_config.php in this directory and
+ * edit it to fit your setup.
+ *
+ * WARNING: Most settings HAVE do be defined explicitly
+ *          (i.e. there are typically no defaults in place)
+ * @author Bogdan Stancescu <bogdan@moongate.ro>
+ */
+
+// Include your own project's library. This is optional.
 // require dirname(dirname(dirname(__FILE__)))."/include/MY_lib.php";
 
 if (!function_exists('LPC_skip')) {
@@ -54,6 +65,10 @@ define('LPC_project_class','');
 // Enable if you want to display errors; also includes LPC/include/LPC_debug.php
 define('LPC_debug',false);
 
+// If you enabled debugging, you can override the default exception handler.
+// String for function name, anything else to leave the PHP handler in place.
+//define('LPC_exception_handler', NULL);
+
 // Add other directories containing your own classes here, e.g.
 // $LPC_extra_class_dirs=array(dirname(dirname(dirname(__FILE__)))."/include/classes");
 $LPC_extra_class_dirs=array();
@@ -94,11 +109,9 @@ define('LPC_CACHE_TYPE','session');
 mb_internal_encoding("UTF-8");
 
 // This value identifies this particular LPC_config.php file on this
-// server. This key is used to identify this particular LPC deployment
-// for system-wide settings (e.g. for memcache). Try to keep it as
+// server/cluster. This key is used to identify this particular LPC deployment
+// for system/cluster-wide settings (memcache, Zookeeper). Try to keep it as
 // short as possible (a single character, if you can help it).
-// In an ideal world, this would've been set by default to the path
-// of this LPC_config.php file, but that would've been too long a string.
 define('LPC_INSTALLATION_KEY','d'); // "d" for "default"
 
 // Define as many databases as you need. You can define these at any time,
@@ -114,6 +127,9 @@ LPC_DB::registerKey("sample_db_key", array(
 //	'collation'=>'utf8'
 ));
 */
+
+// Zookeeper configuration. Define it if you plan to use ZK locks.
+//define("LPC_ZOOKEEPER_HOST", "localhost:2181");
 
 // --------------------------------------------------------------------------
 // You typically shouldn't need to change anything below this line
