@@ -21,9 +21,10 @@ $langMapping=array();
 foreach($inData['languages'] as $langData) {
 	$lang=new LPC_Language();
 	$langs=$lang->search('locale_POSIX',$langData['locale_POSIX']);
-	if ($langs)
+	if ($langs) {
 		$lang=$langs[0];
-	else {
+		$lang->load();
+	} else {
 		$lang=new LPC_Language();
 		$lang->setAttr('locale_POSIX',$langData['locale_POSIX']);
 	}
@@ -35,15 +36,20 @@ foreach($inData['languages'] as $langData) {
 // Messages
 foreach($inData['messages'] as $msgKey=>$msgData) {
 	$ref=new LPC_I18n_reference($msgKey);
-	if (!$ref->probe())
-		$ref->query("
-			INSERT INTO ".$ref->getTableName()."
-				(".$ref->getFieldName(0).")
-				VALUES (".$ref->db->qstr($msgKey).")
-		");
-
-	$ref->setAttr('comment',$msgData['comment']);
-	$ref->save();
+	if ($ref->probe()) {
+		$ref->load();
+		$ref->setAttrs(array(
+			'comment'=>$msgData['comment'],
+			'system'=>$msgData['system'],
+		));
+		$ref->save();
+	} else {
+		$ref->setAttrs(array(
+			'comment'=>$msgData['comment'],
+			'system'=>$msgData['system'],
+		));
+		$ref->insertWithId();
+	}
 
 	foreach($msgData['translations'] as $trnData) {
 		$msg=new LPC_I18n_message();
@@ -57,9 +63,10 @@ foreach($inData['messages'] as $msgKey=>$msgData) {
 				$ref->id
 			)
 		);
-		if ($msgs)
+		if ($msgs) {
 			$msg=$msgs[0];
-		else {
+			$msg->load();
+		} else {
 			$msg=new LPC_I18n_message();
 			$msg->setAttrs(array(
 				'language'=>$langMapping[$trnData['language']],
