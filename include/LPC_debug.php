@@ -34,7 +34,12 @@ function LPC_CLI_exceptionHandler($exception)
 	}
 	exit;
 }
-set_exception_handler('LPC_exceptionHandler');
+
+if (defined("LPC_exception_handler")) {
+	if (is_string(LPC_exception_handler))
+		set_exception_handler(LPC_exception_handler);
+} else
+	set_exception_handler('LPC_exceptionHandler');
 /**
 * This function starts a timer - use {@link LPC_getTimer()} afterwards to
 * get the time elapsed.
