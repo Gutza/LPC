@@ -2,11 +2,27 @@
 
 require_once "PHPExcel/PHPExcel.php";
 
+/*
+
+If you want to export PDF files:
+1. Download the fonts:
+	svn co https://PHPExcel.svn.codeplex.com/svn/trunk/Classes/PHPExcel/Shared/PDF/fonts
+2. Tell PHPExcel where you downloaded the fonts:
+	define('K_PATH_FONTS',<directory>);
+
+*/
+
+/**
+* The generic LPC class for Excel spreadsheets
+* @author Bogdan Stancescu <bogdan@moongate.ro>
+* @copyright Copyright (c) 2011, Bogdan Stancescu
+* @license http://www.gnu.org/licenses/gpl.html GNU Public License v3 or later
+*/
 class LPC_Excel_base
 {
-	var $excel;
+	public $excel;
 
-	var $borderStyle = array(
+	public $borderStyle = array(
 		'borders' => array(
 			'allborders' => array(
 				'style' => PHPExcel_Style_Border::BORDER_THIN
@@ -14,7 +30,7 @@ class LPC_Excel_base
 		)
 	);
 
-	function __construct($object=NULL)
+	public function __construct($object=NULL)
 	{
 		if ($object===NULL) {
 			$this->excel=new PHPExcel();
@@ -39,13 +55,13 @@ class LPC_Excel_base
 	}
 
 	// LPC -> Excel (array -> string)
-	function coord_L2E($coord)
+	public function coord_L2E($coord)
 	{
 		return PHPExcel_Cell::stringFromColumnIndex($coord[0]).($coord[1]+1);
 	}
 
 	// Excel -> LPC (string -> array)
-	function coord_E2L($coord)
+	public function coord_E2L($coord)
 	{
 		$Xcoord=PHPExcel_Cell::coordinateFromString($coord);
 		return array(
@@ -54,22 +70,22 @@ class LPC_Excel_base
 		);
 	}
 
-	function setCell($coord,$content)
+	public function setCell($coord,$content)
 	{
 		$this->excel->getActiveSheet()->SetCellValue($this->coord_L2E($coord),$content);
 	}
 
-	function getCell($coord)
+	public function getCell($coord)
 	{
 		return $this->excel->getActiveSheet()->getCell($this->coord_L2E($coord))->getCalculatedValue();
 	}
 
-	function getCellDate($coord)
+	public function getCellDate($coord)
 	{
 		return PHPExcel_Shared_Date::ExcelToPHP($this->getCell($coord));
 	}
 
-	function setBorder($coord1,$coord2=false)
+	public function setBorder($coord1,$coord2=false)
 	{
 		$c=$this->coord_L2E($coord1);
 		if ($coord2)
@@ -77,61 +93,78 @@ class LPC_Excel_base
 		$this->excel->getActiveSheet()->getStyle($c)->applyFromArray($this->borderStyle);
 	}
 
-	function mergeCells($coord1,$coord2)
+	public function mergeCells($coord1,$coord2)
 	{
 		$c1=$this->coord_L2E($coord1);
 		$c2=$this->coord_L2E($coord2);
 		$this->excel->getActiveSheet()->mergeCells($c1.":".$c2);
 	}
 
-	function export($filename)
+	public function export($final_filename, $temp_filename=NULL)
 	{
-		$objWriter = new PHPExcel_Writer_Excel2007($this->excel);
+		$finalFilename=$tempFilename=$final_filename;
+		if (!empty($temp_filename))
+			$tempFilename=$temp_filename;
+
+		$Xfile=explode(".",$finalFilename);
+		$fileX=end($Xfile);
+		switch($fileX) {
+			case 'xls':
+				return $this->exportWithType($tempFilename, 'Excel5');
+			case 'pdf':
+				return $this->exportWithType($tempFilename, 'PDF');
+			default:
+				return $this->exportWithType($tempFilename, 'Excel2007');
+		}
+	}
+
+	public function exportWithType($filename, $filetype)
+	{
+		$objWriter = PHPExcel_IOFactory::createWriter($this->excel, $filetype);
 		$objWriter->save($filename);
 	}
 
-	function import5($filename)
+	// Deprecated
+	public function import5($filename)
 	{
-		$objReader = new PHPExcel_Reader_Excel5();
-		return $this->importFromReader($objReader,$filename);
+		return $this->import($filename);
 	}
 
-	function import2007($filename)
+	// Deprecated
+	public function import2007($filename)
 	{
-		$objReader = new PHPExcel_Reader_Excel2007();
-		return $this->importFromReader($objReader,$filename);
+		return $this->import($filename);
 	}
 
-	private function importFromReader($objReader,$filename)
+	public function import($filename)
 	{
-		$this->excel=$objReader->load($filename);
+		$this->excel = PHPExcel_IOFactory::load($filename);
 		return $this->excel->getSheetCount();
 	}
 
-	function import($filename)
-	{
-		if ($sheetCount=$this->import2007($filename))
-			return $sheetCount;
-		return $this->import5($filename);
-	}
-
-	function setNumberFormat($coord,$format)
+	public function setNumberFormat($coord,$format)
 	{
 		$this->excel->getActiveSheet()->getStyle($this->coord_L2E($coord))->getNumberFormat()->setFormatCode($format);
 	}
 
-	function setFontSize($coord,$size)
+	public function setFontSize($coord,$size)
 	{
 		$this->excel->getActiveSheet()->getStyle($this->coord_L2E($coord))->getFont()->setSize($size);
 	}
 
-	function setWidth($column,$width)
+	public function setWidth($column,$width)
 	{
 		$colName=substr($this->coord_L2E(array($column,1)),0,-1);
 		$this->excel->getActiveSheet()->getColumnDimension($colName)->setWidth($width);
 	}
 
-	function styleFromArray($coord,$style)
+	public function setHeight($row,$height)
+	{
+		$rowName=substr($this->coord_L2E(array(1,$row)),1);
+		$this->excel->getActiveSheet()->getRowDimension($rowName)->setRowHeight($height);
+	}
+
+	public function styleFromArray($coord,$style)
 	{
 		$this->excel->getActiveSheet()->getStyle($this->coord_L2E($coord))->applyFromArray($style);
 	}

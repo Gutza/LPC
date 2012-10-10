@@ -347,6 +347,23 @@ abstract class LPC_Object implements Serializable
 		return $this->beforeDelete($id);
 	}
 	// }}}
+	// {{{ getDBObject()
+	/**
+	* Returns a new object of the same class with the same ID,
+	* which can be used to retrieve this very object's current
+	* status in the database.
+	*
+	* @return object a newly-instantiated object of the same class and the same ID as the current one
+	*/
+	public function getDBObject()
+	{
+		if (!isset($this->id))
+			throw new RuntimeException("This method has to be called on an object with an ID!");
+
+		$class=get_class($this);
+		return new $class($this->id);
+	}
+	// }}}
 
 	// TO DO (code duplication): save(), insert() and insertWithId() share
 	// quite a lot of duplicate code, should merge them or build extra
@@ -438,8 +455,6 @@ abstract class LPC_Object implements Serializable
 
 		$this->modified=false;
 
-		// **TODO** find out what loggableChange does
-		$this->loggableChange=true;
 		$this->log('insert');
 
 		$this->internal_onSave(true);
@@ -596,7 +611,8 @@ abstract class LPC_Object implements Serializable
 	// }}}
 	// {{{ deleteDependencies()
 	/**
-	 * Deletes this object's dependencies (sets MISTRESSes to 0 and deletes WIFEs)
+	 * Deletes this object's dependencies (sets MISTRESS dependencies
+	 * to 0 and deletes WIFE objects)
 	 *
 	 * @return boolean true on success, false on failure
 	 */
@@ -606,18 +622,17 @@ abstract class LPC_Object implements Serializable
 		foreach($mistresses as $mistress)
 			$this->dropLink($mistress['dep'],$mistress['object']);
 		
-		$wives=$this->getAllObjects();
+		$wives=$this->getAllObjects('WIFE');
 		foreach($wives as $wife) {
 			$wife['object']->noLogging=$this->noLogging;
 			$tmp=get_class($wife['object']).'#'.$wife['object']->id;
 			if (@in_array($tmp, $stack))
 				continue;
-			if (($purpose=='archive') || ($wife['dep']!='lfx_log')) {
-				if (!$wife['object']->delete(0, $purpose, $stack))
-					return false;
-				else
-					$stack[]=$tmp;
-			}
+
+			if (!$wife['object']->delete(0, $purpose, $stack))
+				return false;
+
+			$stack[]=$tmp;
 		}
 		return $stack;
 	}
@@ -1010,6 +1025,12 @@ abstract class LPC_Object implements Serializable
 	function getAttrH($attName)
 	{
 		return htmlspecialchars($this->getAttr($attName),ENT_QUOTES);
+	}
+	// }}}
+	// {{{ getAttrHB()
+	function getAttrHB($attName)
+	{
+		return nl2br($this->getAttrH($attName));
 	}
 	// }}}
 	// {{{ hasAttr()
@@ -1511,12 +1532,12 @@ abstract class LPC_Object implements Serializable
 	 */
 	function getUrlH()
 	{
-		if (!$this->id) {
+		if (!$this->id)
 			return '';
-		}
-		if ($local=$this->dataStructure['object_page']) {
+
+		if ($local=$this->dataStructure['object_page'])
 			return LPC_url.sprintf($local,$this->id);
-		}
+
 		return false;
 	}
 	// }}}
@@ -1536,12 +1557,12 @@ abstract class LPC_Object implements Serializable
 	 */
 	function getFullUrlH()
 	{
-		if (!$this->id) {
+		if (!$this->id)
 			return '';
-		}
-		if ($local=$this->dataStructure['object_page']) {
+
+		if ($local=$this->dataStructure['object_page'])
 			return LPC_full_url.sprintf($local,$this->id);
-		}
+
 		return false;
 	}
 	// }}}
@@ -1560,12 +1581,12 @@ abstract class LPC_Object implements Serializable
 	 */
 	function getLinkH()
 	{
-		if (($name=$this->getNameH()) && ($url=$this->getUrlH())) {
-			return sprintf('<A HREF="%1$s">%2$s</A>',$url,$name);
-		} elseif ($name) {
+		if (($name=$this->getNameH()) && ($url=$this->getUrlH()))
+			return sprintf('<a href="%1$s">%2$s</a>',$url,$name);
+		elseif ($name)
 			// if I have a name, but I don't have an URL
 			return $name;
-		}
+
 		return false;
 	}
 	// }}}
@@ -1579,9 +1600,9 @@ abstract class LPC_Object implements Serializable
 	 */
 	function getFullLinkH()
 	{
-		if (($name=$this->getNameH()) && ($url=$this->getFullUrlH())) {
-			return sprintf('<A HREF="%1$s">%2$s</A>',$url,$name);
-		}
+		if (($name=$this->getNameH()) && ($url=$this->getFullUrlH()))
+			return sprintf('<a href="%1$s">%2$s</a>',$url,$name);
+
 		return false;
 	}
 	// }}}
@@ -2040,9 +2061,7 @@ abstract class LPC_Object implements Serializable
 			$type=explode(".",$dataDef['type']);
 			$rules=array();
 
-			if (in_array($type[0],array('text','longtext')))
-				$this->dataStructure['fields'][$attName]['base_type']=$type[0];
-			elseif (in_array($type[0],array('html','set','enum')))
+			if (in_array($type[0],array('text','longtext','html','set','enum')))
 				$this->dataStructure['fields'][$attName]['base_type']='text';
 			elseif (in_array($type[0],array('integer','email','float','date','boolean'))) {
 				$rules[]=$type[0];
@@ -2816,6 +2835,12 @@ fclose($fp);
 	*/
 	function log($type)
 	{
+		if ($this->noLogging || !$this->loggableChange)
+			return;
+
+		LPC_Logger::doLog($type,$this);
+
+		$this->loggableChange=false; // reset for the next change
 	}
 	// }}}
 	// {{{ debug()
@@ -2856,13 +2881,9 @@ fclose($fp);
 			if (
 				!$force &&
 				empty($dataEntry['flags']['forceSave']) &&
-				(
-					//!isset($this->attr[$attName]) || // commented out because we want to save NULL values for null fields
-					!$this->attr_flags[$attName]['modified']
-				)
-			) {
+				!$this->attr_flags[$attName]['modified']
+			)
 				continue;
-			}
 
 			if (empty($dataEntry['flags']['noLogging']))
 				$this->loggableChange=true;
@@ -2878,23 +2899,18 @@ fclose($fp);
 			else
 				$q_values[]=$this->db->qstr($fld_data);
 		}
-		$query='';
-		if (!$insert) {
-			for($i=0;$i<count($q_fields);$i++)
-				$query.=$q_fields[$i]."=".$q_values[$i].", ";
 
-			$query=substr($query, 0, -2);
-		} else {
-			$q1=$q2='';
-			for($i=0;$i<count($q_fields);$i++) {
-				$q1.=$q_fields[$i].", ";
-				$q2.=$q_values[$i].", ";
-			}
-			$q1=substr($q1,0,-2);
-			$q2=substr($q2,0,-2);
-			$query="(".$q1.") VALUES (".$q2.")";
+		if ($insert)
+			return "(".implode($q_fields, ", ").") VALUES (".implode($q_values, ", ").")";
+
+		$query='';
+		$count=count($q_fields);
+		for($i=0;$i<$count;$i++) {
+			$query.=$q_fields[$i]."=".$q_values[$i].", ";
+			unset($q_fields[$i], $q_values[$i]);  // Free some memory
 		}
-		return $query;
+
+		return substr($query, 0, -2);
 	}
 	// }}}
 	// {{{ probe()
@@ -3691,7 +3707,10 @@ fclose($fp);
 				}
 				continue;
 			}
-			if (empty($this->dataStructure['fields'][$attName]['type'])) {
+			if (
+				empty($this->dataStructure['fields'][$attName]['type']) ||
+				$this->dataStructure['fields'][$attName]['base_type']=='text'
+			) {
 				$filter=new LPC_HTML_list_filter_string();
 				$filter->input_size=10;
 				$filter->SQL_key=$this->getFieldName($attName);
@@ -4051,7 +4070,8 @@ fclose($fp);
 		foreach($attrs as $attName) {
 			if (
 				!isset($this->dataStructure['fields'][$attName]['type']) ||
-				$this->dataStructure['fields'][$attName]['type']!='longtext')
+				$this->dataStructure['fields'][$attName]['base_type']!='text'
+			)
 			$sortable[]=$attName;
 		}
 		return $sortable;

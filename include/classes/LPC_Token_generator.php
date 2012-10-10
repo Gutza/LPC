@@ -10,10 +10,15 @@
 
 class LPC_Token_generator
 {
-	var $method="sha1"; // the only one supported right now -- 40 characters long
-	var $encoding="base64"; // plain or base64; applied before trimming
+	var $method=self::METHOD_SHA1; // the only one supported right now -- 40 characters long
+	var $encoding=self::ENCODING_BASE64; // plain or base64; applied before trimming
 	var $length=40; // Specifies the maximum length
 	var $options=0;
+
+	const METHOD_SHA1="sha1";
+
+	const ENCODING_BASE64="base64";
+	const ENCODING_PLAIN="plain";
 
 	const OPT_NO_ZERO=1;
 	const OPT_NO_O=2;
@@ -21,6 +26,7 @@ class LPC_Token_generator
 	const OPT_NO_L=8;
 	const OPT_ALL_UPPERCASE=16;
 	const OPT_ALL_LOWERCASE=32;
+	const OPT_START_END_ALPHANUM=64;
 
 	private $object;
 	private $field;
@@ -61,6 +67,11 @@ class LPC_Token_generator
 
 	function processOptions($token)
 	{
+		if ($this->options & self::OPT_START_END_ALPHANUM) {
+			$token[0]=$this->to_alphanum($token[0]);
+			$last=strlen($token)-1;
+			$token[$last]=$this->to_alphanum($token[$last]);
+		}
 		if ($this->options & self::OPT_NO_ZERO)
 			$token=str_replace('0','Z',$token);
 		if ($this->options & self::OPT_NO_O)
@@ -76,12 +87,26 @@ class LPC_Token_generator
 		return $token;
 	}
 
+	private function to_alphanum($char)
+	{
+		if (preg_match("/[0-9a-zA-Z]/",$char))
+			return $char;
+		$ascii=rand(0,61);
+		if ($ascii<10) // 0-9
+			return chr($ascii+ord('0'));
+		$ascii-=10;
+		if ($ascii<26) // upperrcase
+			return chr($ascii+ord('A'));
+		$ascii-=26;
+		return chr($ascii+ord('a'));
+	}
+
 	function encode($token)
 	{
 		switch($this->encoding) {
-			case 'plain':
+			case self::ENCODING_PLAIN:
 				return $token;
-			case 'base64':
+			case self::ENCODING_BASE64:
 				return str_replace("+","-",str_replace("/","_",substr(base64_encode($this->to8bit($token)),0,-1)));
 			default:
 				throw new RuntimeException("Unknown encoding (".$this->encoding.")");

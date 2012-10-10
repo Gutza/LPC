@@ -22,15 +22,6 @@ define('LPC_base_url','http://www.example.com');
 // Change this to the web path to your project (no trailing slash; empty if it's in the root)
 define('LPC_project_url','/myProject');
 
-// If needed, change this to the web path to the LPC base directory (no trailing slash)
-define('LPC_url',LPC_project_url.'/LPC');
-
-// If needed, change this to reflect the full URL of the LPC base directory (no trailing slash)
-define('LPC_full_url',LPC_base_url.LPC_url);
-
-// If needed, change this to reflect the full URL of your project (no trailing slash)
-define('LPC_project_full_url',LPC_base_url.LPC_project_url);
-
 // Change to true if you want to enable the GUI module.
 define('LPC_GUI',false);
 // Set the default page class
@@ -64,7 +55,7 @@ define('LPC_project_class','');
 define('LPC_debug',false);
 
 // Add other directories containing your own classes here, e.g.
-// $LPC_extra_class_dirs=array(dirname(__FILE__)."/classes");
+// $LPC_extra_class_dirs=array(dirname(dirname(dirname(__FILE__)))."/include/classes");
 $LPC_extra_class_dirs=array();
 
 // LPC_CACHE_TYPE must be one of:
@@ -127,6 +118,15 @@ LPC_DB::registerKey("sample_db_key", array(
 // --------------------------------------------------------------------------
 // You typically shouldn't need to change anything below this line
 // --------------------------------------------------------------------------
+// If needed, change this to the web path to the LPC base directory (no trailing slash)
+define('LPC_url',LPC_project_url.'/LPC');
+
+// If needed, change this to reflect the full URL of the LPC base directory (no trailing slash)
+define('LPC_full_url',LPC_base_url.LPC_url);
+
+// If needed, change this to reflect the full URL of your project (no trailing slash)
+define('LPC_project_full_url',LPC_base_url.LPC_project_url);
+
 define('LPC_images',LPC_url.'/images');
 define('LPC_js',LPC_url.'/js');
 define('LPC_css',LPC_url.'/css');

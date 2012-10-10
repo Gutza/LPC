@@ -145,6 +145,39 @@ CREATE TABLE `LPC_scaffolding_default` (
   KEY `className` (`className`,`attName`,`language`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table `LPC_log`
+--
+
+DROP TABLE IF EXISTS `LPC_log`;
+CREATE TABLE `LPC_log` (
+  `entry_date` datetime DEFAULT NULL,
+  `entry_type` varchar(20) DEFAULT NULL,
+  `log_class` varchar(30) DEFAULT NULL,
+  `log_id` varchar(20) DEFAULT NULL,
+  `log_user` mediumint(8) UNSIGNED NOT NULL DEFAULT 0,
+  `entry_attrs` longblob,
+  KEY `entry_date` (`entry_date`,`entry_type`),
+  KEY `log_class` (`log_class`,`log_id`,`entry_date`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `LPC_error`
+--
+
+DROP TABLE IF EXISTS `LPC_error`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `LPC_error` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `message` longtext,
+  `type` varchar(50) DEFAULT NULL,
+  `date_registered` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `type` (`type`,`date_registered`),
+  KEY `date_registered` (`date_registered`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 SET character_set_client = @saved_cs_client;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

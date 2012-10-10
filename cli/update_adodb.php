@@ -95,7 +95,7 @@ if (strstr(implode($out,"\n"),"Zip archive")) {
 		exit;
 	}
 } elseif (strstr(implode($out,"\n"),"gzip compressed")) {
-	echo "This seemd to be a tarball.\n";
+	echo "This seems to be a tarball.\n";
 	if (
 		!exec($tarball_cmd,$out2,$errstat) ||
 		$errstat
@@ -131,7 +131,7 @@ $new_ado_dir=$out_dir."/".$entries[0];
 
 echo "***Updating ADOdb***\n";
 
-passthru("cp -ruv ".escapeshellcmd($new_ado_dir)."/* ".escapeshellcmd($old_ado_dir),$errstat);
+passthru("cp -r ".escapeshellcmd($new_ado_dir)."/* ".escapeshellcmd($old_ado_dir),$errstat);
 
 if ($errstat) {
 	echo "There was a problem copying the files. Aborting.\n";

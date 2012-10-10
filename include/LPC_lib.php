@@ -15,8 +15,7 @@ define('LPC_base',dirname(LPC_include));
 require LPC_include."/adodb5/adodb.inc.php";
 require LPC_include."/LPC_include_manager.php";
 require LPC_include."/LPC_intl.php";
-
-require dirname(__FILE__)."/LPC_config.php";
+require LPC_include."/LPC_config.php";
 
 if (LPC_GUI)
 	require LPC_include."/LPC_icons.php";
