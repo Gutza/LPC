@@ -29,8 +29,7 @@ class LPC_Language extends LPC_Base
 	public static function setCurrent($object=NULL)
 	{
 		if (!isset($object) || !$object->id) {
-			unset(self::$currentInstance);
-			unset($_SESSION['LPC']['current_language_id']);
+			unset(self::$currentInstance, $_SESSION['LPC']['current_language_id']);
 			return true;
 		}
 		self::$currentInstance=$object;
@@ -43,14 +42,17 @@ class LPC_Language extends LPC_Base
 		if (isset(self::$currentInstance))
 			return self::$currentInstance;
 
+		$langObj=self::newLanguage();
+		if (get_class($langObj)!=get_class($this)) {
+			self::setCurrent($langObj->getCurrent());
+			return $langObj->getCurrent();
+		}
+
 		if (isset($_SESSION['LPC']['current_language_id'])) {
 			$lang=self::newLanguage($_SESSION['LPC']['current_language_id']);
 			if ($lang->probe())
 				self::setCurrent($lang);
 		}
-
-		if (isset(self::$currentInstance))
-			return self::$currentInstance;
 
 		$default=self::getDefault();
 		self::setCurrent($default);
@@ -73,7 +75,16 @@ class LPC_Language extends LPC_Base
 
 	public static function newLanguage($id=0)
 	{
-		return new LPC_Language($id);
+		$class=self::getLanguageClass();
+		return new $class($id);
+	}
+
+	protected function getLanguageClass()
+	{
+		if (defined("LPC_language_class"))
+			return LPC_language_class;
+
+		return "LPC_Language";
 	}
 
 	public function getLocale()
