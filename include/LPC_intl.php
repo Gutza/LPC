@@ -42,22 +42,4 @@ function _LS($message)
 	if (!$msgfmt)
 		return "";
 	return $msgfmt->format($args);
-
-	// ========== OLD ============
-
-	$langID=LPC_Language::getCurrent()->id;
-	$entry=new LPC_I18n_message();
-	$entries=$entry->search(
-		array('message_key','language'),
-		array($message,$langID)
-	);
-	if (!$entries) {
-		$entries=$entry->search(
-			array('message_key','language'),
-			array($message,LPC_language::getDefault()->id)
-		);
-	}
-
-	if (!$entries)
-		return "{".$message." [".implode("][",$args)."]}";
 }
