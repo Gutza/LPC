@@ -63,9 +63,12 @@ abstract class LPC_User extends LPC_Base
 
 	public static function logout()
 	{
-		if (!self::getCurrent(true))
+		$u=self::getCurrent(true);
+		if (!$u)
 			return;
+		$u->beforeLogout();
 		self::setCurrent();
+		$u->onLogout();
 	}
 
 	/**
@@ -95,6 +98,7 @@ abstract class LPC_User extends LPC_Base
 		$user=self::newUser();
 		if ($u=$user->validatePOST()) {
 			self::setCurrent($u);
+			$u->onLogin();
 			return $u;
 		}
 
@@ -105,6 +109,27 @@ abstract class LPC_User extends LPC_Base
 
 		$user->showLoginForm();
 		exit;
+	}
+
+	/**
+	* Executed just after login. Override this.
+	*/
+	protected function onLogin()
+	{
+	}
+
+	/**
+	* Executed just before logout. Override this.
+	*/
+	protected function beforeLogout()
+	{
+	}
+
+	/**
+	* Executed just after logout. Override this.
+	*/
+	protected function onLogout()
+	{
 	}
 
 	public static function configuredForUsers()
