@@ -44,6 +44,9 @@ define('LPC_default_language',1);
 // System language type (LPC_Language field)
 define('LPC_language_type','POSIX');
 
+// Identify your language class, if you want to override some methods
+define('LPC_language_class', 'CB_Language');
+
 // The system path that contains this entire project (usually the directory above LPC)
 define('LPC_base_path',dirname(dirname(dirname(__FILE__))));
 
