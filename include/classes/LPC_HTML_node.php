@@ -207,6 +207,12 @@ class LPC_HTML_node extends LPC_HTML_base
 		$this->attributes[$key]=$value;
 	}
 
+	public function setAttrs($attrs)
+	{
+		foreach($attrs as $attName=>$attValue)
+			$this->setAttr($attName, $attValue);
+	}
+
 	public function getAttr($key)
 	{
 		if (!isset($this->attributes[$key]))
