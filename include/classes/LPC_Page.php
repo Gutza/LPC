@@ -74,8 +74,10 @@ class LPC_Page extends LPC_HTML_document
 		return parent::render();
 	}
 
-	function st()
+	function st($title=NULL)
 	{
+		if (!is_null($title))
+			$this->title=$title;
 		$this->a("<h1>".$this->title."</h1>");
 	}
 
