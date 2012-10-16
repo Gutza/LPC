@@ -124,6 +124,8 @@ class LPC_Page extends LPC_HTML_document
 			$loadInfo="; load 5s: ".($loadInfo*100/$coreCount)."% (avg on ".$coreCount.($coreCount>1?' cores':' core').")";
 		}
 
+		$result[]=$this->renderMessageTranslations();
+
 		$runtime=new LPC_HTML_node("DIV");
 		$runtime->setAttr('style',"color:#c0c0c0; text-align:center; font-size:80%; margin-top:10px");
 		$runTime=number_format(microtime(true)-LPC_start_time,3);
@@ -131,5 +133,13 @@ class LPC_Page extends LPC_HTML_document
 		$result[]=$runtime;
 
 		return $result;
+	}
+
+	function renderMessageTranslations()
+	{
+		if (empty($_SESSION['LPC_display_message_translations']))
+			return NULL;
+
+		return new LPC_I18n_messageList();
 	}
 }
