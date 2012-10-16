@@ -6,6 +6,13 @@ if (empty($_REQUEST['m'])) {
 	header("Location: index.php");
 	exit;
 }
+if (isset($_REQUEST['l'])) {
+	$l=LPC_Language::newLanguage();
+	$l->fromKey($_REQUEST,'l');
+	if ($l->id)
+		$_SESSION['LPC_target_lang']=$l->id;
+}
+
 if (empty($_SESSION['LPC_target_lang'])) {
 	header("Location: lang_select.php?m=".rawurlencode($msgKey));
 	exit;
