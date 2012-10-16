@@ -4,9 +4,25 @@ require "common.php";
 $p->title="Message selector";
 $p->st();
 
+if (isset($_GET['msgDisplay'])) {
+	if ($_GET['msgDisplay'])
+		$_SESSION['LPC_display_message_translations']=true;
+	else
+		unset($_SESSION['LPC_display_message_translations']);
+}
+
+if (empty($_SESSION['LPC_display_message_translations'])) {
+	$newMsgDisplayStatus=1;
+	$newMsgDisplayLabel="Display message tranlations";
+} else {
+	$newMsgDisplayStatus=0;
+	$newMsgDisplayLabel="Hide message tranlations";
+}
+
 $p->a(
 	"<p>".
-		"[<a href='message_check.php'>Check all message keys</a>]".
+		"[<a href='message_check.php'>Check all message keys</a>] &bull; ".
+		"[<a href='?msgDisplay=$newMsgDisplayStatus'>$newMsgDisplayLabel</a>]".
 	"</p>"
 );
 
