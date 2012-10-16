@@ -17,11 +17,13 @@ class LPC_I18n_messageFormatter extends MessageFormatter
 	public static function get($messageKey)
 	{
 		$langID=LPC_Language::getCurrent()->id;
-		$cacheKey=$langID.'-'.$messageKey;
-		if (!isset(self::$object_cache[$cacheKey]))
-			self::$object_cache[$cacheKey]=new LPC_I18n_messageFormatter($messageKey);
+		if (!isset(self::$object_cache[$langID]))
+			self::$object_cache[$langID]=array();
 
-		return self::$object_cache[$cacheKey];
+		if (!isset(self::$object_cache[$langID][$messageKey]))
+			self::$object_cache[$langID][$messageKey]=new LPC_I18n_messageFormatter($messageKey);
+
+		return self::$object_cache[$langID][$messageKey];
 	}
 
 	function __construct($messageKey)
