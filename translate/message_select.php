@@ -13,10 +13,10 @@ if (isset($_GET['msgDisplay'])) {
 
 if (empty($_SESSION['LPC_display_message_translations'])) {
 	$newMsgDisplayStatus=1;
-	$newMsgDisplayLabel="Display message tranlations";
+	$newMsgDisplayLabel="Display message translations";
 } else {
 	$newMsgDisplayStatus=0;
-	$newMsgDisplayLabel="Hide message tranlations";
+	$newMsgDisplayLabel="Hide message translations";
 }
 
 $p->a(
