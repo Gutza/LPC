@@ -154,7 +154,7 @@ class LPC_HTML_node extends LPC_HTML_base
 				$xtra="";
 				if (is_object($attribute))
 					$xtra=get_class($attribute)." ";
-				throw new RuntimeException("Unknown attribute type (".gettype($attribute)." $xtra-- ".$key."=".$attribute.")");
+				throw new RuntimeException("Unknown attribute type (".gettype($attribute)." $xtra-- ".$key."=".$attribute." for tag ".$this->nodeName.")");
 			}
 		}
 		$tagType=self::tagStart;
