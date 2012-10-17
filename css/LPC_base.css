@@ -92,6 +92,10 @@ div.confirmation_message {
 	color: #050;
 }
 
+div.LPC_translated_message_list {
+	clear: both;
+}
+
 /* Busy */
 #busyLayer
 {
