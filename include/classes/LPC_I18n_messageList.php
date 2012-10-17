@@ -15,7 +15,7 @@ class LPC_I18n_messageList extends LPC_HTML_widget
 			foreach($msgs as $key=>$obj) {
 				$a=new LPC_HTML_node('a');
 				$a->a(htmlspecialchars($key));
-				$a->setAttr('href',LPC_url."/translate/message_translate.php?l=$langID&amp;m=".rawurlencode($key));
+				$a->setAttr('href',LPC_url."/translate/message_translate.php?l=$langID&m=".rawurlencode($key));
 				$a->setAttr('title',$obj->format(array()));
 				if ($msgList->content)
 					$msgList->a(" &bull; ");
