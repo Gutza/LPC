@@ -104,18 +104,21 @@ class LPC_HTML_node extends LPC_HTML_base
 	public function setClass($classes)
 	{
 		$this->classes=explode(" ",$classes);
+		return $this;
 	}
 
 	public function addClass($classes)
 	{
 		$this->_classesFromAttr();
 		$this->classes=array_unique(array_merge($this->classes,explode(" ",$classes)));
+		return $this;
 	}
 
 	public function removeClass($classes)
 	{
 		$this->_classesFromAttr();
 		$this->classes=array_diff(array_unique($this->classes),explode(" ",$classes));
+		return $this;
 	}
 
 	private function _processClasses()
@@ -207,12 +210,14 @@ class LPC_HTML_node extends LPC_HTML_base
 	public function setAttr($key,$value=NULL)
 	{
 		$this->attributes[$key]=$value;
+		return $this;
 	}
 
 	public function setAttrs($attrs)
 	{
 		foreach($attrs as $attName=>$attValue)
 			$this->setAttr($attName, $attValue);
+		return $this;
 	}
 
 	public function getAttr($key)
@@ -233,6 +238,6 @@ class LPC_HTML_node extends LPC_HTML_base
 	{
 		$this->id=$id;
 		$this->setAttr('id',$id);
-		return $id;
+		return $this;
 	}
 }

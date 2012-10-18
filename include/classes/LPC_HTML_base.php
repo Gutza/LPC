@@ -61,7 +61,7 @@ abstract class LPC_HTML_base implements iLPC_HTML
 			$this->content[]=$element;
 		else
 			$this->content[$key]=$element;
-		return true;
+		return $this;
 	}
 
 	public function a($element,$key=NULL)
@@ -74,10 +74,10 @@ abstract class LPC_HTML_base implements iLPC_HTML
 		if (!is_numeric($key) && isset($this->content[$key])) {
 			// array_merge wouldn't behave the way intended here
 			$this->content[$key]=$element;
-			return true;
+			return $this;
 		}
 		$this->content=array_merge(array($key=>$element),$this->content);
-		return true;
+		return $this;
 	}
 
 	public function p($element,$key=0)
