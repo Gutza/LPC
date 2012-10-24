@@ -10,7 +10,7 @@
 class LPC_ZK_lock
 {
 	/**
-	* ZooKeeper handler
+	* ZooKeeper handler (a Zookeeper instance)
 	*
 	* @var object
 	*/
@@ -23,6 +23,12 @@ class LPC_ZK_lock
 	*/
 	private $base_path;
 
+	/**
+	* The default ACL used for ZK keys. You generally don't want to
+	* mess with this, if you have a private ZK cluster.
+	*
+	* @var array
+	*/
 	public $default_acl=array(
 		array(
 			"perms"=>Zookeeper::PERM_ALL,
@@ -67,58 +73,107 @@ class LPC_ZK_lock
 	public function __construct($path, $renew=false)
 	{
 		if (!defined("LPC_ZOOKEEPER_HOST"))
-			throw new RuntimeException("Please define constant ".
-				"LPC_ZOOKEEPER_HOST if you want to use class ".
-				get_class($this));
+			throw new RuntimeException(
+				"Please define constant LPC_ZOOKEEPER_HOST if ".
+				"you want to use class ".get_class($this)
+			);
+
 		if (!isset($path) || is_null($path) || !is_string($path) || !strlen($path))
-			throw new RuntimeException("The path needs to be ".
-				"a non-empty string.");
-		while (substr($path, -1, 1)=='/') // Clip the final slash(es)
+			throw new RuntimeException(
+				"The path needs to be a non-empty string."
+			);
+
+		while (substr($path, -1, 1)=='/')
+			// Clip the final slash(es)
 			$path=substr($path, 0, -1);
-		if (!strlen($path)) // Add a slash if we actually work in the root
+
+		if (!strlen($path))
+			// Add a slash if we actually work in the root
 			$path='/';
+
 		$this->base_path=$path;
 
 		if ($renew && isset(self::$zk_h))
-			self::$zk_h=NULL; // It NEEDS to be manually "unset" (not simply replaced with the new one)
+			// It NEEDS to be manually "unset" (not simply replaced with the new one)
+			self::$zk_h=NULL;
 
 		if (!isset(self::$zk_h)) {
 			self::$zk_h=new Zookeeper(LPC_ZOOKEEPER_HOST);
+
+			// Now for a simplistic connection test
 			if (is_null(self::$zk_h->get("/")))
-				throw new RuntimeException("Failed connecting to the ".
-					"specified ZooKeeper server! (".LPC_ZOOKEEPER_HOST.")");
+				throw new RuntimeException(
+					"Failed connecting to the specified ".
+					"ZooKeeper server! (".LPC_ZOOKEEPER_HOST.")"
+				);
 		}
 	}
 
 	/**
-	* Lock a ZK key
+	* Lock a ZK key.
+	*
+	* Creates a sequenced key and waits for {@link waitForLock()} to confirm
+	* ours is the first in that sequence.
+	*
+	* On success, it returns the sequence lock key (sequence number included),
+	* which can then be used with {@link unlock()} to unlock.
 	*
 	* @param string $key the key to use. Typically a key under the default path
 	*	defined in {@link __construct}, unless $key starts with a
 	*	slash, in which case $key is the full path
 	* @param int $timeout how many seconds to wait. If zero, just return.
-	* @return boolean true on success, false on failure
+	* @return mixed (boolean) false on failure, or (string) sequence lock key
 	*/
 	public function lock($key, $timeout=0)
 	{
 		$full_key=$this->computeFullKey($key);
 		$this->ensurePath($full_key);
-		$lock_key=self::$zk_h->create($full_key, 1, $this->default_acl, Zookeeper::EPHEMERAL | Zookeeper::SEQUENCE);
+		$lock_key=self::$zk_h->create(
+			$full_key, 1, $this->default_acl,
+			Zookeeper::EPHEMERAL | Zookeeper::SEQUENCE
+		);
 		if (!$lock_key)
 			throw new RuntimeException("Failed creating lock node ".$full_key);
+
 		if (!$this->waitForLock($lock_key, $full_key, $timeout)) {
 			// Clean up
 			self::$zk_h->delete($lock_key);
 			return false;
 		}
+
 		return $lock_key;
 	}
 
+	/**
+	* Unlocks a ZK key.
+	*
+	* It needs to be provided with a valid sequence lock key, as returned by
+	* {@link lock()}.
+	*
+	* @param string $lock_key the sequence lock key to unlock
+	* @return bool true on success, false on failure
+	*/
 	public function unlock($lock_key)
 	{
+		if (!is_string($lock_key))
+			throw new DomainException(
+				"This method expects a string!"
+			);
 		return self::$zk_h->delete($lock_key);
 	}
 
+	/**
+	* Waits for a sequenced key to be the first in the sequence,
+	* thus ensuring that specific key's process has the lock.
+	*
+	* @param string $my_key a sequence lock key, as created in
+	*		{@link lock}
+	* @param string $base_key the lock key's associated full lock key
+	*		(with full, absolute path)
+	* @param float $timeout how long to wait before giving up.
+	* @return bool true if ours is the first key in the sequence, false
+	*		otherwise.
+	*/
 	private function waitForLock($my_key, $base_key, $timeout)
 	{
 		$deadline=microtime(true)+$timeout;
@@ -132,14 +187,33 @@ class LPC_ZK_lock
 		}
 	}
 
+	/**
+	* Check if there's ANY lock on a specific key.
+	* Be advised this returns false if ANY lock is in place
+	* for this key, regardless of its index in the sequence.
+	*
+	* @param string $key the key to check for
+	* @return bool true if there is any lock, false otherwise
+	*/
 	public function isLocked($key)
 	{
 		return !is_null($this->getFirstLock($this->computeFullKey($key)));
 	}
 
 	/**
-	* Wait for all locks named $base_key.
+	* Wait for ALL locks named $base_key to die.
+	* Be advised, this uses {@link isLocked()}, so it does NOT
+	* wait for all PREVIOUS locks to die -- this waits for ALL
+	* locks to die. That is, if you obtain a lock on this key
+	* prior to calling this method, this will also wait for
+	* YOUR own lock to be removed before returning true.
+	*
 	* $timeout in seconds; 0 means wait indefinitely
+	*
+	* @param string $key the key to wait for
+	* @param float $timeout the amount of time to wait, in seconds
+	* @return bool true if all previous locks for this key
+	*		are dead, false if we timed out while waiting.
 	*/
 	public function waitForAllLocks($key, $timeout=0)
 	{
@@ -158,7 +232,21 @@ class LPC_ZK_lock
 	}
 
 	/**
-	* Get the first lock (or, in fact, any lock) prefixed as $base_key
+	* Get the first lock prefixed as $base_key.
+	*
+	* Depending on parameter $any, it returns the first lock it finds
+	* (irrespective of that key's position in the sequence), or
+	* the first lock in the sequence. The latter is more expensive,
+	* since it needs to sift through all matching keys, looking for
+	* the smallest one, so make sure to specify $any=true if you
+	* only want to check if there's any lock whatsoever.
+	*
+	* @param string $base_key the full key (with path), but
+	*		without any sequence info
+	* @param bool $any whether to return any key in the sequence, or
+	*		specifically the first one
+	* @return mixed (string) the first sequence lock (sequence number
+	*		included), or (NULL) if there is none.
 	*/
 	protected function getFirstLock($base_key, $any=false)
 	{
@@ -177,6 +265,16 @@ class LPC_ZK_lock
 		return $first_lock;
 	}
 
+	/**
+	* Converts a relative key to a full key.
+	*
+	* This uses {@link $base_path} to prepend the path to the
+	* specified key. If the key is already a full key (i.e.
+	* it starts with a "/") then the key is returned unchanged.
+	*
+	* @param string $key the key to process
+	* @return string the associated full key (with absolute path)
+	*/
 	protected function computeFullKey($key)
 	{
 		if (substr($key, 0, 1)=='/')
@@ -184,6 +282,13 @@ class LPC_ZK_lock
 		return $this->base_path.'/'.$key;
 	}
 
+	/**
+	* Ensures the path of the specified key exists, and creates
+	* all required parents if necessary. It does NOT create the key itself.
+	*
+	* @param $key the full key (with path)
+	* @return bool true on success. On failure it throws an exception.
+	*/
 	protected function ensurePath($key)
 	{
 		$parent=self::getParentName($key);
@@ -198,6 +303,12 @@ class LPC_ZK_lock
 		throw new RuntimeException("Failed creating path [".$parent."]");
 	}
 
+	/**
+	* Returns the parent's name for a specified key.
+	*
+	* @param string $key the full key (with path)
+	* @return string the key parent's path
+	*/
 	private function getParentName($key)
 	{
 		return dirname($key);
