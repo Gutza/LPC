@@ -57,6 +57,13 @@ class LPC_ZK_lock
 	static protected $known_paths=array();
 
 	/**
+	* The name of the actual lock key.
+	*
+	* @var string
+	*/
+	var $lock_name="lock-";
+
+	/**
 	* Constructor. Takes a root path.
 	*
 	* Configure the ZooKeeper connection in LPC_config.php
@@ -126,7 +133,7 @@ class LPC_ZK_lock
 	*/
 	public function lock($key, $timeout=0)
 	{
-		$full_key=$this->computeFullKey($key);
+		$full_key=$this->computeFullKey($this->getLockName($key));
 		$this->ensurePath($full_key);
 		$lock_key=self::$zk_h->create(
 			$full_key, 1, $this->default_acl,
@@ -142,6 +149,11 @@ class LPC_ZK_lock
 		}
 
 		return $lock_key;
+	}
+
+	protected function getLockName($key)
+	{
+		return $key."/".$this->lock_name;
 	}
 
 	/**
@@ -197,7 +209,7 @@ class LPC_ZK_lock
 	*/
 	public function isLocked($key)
 	{
-		return !is_null($this->getFirstLock($this->computeFullKey($key)));
+		return !is_null($this->getFirstLock($this->computeFullKey($this->getLockName($key))));
 	}
 
 	/**
