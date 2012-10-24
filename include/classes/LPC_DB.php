@@ -45,4 +45,16 @@ class LPC_DB
 
 		return self::$dbStruct[$key]['connection'];
 	}
+
+	public static function disconnect($key)
+	{
+		if (!isset(self::$dbStruct[$key]))
+			throw new RuntimeException("Unknown database key \"$key\"! Use LPC_DB::registerKey() to register this key.");
+
+		if (empty(self::$dbStruct[$key]['connection']))
+			return NULL;
+
+		self::$dbStruct[$key]['connection']->Close();
+		self::$dbStruct[$key]['connection']=NULL;
+	}
 }
