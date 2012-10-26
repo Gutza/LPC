@@ -214,8 +214,10 @@ class LPC_ZK_lock
 	{
 		$deadline=microtime(true)+$timeout;
 		$parent=self::getParentName($base_key);
+		$my_index=$this->getIndex($my_key);
+
 		while(true) {
-			if ($my_key==$this->getFirstLock($base_key))
+			if (!$this->isAnyLock($base_key, $my_index))
 				return true;
 			if ($deadline<=microtime(true))
 				return false;
@@ -236,7 +238,7 @@ class LPC_ZK_lock
 	*/
 	public function isLocked($key)
 	{
-		return !is_null($this->getFirstLock($this->computeFullKey($this->getLockName($key))));
+		return $this->isAnyLock($this->computeFullKey($this->getLockName($key)));
 	}
 
 	/**
@@ -271,37 +273,74 @@ class LPC_ZK_lock
 	}
 
 	/**
-	* Get the first lock prefixed as $base_key.
+	* Returns the sequence number for a given key,
+	* or false if not a sequence node.
 	*
-	* Depending on parameter $any, it returns the first lock it finds
-	* (irrespective of that key's position in the sequence), or
-	* the first lock in the sequence. The latter is more expensive,
-	* since it needs to sift through all matching keys, looking for
-	* the smallest one, so make sure to specify $any=true if you
-	* only want to check if there's any lock whatsoever.
+	* @param string $key the key to compute the index for
+	* @return mixed (int) sequence number if a sequence node,
+	*	(bool) false otherwise
+	*/
+	protected function getIndex($key)
+	{
+		if (!preg_match("/[1-9][0-9]*$/", $key, $matches))
+			return false;
+
+		return intval($matches[0]);
+	}
+
+	/**
+	* Check for locks like $base_key.
+	*
+	* Checks if there is any sequence node under $base_key's parent.
+	* By default, it checks if there is any such node whatsoever.
+	*
+	* If $index_filter is non-zero then it checks whether any node
+	* with a smaller index that $index_filter is present; returns
+	* false if all the nodes it finds are larger.
+	*
+	* If $name_filter is true, it checks if the nodes are prefixed with
+	* the $base_key's name. If $name_filter is a string, it checks if the
+	* nodes are prefixed with $name_filter. In either of these cases,
+	* nodes that don't match the filter are ignored.
 	*
 	* @param string $base_key the full key (with path), but
 	*		without any sequence info
-	* @param bool $any whether to return any key in the sequence, or
-	*		specifically the first one
-	* @return mixed (string) the first sequence lock (sequence number
-	*		included), or (NULL) if there is none.
+	* @param int $index_filter whether to filter by node index.
+	* @param mixed $name_filter whether to filter by node name results.
+	* @return bool true if a matching node is found, false otherwise
 	*/
-	protected function getFirstLock($base_key, $any=false)
+	protected function isAnyLock($base_key, $index_filter=0, $name_filter=false)
 	{
+		$index_filter=intval($index_filter);
+
 		$parent=self::getParentName($base_key);
 		$children=self::$zk_h->getChildren($parent);
-		$first_lock=NULL;
-		foreach($children as $child) {
-			$child=$parent."/".$child;
-			if (substr($child, 0, strlen($base_key))!=$base_key)
+		foreach($children as $child_key) {
+			$child=$parent."/".$child_key;
+			if ($name_filter===true || is_string($name_filter)) {
+				if ($name_filter===true)
+					$filter=$base_key;
+				else
+					$filter=$filter;
+
+				if (substr($child, 0, strlen($filter))!=$filter)
+					continue;
+			}
+
+			if (!$index_filter)
+				return true;
+
+			$child_index=$this->getIndex($child_key);
+
+			if (!$child_index)
+				// Not a sequence node
 				continue;
-			if ($any)
-				return $child;
-			if (is_null($first_lock) || $child<$first_lock)
-				$first_lock=$child;
+
+			if ($child_index<$index_filter)
+				// smaller index
+				return true;
 		}
-		return $first_lock;
+		return false;
 	}
 
 	/**
