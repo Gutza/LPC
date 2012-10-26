@@ -48,6 +48,13 @@ class LPC_ZK_lock
 	public $sleep_cycle=100000;
 
 	/**
+	* How many seconds to wait before timing out on connections.
+	*
+	* @var float
+	*/
+	public $connection_timeout=0.1;
+
+	/**
 	* A local cache of known paths. Used by {link ensurePath()}.
 	*
 	* We exploit the assumption that we're always using the same ZK cluster.
@@ -104,15 +111,20 @@ class LPC_ZK_lock
 			// It NEEDS to be manually "unset" (not simply replaced with the new one)
 			self::$zk_h=NULL;
 
-		if (!isset(self::$zk_h)) {
-			self::$zk_h=new Zookeeper(LPC_ZOOKEEPER_HOST);
+		if (empty(self::$zk_h)) {
+			self::$zk_h=new Zookeeper();
+			self::$zk_h->connect(LPC_ZOOKEEPER_HOST);
+			$this->waitForConnection();
+		}
+	}
 
-			// Now for a simplistic connection test
-			if (is_null(self::$zk_h->get("/")))
-				throw new RuntimeException(
-					"Failed connecting to the specified ".
-					"ZooKeeper server! (".LPC_ZOOKEEPER_HOST.")"
-				);
+	function waitForConnection()
+	{
+		$deadline=microtime(true)+$this->connection_timeout;
+		while(self::$zk_h->getState()!=Zookeeper::CONNECTED_STATE) {
+			if ($deadline <= microtime(true))
+				throw new RuntimeException("Zookeeper connection timed out!");
+			usleep($this->sleep_cycle);
 		}
 	}
 
@@ -136,8 +148,10 @@ class LPC_ZK_lock
 		$full_key=$this->computeFullKey($this->getLockName($key));
 		$this->ensurePath($full_key);
 		$lock_key=self::$zk_h->create(
-			$full_key, 1, $this->default_acl,
-			Zookeeper::EPHEMERAL | Zookeeper::SEQUENCE
+			$full_key, // path
+			1, // value
+			$this->default_acl, // ACL
+			Zookeeper::EPHEMERAL | Zookeeper::SEQUENCE // flags
 		);
 		if (!$lock_key)
 			throw new RuntimeException("Failed creating lock node ".$full_key);
@@ -151,6 +165,16 @@ class LPC_ZK_lock
 		return $lock_key;
 	}
 
+	/**
+	* Get a generic name and return the name of the ZK key appropriate for locking.
+	*
+	* ZK sequences are per parent node, so this ensures we're always working inside
+	* the requested node. It simply appends a slash and {@link $lock_name} to the
+	* specified key name.
+	*
+	* @param string $key the desired name for the lock
+	* @return string the name of the ZK node for this lock
+	*/
 	protected function getLockName($key)
 	{
 		return $key."/".$this->lock_name;
@@ -201,8 +225,11 @@ class LPC_ZK_lock
 
 	/**
 	* Check if there's ANY lock on a specific key.
-	* Be advised this returns false if ANY lock is in place
+	*
+	* Be advised this returns true if ANY lock is in place
 	* for this key, regardless of its index in the sequence.
+	* That is, if you obtain a lock and then call this, it
+	* will tell you it IS locked.
 	*
 	* @param string $key the key to check for
 	* @return bool true if there is any lock, false otherwise
