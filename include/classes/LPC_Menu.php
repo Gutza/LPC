@@ -113,21 +113,6 @@ abstract class LPC_Menu extends LPC_HTML_widget
 		}
 	}
 
-	/*
-		array(
-			'type'=>'AND',
-			'permissions'=>array(
-				'Can do this',
-				array(
-					'type'=>'OR',
-					'permissions'=>array(
-						'Can do that',
-						'Can do the other',
-					),
-				),
-			),
-		),
-	*/
 	function testPermissionStruct($struct)
 	{
 		$user=LPC_User::getCurrent();
