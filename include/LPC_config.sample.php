@@ -131,9 +131,6 @@ LPC_DB::registerKey("sample_db_key", array(
 ));
 */
 
-// Zookeeper configuration. Define it if you plan to use ZK locks.
-//define("LPC_ZOOKEEPER_HOST", "localhost:2181");
-
 // --------------------------------------------------------------------------
 // You typically shouldn't need to change anything below this line
 // --------------------------------------------------------------------------
