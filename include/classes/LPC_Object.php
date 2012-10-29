@@ -2885,7 +2885,10 @@ fclose($fp);
 			)
 				continue;
 
-			if (empty($dataEntry['flags']['noLogging']))
+			if (
+				empty($dataEntry['flags']['noLogging']) &&
+				empty($dataEntry['flags']['noLogging'])
+			)
 				$this->loggableChange=true;
 
 			$fld_name=$dataEntry['fld_name'];
