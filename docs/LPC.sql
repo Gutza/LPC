@@ -157,6 +157,8 @@ CREATE TABLE `LPC_log` (
   `log_id` varchar(20) DEFAULT NULL,
   `log_user` mediumint(8) UNSIGNED NOT NULL DEFAULT 0,
   `entry_attrs` longblob,
+  `trace` longblob,
+  `reason` varchar(50) DEFAULT NULL,
   KEY `entry_date` (`entry_date`,`entry_type`),
   KEY `log_class` (`log_class`,`log_id`,`entry_date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
