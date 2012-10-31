@@ -127,10 +127,20 @@ abstract class LPC_Object implements Serializable
 	var $noLogging=false;
 
 	/**
+	 * If set true, logs will also include a full backtrace.
+	 */
+	var $logTrace=false;
+
+	/**
+	 * If set, logs will contain this string in the reason field.
+	 */
+	var $logReason=NULL;
+
+	/**
 	 * The module in which this object resides. Typically should only be set
 	 * in top-level objects.
 	 */
-	var $module='LFX';
+	var $module='LPC';
 
 	/**
 	 * This variable controls whether the consistency checker should skip any
@@ -170,22 +180,13 @@ abstract class LPC_Object implements Serializable
 	//            Constructor
 	// ----------------------------------
 	/**
-	 * The constructor. Please *always* run parent
-	 * constructors *explicitly* when extending a class
-	 * (unless that has extremely adverse effects to your code)
-	 * In other words, it is highly recommended that any
-	 * class LFX_random extending LFX_object runs $this->LFX_object()
-	 * in the constructor, any class extending LFX_random runs
-	 * $this->LFX_random() in the constructor and so on.
-	 * The request for explicit running the constructor means that
-	 * you should not use
-	 * < ?
-	 *   $parent=get_parent_class($this);
-	 *   $this->$parent();
-	 * ? >
-	 * because that fails when your class is extended and will end
-	 * up calling itself over and over, looping indefinitely.
-	 * The LPC_Object constructor only sets $this->id, if $id is passed.
+	 * Constructor.
+	 *
+	 * Please *always* run parent constructors *explicitly* when extending
+	 * this class (unless that has extremely adverse effects to your code).
+	 *
+	 * The constructor only sets $this->id, if $id is passed.
+	 *
 	 * @param integer $id [optional] The id of the newly instantiated object
 	 */
 	function __construct($id=0)
@@ -371,13 +372,15 @@ abstract class LPC_Object implements Serializable
 
 	// {{{ save()
 	/**
-	 * Saves the current objfile:///var/internal_public/helpdesk_merged/LFXlib/include/classes/LFX_object.phpect to the database.
+	 * Saves the current object to the database.
 	 *
 	 * If $id is not specified, $this->id is used.
 	 * If $this->id is not set (or evaluates to false) then it
 	 * adds a new record with the current object's attributes
 	 * to the database (actually executes $this->insert()).
+	 *
 	 * Sets the correct $this->id upon success.
+	 *
 	 * @return mixed id on success, false on error
 	 *   or NULL if {@link internal_beforeSave} aborts the save
 	 */
@@ -1483,15 +1486,13 @@ abstract class LPC_Object implements Serializable
 	 *
 	 * The HTML representation should be a string which you feel is reasonably
 	 * representative for this object; for instance it could be
-	 * $this->getAttrH('fname').' '.$this->getAttrH('lname') for a LFX_User, or
-	 * '#'.$this->id.' '.$this->getAttrH('title') for an OPT_Request, or simply
-	 * $this->getAttr('name') for a DMO_Instance.
+	 * $this->getAttrH('fname').' '.$this->getAttrH('lname') for a user object.
 	 *
 	 * If you use a single attribute as representation of this object,
-	 * linke in the last example above,
-	 * then you can specify it as the "title_attr" entry in the data structure
-	 * array you pass in the class constructor; if you do that, then you can
-	 * skip overriding this method and it will simply return
+	 * like in the last example above, then you can specify it as the
+	 * "title_attr" entry in the data structure array you pass in the
+	 * class constructor; if you do that, then you can skip overriding
+	 * this method and it will simply return
 	 * $this->getAttrH(<the attribute you specified>).
 	 *
 	 * @return string HTML representation of this object.
@@ -2208,7 +2209,7 @@ abstract class LPC_Object implements Serializable
 	 * After performing the query, use $this->db methods to retrieve the result.
 	 *
 	 * @param mixed $sql (string) the query in plain text or
-	 *  (array) the query as a LFX_Query_Manager structure
+	 *  (array) the query as a LPC_Query_builder structure
 	 * @return integer the database result handle (which incidentally you don't need)
 	 */
 	function query($sql,$inputArr=false)
@@ -2258,7 +2259,7 @@ fclose($fp);
 
 	 */
 
-		$localExplainRecord=false;
+		//$localExplainRecord=false;
 		/*
 		// **TODO** re-implement this within the LPC context, it was very useful!
 		if (isset($_SESSION['LFX_debug']['log_bad_db_indexes']) && $_SESSION['LFX_debug']['log_bad_db_indexes']) {
@@ -2289,12 +2290,12 @@ fclose($fp);
 		if (!$result && empty($this->inhibitQueryErrors))
 			throw new RuntimeException("Database error #{$this->db->ErrorNo()}: {$this->db->ErrorMsg()}; Query: \"$sql\"");
 
-		global $_LFX;
-		if (!isset($_LFX['global']['queryCount']))
-			$_LFX['global']['queryCount']=1;
+		global $_LPC;
+		if (!isset($_LPC['global']['queryCount']))
+			$_LPC['global']['queryCount']=1;
 		else
-			$_LFX['global']['queryCount']++;
-
+			$_LPC['global']['queryCount']++;
+/*
 		if ($localExplainRecord) {
 			if ($localExplainRecord['rows']-$this->db->num_rows()>3) {
 				LFX_LogMessage(
@@ -2317,10 +2318,11 @@ fclose($fp);
 				);
 			}
 		}
+*/
 		if (!$result) {
-			global $_LFX;
-			$_LFX['global']['queries']['errors']++;
-			if ($_LFX['global']['queries']['errors']>50)
+			global $_LPC;
+			$_LPC['global']['queries']['errors']++;
+			if ($_LPC['global']['queries']['errors']>50)
 				throw new RuntimeException("Too many errors in queries!");
 		}
 		return $result;
@@ -2838,7 +2840,7 @@ fclose($fp);
 		if ($this->noLogging || !$this->loggableChange)
 			return;
 
-		LPC_Logger::doLog($type,$this);
+		LPC_Logger::doLog($type, $this);
 
 		$this->loggableChange=false; // reset for the next change
 	}
