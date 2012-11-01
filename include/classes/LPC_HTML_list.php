@@ -293,7 +293,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 				$url=LPC_Url::add_GET_var($_SERVER['REQUEST_URI'],$sortParam,$key);
 				$url=LPC_Url::add_GET_var($url,$orderParam,$newOrder);
 				$label=new LPC_HTML_node("A");
-				$label->setAttr('href',htmlspecialchars($url));
+				$label->setAttr('href',$url);
 				$label->content=$labelText;
 			} else {
 				$label=new LPC_HTML_node("SPAN");
