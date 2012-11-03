@@ -41,12 +41,6 @@ define('LPC_GUI',false);
 // Default system language ID; taken from LPC_Language
 define('LPC_default_language',1);
 
-// System language type (LPC_Language field)
-define('LPC_language_type','POSIX');
-
-// Identify your language class, if you want to override some methods
-define('LPC_language_class', 'CB_Language');
-
 // The system path that contains this entire project (usually the directory above LPC)
 define('LPC_base_path',dirname(dirname(dirname(__FILE__))));
 
@@ -54,16 +48,12 @@ define('LPC_base_path',dirname(dirname(dirname(__FILE__))));
 if (!defined('LPC_GUI_OB'))
 	define('LPC_GUI_OB',false);
 
-// Identify your user class, if you want to use native authentication
-define('LPC_user_class','');
-
-// Define this if you want LPC to ensure that all users are authenticated
-// Seeing as it's an environment variable, you can also define it using
-// external means, e.g. Apache's mod_env.
-//putenv("LPC_auth=1");
-
 // Identify your projects class, if you want to use them
 define('LPC_project_class','');
+
+// Add other directories containing your own classes here, e.g.
+// $LPC_extra_class_dirs=array(dirname(dirname(dirname(__FILE__)))."/include/classes");
+$LPC_extra_class_dirs=array();
 
 // Enable if you want to display errors; also includes LPC/include/LPC_debug.php
 define('LPC_debug',false);
@@ -72,9 +62,8 @@ define('LPC_debug',false);
 // String for function name, anything else to leave the PHP handler in place.
 //define('LPC_exception_handler', NULL);
 
-// Add other directories containing your own classes here, e.g.
-// $LPC_extra_class_dirs=array(dirname(dirname(dirname(__FILE__)))."/include/classes");
-$LPC_extra_class_dirs=array();
+// The e-mail address where you want to receive soft errors
+//LPC_Error::$email='me@example.com';
 
 // LPC_CACHE_TYPE must be one of:
 // none		no caching is performed (poor performance)
@@ -131,9 +120,33 @@ LPC_DB::registerKey("sample_db_key", array(
 ));
 */
 
+// LPC_Log can log in MongoDB databases (this is specific to LPC_Log for now)
+/*
+LPC_DB::registerKey("LPC_Log", array(
+	'type'=>'mongodb',
+	'host'=>"localhost",
+	'database'=>'LPC_'.LPC_INSTALLATION_KEY,
+));
+define("LPC_LOGGER_DB_KEY", "LPC_Log");
+*/
+
 // --------------------------------------------------------------------------
 // You typically shouldn't need to change anything below this line
 // --------------------------------------------------------------------------
+// System language type (LPC_Language field)
+define('LPC_language_type','POSIX');
+
+// Identify your language class, if you want to override some methods
+define('LPC_language_class', 'CB_Language');
+
+// Identify your user class, if you want to use native authentication
+define('LPC_user_class','');
+
+// Define this if you want LPC to ensure that all users are authenticated
+// Seeing as it's an environment variable, you can also define it using
+// external means, e.g. Apache's mod_env.
+//putenv("LPC_auth=1");
+
 // If needed, change this to the web path to the LPC base directory (no trailing slash)
 define('LPC_url',LPC_project_url.'/LPC');
 

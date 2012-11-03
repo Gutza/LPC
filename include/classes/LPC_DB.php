@@ -31,6 +31,28 @@ class LPC_DB
 		if (isset(self::$dbStruct[$key]['connection']))
 			return self::$dbStruct[$key]['connection'];
 
+		if (self::$dbStruct[$key]['data']['type']=='mongodb')
+			return self::getMongoConnection($key);
+
+		return self::getGenericConnection($key);
+	}
+
+	private function getMongoConnection($key)
+	{
+		$cd=&self::$dbStruct[$key]['data'];
+
+		if (!class_exists("Mongo"))
+			throw new RuntimeException("Please install the Mongo PHP extension if you want to use MongoDB databases. (pear install mongo)");
+
+		$mongo=new Mongo($cd['host'], array("connect"=>false, "db"=>$cd['database']));
+		if (!$mongo->connect())
+			throw new RuntimeException("Failed connecting to MongoDB key ".$key);
+
+		return self::$dbStruct[$key]['connection']=$mongo->selectDB($cd['database']);
+	}
+
+	private function getGenericConnection($key)
+	{
 		$cd=&self::$dbStruct[$key]['data']; // connection data
 		if (!function_exists("adonewconnection"))
 			throw new RuntimeException("You must include the ADOdb library before calling LPC_DB::getConnection()!");
@@ -57,4 +79,5 @@ class LPC_DB
 		self::$dbStruct[$key]['connection']->Close();
 		self::$dbStruct[$key]['connection']=NULL;
 	}
+
 }
