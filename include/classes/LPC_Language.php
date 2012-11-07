@@ -43,7 +43,7 @@ class LPC_Language extends LPC_Base
 			return self::$currentInstance;
 
 		$langObj=self::newLanguage();
-		if (get_class($langObj)!=get_class($this)) {
+		if (get_class($langObj)!=get_class()) {
 			self::setCurrent($langObj->getCurrent());
 			return $langObj->getCurrent();
 		}

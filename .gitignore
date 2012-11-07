@@ -1,2 +1,3 @@
 include/LPC_config.php
+include/PHPExcel_fonts/
 

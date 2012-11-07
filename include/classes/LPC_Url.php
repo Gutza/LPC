@@ -49,8 +49,8 @@ class LPC_Url
 		$protocol=empty($_SERVER["HTTPS"])?"http":(($_SERVER["HTTPS"]=="on")?"https":"http");
 		$port="";
 		if (
-			($s=='http' && $_SERVER["SERVER_PORT"]!=80) ||
-			($s=='https' && $_SERVER["SERVER_PORT"]!=443)
+			($protocol=='http' && $_SERVER["SERVER_PORT"]!=80) ||
+			($protocol=='https' && $_SERVER["SERVER_PORT"]!=443)
 		)
 			$port=':'.$_SERVER["SERVER_PORT"];
 
