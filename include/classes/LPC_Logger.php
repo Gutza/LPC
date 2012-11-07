@@ -90,7 +90,7 @@ class LPC_Logger extends LPC_Base
 		if (is_string($obj->logReason))
 			$doc["reason"]=$obj->logReason;
 
-		$table=self::$logObj->getTableName(true);
+		$table=self::$logObj->getTableName();
 
 		self::$logObj->db->$table->insert($doc);
 	}
