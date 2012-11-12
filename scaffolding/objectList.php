@@ -8,7 +8,8 @@ $p->st();
 
 $p->a(
 	"<p>".
-		"[<a href='index.php'>"._LS('scaffoldingSwitchClass')."</a>]".
+		"[<a href='index.php'>"._LS('scaffoldingSwitchClass')."</a>] &bull; ".
+		"[<a href='changeVisi.php?c=".rawurlencode($_GET['c'])."'>"._LS('scaffoldingColumnVisibilityLink')."</a>]".
 	"</p>"
 );
 

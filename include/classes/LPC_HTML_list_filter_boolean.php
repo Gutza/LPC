@@ -39,7 +39,7 @@ class LPC_HTML_list_filter_boolean extends LPC_HTML_list_filter
 			$checked=" checked";
 		else
 			$checked="";
-		return "<div><input type='checkbox' name='".$name."' $checked value='1' id='".$id."'><label for='".$id."'>"._LH($labelKey)."</label></div>";
+		return "<div style='min-width: 50px'><input type='checkbox' name='".$name."' $checked value='1' id='".$id."'><label for='".$id."'>"._LH($labelKey)."</label></div>";
 	}
 
 	function getSQL()
