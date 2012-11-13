@@ -3596,6 +3596,68 @@ fclose($fp);
 		return $l;
 	}
 	// }}}
+	// {{{ sGetAllAttributes()
+	function sGetAllAttributes()
+	{
+		if (empty($this->dataStructure['files']))
+			return $this->getScaffoldingAttributes();
+
+		$attributes=$this->getScaffoldingAttributes();
+		$file_attrs=array();
+		foreach($this->dataStructure['files'] as $meta)
+			$file_attrs=array_merge($file_attrs,array_values($meta));
+
+		$attrs=array();
+		foreach($attributes as $attName)
+			if (!in_array($attName,$file_attrs))
+				$attrs[]=$attName;
+
+		return $attrs;
+	}
+	// }}}
+	// {{{ sGetDefaultVisibleAttributes()
+	public function sGetDefaultVisibleAttributes()
+	{
+		return array_diff(
+			$this->sGetAllAttributes(),
+			$this->sGetDefaultHiddenAttributes()
+		);
+	}
+	// }}}
+	// {{{ sGetDefaultHiddenAttributes()
+	function sGetDefaultHiddenAttributes()
+	{
+		return $this->scaffoldingHiddenAttributes;
+	}
+	// }}}
+	// {{{ sGetVisibleAttributes()
+	function sGetVisibleAttributes()
+	{
+		static $hObj;
+		if (empty($hObj))
+			$hObj=new LPC_Scaffold_fld_visi();
+
+		$diffVis=$hObj->getDiff(
+			get_class($this),
+			LPC_Scaffold_fld_visi::MOD_SHOW
+		);
+		$diffHid=$hObj->getDiff(
+			get_class($this),
+			LPC_Scaffold_fld_visi::MOD_HIDE
+		);
+
+		return
+		array_unique(
+			array_merge(
+				array_diff(
+					$this->sGetDefaultVisibleAttributes(),
+					$diffHid
+				),
+				$diffVis
+			)
+		);
+	}
+	// }}}
 	// {{{ getBaseList()
 	public function getBaseList($filterQuery=NULL)
 	{
@@ -3614,20 +3676,7 @@ fclose($fp);
 			$qb=new LPC_Query_builder();
 			$query['where']['conditions'][]=$this->getFieldName(0)." IN (".$qb->buildSQL($filterQuery).")";
 		}
-		if (empty($this->dataStructure['files']))
-			$attrs=$this->getScaffoldingAttributes();
-		else {
-			$attributes=$this->getScaffoldingAttributes();
-			$file_attrs=array();
-			foreach($this->dataStructure['files'] as $meta)
-				$file_attrs=array_merge($file_attrs,array_values($meta));
-
-			$attrs=array();
-			foreach($attributes as $attName)
-				if (!in_array($attName,$file_attrs))
-					$attrs[]=$attName;
-		}
-		$attrs=array_diff($attrs,$this->scaffoldingHiddenAttributes);
+		$attrs=$this->sGetVisibleAttributes();
 
 		// Process attributes; make sure we join the linked table, and the link table's i18n table where needed
 		$linkData=array();
@@ -3718,6 +3767,10 @@ fclose($fp);
 			) {
 				$filter=new LPC_HTML_list_filter_string();
 				$filter->input_size=10;
+				$filter->SQL_key=$this->getFieldName($attName);
+				$filters->a($filter,$attName);
+			} elseif ($this->dataStructure['fields'][$attName]['base_type']=='boolean') {
+				$filter=new LPC_HTML_list_filter_boolean();
 				$filter->SQL_key=$this->getFieldName($attName);
 				$filters->a($filter,$attName);
 			}

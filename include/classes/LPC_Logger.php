@@ -15,9 +15,9 @@ class LPC_Logger extends LPC_Base
 	function registerDataStructure()
 	{
 		return array(
-			'table_name'=>'LPC_Log',
-			'id_field'=>'id',
-			'fields'=>array(),
+			'table_name'=>'LPC_log',
+			'id_field'=>'id', // bogus
+			'fields'=>array(), // useless
 		);
 	}
 

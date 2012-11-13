@@ -168,8 +168,6 @@ CREATE TABLE `LPC_log` (
 --
 
 DROP TABLE IF EXISTS `LPC_error`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `LPC_error` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `message` longtext,
@@ -178,6 +176,19 @@ CREATE TABLE `LPC_error` (
   PRIMARY KEY (`id`),
   KEY `type` (`type`,`date_registered`),
   KEY `date_registered` (`date_registered`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `LPC_scaffold_fld_visi`
+--
+
+DROP TABLE IF EXISTS `LPC_scaffold_fld_visi`;
+CREATE TABLE `LPC_scaffold_fld_visi` (
+  `user` int(10) unsigned NOT NULL DEFAULT '0',
+  `class_name` varchar(30) DEFAULT NULL,
+  `field_name` varchar(30) DEFAULT NULL,
+  `action` enum('force_hide','force_show') NOT NULL DEFAULT 'force_hide',
+  KEY `user_class` (`user`,`class_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 SET character_set_client = @saved_cs_client;

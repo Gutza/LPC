@@ -808,6 +808,24 @@ It is recommended that you do not overwrite this translation just in order to cu
         ),
       ),
     ),
+    'lpcListFilterBooleanHelp' => 
+    array (
+      'comment' => 'The help message shown for boolean filters.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Only records with values mathing your selection will be displayed. If you select both fields, all records will be shown (same if you deselect both fields).',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Vor fi afişate numai înregistrările care conţin în acest câmp valoarea pe care o selectaţi. Dacă selectaţi ambele câmpuri vor fi afişate toate înregistrările (la fel şi dacă debifaţi ambele câmpuri).',
+        ),
+      ),
+    ),
     'lpcListFilterStringHelp' => 
     array (
       'comment' => 'The help message for the plain string filter in lists. Do NOT use HTML -- it will be shown as such.',
@@ -845,6 +863,150 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         array (
           'language' => '2',
           'translation' => 'Anulează filtrul',
+        ),
+      ),
+    ),
+    'rightsTestCache' => 
+    array (
+      'comment' => 'The title of the rights test cache page.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Test cached rights',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Testează drepturile din cache',
+        ),
+      ),
+    ),
+    'rightsTestSubmit' => 
+    array (
+      'comment' => 'The rights test submit button label',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Select the user',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Selectează utilizatorul',
+        ),
+      ),
+    ),
+    'rightsTestUserID' => 
+    array (
+      'comment' => 'The label explaining the user ID field in the cached rights test page',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'User ID to investigate:',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'ID-ul utilizatorului pe care doriţi să-l investigaţi:',
+        ),
+      ),
+    ),
+    'rightTestGlobalExpDate' => 
+    array (
+      'comment' => 'Label for the global cache expiration date',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Expiration date for the global cache',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Data de expirare a cache-ului global',
+        ),
+      ),
+    ),
+    'rightTestProjectExpDate' => 
+    array (
+      'comment' => 'Label for project cache expiration date',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Project cache expiration date',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Data de expirare a cache-ului proiectului curent',
+        ),
+      ),
+    ),
+    'rightTestUserDate' => 
+    array (
+      'comment' => 'Label for user cache date',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'User cache date',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Data cache-ului utilizatorului',
+        ),
+      ),
+    ),
+    'rightTestUserExpDate' => 
+    array (
+      'comment' => 'User cache expiration date',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'User cache expiration date',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Data de expirare a cache-ului utilizatorului',
+        ),
+      ),
+    ),
+    'rightTestUserPermissions' => 
+    array (
+      'comment' => 'Permissions list',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'User\'s permissions (from cache)',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Lista permisiunilor utilizatorului (din cache)',
         ),
       ),
     ),
@@ -1028,6 +1190,60 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         ),
       ),
     ),
+    'scaffoldingColumnVisibilityExplain' => 
+    array (
+      'comment' => 'Explanation for the column visibility form',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Use the list below to indicate which columns you want visible for this object. You can always adjust this list. This is your personal preference; making changes here does not affect other users.',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Folosiţi lista de dedesubt pentru a indica ce coloane doriţi să afişaţi pentru acest obiect. Puteţi modifica această listă oricând. Aceasta este o preferinţă personală de-a dumneavoastră; modificările pe care le faceţi aici nu vor afecta alţi utilizatori.',
+        ),
+      ),
+    ),
+    'scaffoldingColumnVisibilityLink' => 
+    array (
+      'comment' => 'The label of the link to the scaffolding visibility column interface',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Show or hide columns',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Afişează sau ascunde coloane',
+        ),
+      ),
+    ),
+    'scaffoldingColumnVisibilityTitle' => 
+    array (
+      'comment' => 'The title for the column visibility page. Takes one parameter, the class name.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Column visibility for {0}',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Vizibilitatea coloanelor pentru {0}',
+        ),
+      ),
+    ),
     'scaffoldingCreateDependency' => 
     array (
       'comment' => 'The label of the link for attaching one dependency in the scaffolding list. Takes one parameter, the name of the dependency.',
@@ -1169,6 +1385,24 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         array (
           'language' => '2',
           'translation' => 'Modifică {0} #{1}',
+        ),
+      ),
+    ),
+    'scaffoldingErrorNeedClass' => 
+    array (
+      'comment' => 'The error message shown in scaffolding pages when a class is needed and it\'s not provided.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Incomplete parameters! (missing class name)',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Parametri incompleţi! (lipseşte numele clasei)',
         ),
       ),
     ),
