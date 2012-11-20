@@ -22,15 +22,17 @@ abstract class LPC_User extends LPC_Base
 		'min_length'=>6,
 		'need_alpha'=>true,
 		'need_numeric'=>true,
+		'need_lowercase'=>false, // implies need_alpha
+		'need_uppercase'=>false, // implies need_alpha
 	);
 
 	var $token_delay=7; // token validity, in days (you can use fractions if you want shorter delays)
 	var $token_email_email='nobody'; // The originating e-mail address for token-related messages
 	var $token_email_name=LPC_project_name; // The originating name for token-related messages
 	var $token_invite_subject="lpcAuthInviteSubject"; // The translation key for the subject
-	var $token_invite_body="lpcAuthInviteBody"; // The translation key for the body
-	var $token_recover_subject="lpcAuthRecoverSubject";
-	var $token_recover_body="lpcAuthRecoverBody";
+	var $token_invite_body="lpcAuthInviteBody"; // The translation key for the invitation (e-mail validation) body
+	var $token_recover_subject="lpcAuthRecoverSubject"; // The translation key for the subject
+	var $token_recover_body="lpcAuthRecoverBody"; // The translation key for the password recovery body
 
 	const HU_KEY='perm_H'; // Cache key for whether this guy's a hyperuser
 	const SU_KEY='perm_S'; // Cache key for whether this guy's a superuser in the current project
@@ -866,6 +868,12 @@ EOJS;
 
 		if ($this->password_conditions['need_numeric'] && !preg_match("/[0-9]/",$pwd1))
 			return _LH('lpcAuthErrNeedNumber');
+
+		if ($this->password_conditions['need_lowercase'] && !preg_match("/[a-z]/", $pwd1))
+			return _LH('lpcAuthErrNeedLowercase');
+
+		if ($this->password_conditions['need_uppercase'] && !preg_match("/[A-Z]/", $pwd1))
+			return _LH('lpcAuthErrNeedUppercase');
 
 		return false;
 	}
