@@ -58,7 +58,7 @@ class LPC_Token_generator
 
 	function instantToken()
 	{
-		$token=$this->encode(sha1(rand().microtime()));
+		$token=$this->encode(sha1(openssl_random_pseudo_bytes(20)));
 		if ($this->length<strlen($token))
 			$token=substr($token,0,$this->length);
 		$token=$this->processOptions($token);
