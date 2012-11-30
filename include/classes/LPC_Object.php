@@ -1131,7 +1131,7 @@ abstract class LPC_Object implements Serializable
 	function touchAttr($attName)
 	{
 		if (!isset($this->attr_flags[$attName]))
-			throw new RuntimeException("The attribute to touch ($attName) was never defined in this class!");
+			throw new RuntimeException("The attribute to touch ($attName) was never defined in this class: ".get_class($this));
 		$this->attr_flags[$attName]['modified']=true;
 		$this->modified=true;
 		return true;
@@ -2134,7 +2134,7 @@ abstract class LPC_Object implements Serializable
 			throw new RuntimeException("The atribute name is mandatory!");
 		elseif (empty($this->dataStructure['fields'][$attName]['fld_name'])) {
 			if (empty($this::$i18n_class))
-				throw new RuntimeException("Attribute to retrieve the field for (\"".$attName."\") wasn't defined in this class!");
+				throw new RuntimeException("Attribute to retrieve the field for (\"".$attName."\") wasn't defined in this class: ".get_class($this));
 			$this->initI18n();
 			return $this->i18n_object->getFieldName($attName,$simple);
 		} else
@@ -4158,7 +4158,7 @@ fclose($fp);
 	function getI18nAttr($attName)
 	{
 		if (!$this::$i18n_class)
-			throw new DomainException("Attribute \"$attName\" has never been defined in this class, and no i18n class is defined!");
+			throw new DomainException("Attribute \"$attName\" has never been defined in class ".get_class($this).", and no i18n class is defined!");
 		$this->initI18n();
 		return $this->i18n_object->getAttr($attName);
 	}
@@ -4167,7 +4167,7 @@ fclose($fp);
 	function setI18nAttr($attName,$attValue)
 	{
 		if (!$this::$i18n_class)
-			throw new InvalidArgumentException("Attribute \"$attName\" has never been defined in class, and no i18n class is defined!");
+			throw new InvalidArgumentException("Attribute \"$attName\" has never been defined in class ".get_class($this).", and no i18n class is defined!");
 		$this->initI18n();
 		$this->i18n_object->setAttr($attName,$attValue);
 		if (!$this->modified)
