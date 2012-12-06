@@ -33,22 +33,24 @@ if ($obj->hasScaffoldingRight('W')) {
 }
 
 $refdata=array('rd','rc','rid');
+$rd=NULL;
 foreach($refdata as $refatom) {
 	if (isset($_POST['LPC_scaffolding_'.$refatom]))
 		$$refatom=$_POST['LPC_scaffolding_'.$refatom];
 	elseif (isset($_GET[$refatom]))
 		$$refatom=$_GET[$refatom];
 }
-$query=NULL;
-if (isset($rd)) {
+$query=$rObj=NULL;
+if (strlen($rd)) {
 	$rObj=new $rc($rid);
 	if (!$rObj->probe()) {
 		$p-a(new LPC_HTML_error(_LH('scaffoldErrorMissingRemote')));
 		return;
 	}
+	$editDiv->a(" &bull; [<a href='objectEdit.php?c=".$_GET['rc']."&amp;id=".$_GET['rid']."'>"._LS('scaffoldingBackToParent',htmlspecialchars($_GET['rc']),htmlspecialchars($_GET['rid']))."</a>]");
 	$query=$rObj->_makeGetLinksQuery($rd);
 }
-$p->a($obj->getScaffoldingList($query));
+$p->a($obj->getScaffoldingList($query, $rObj, $rd));
 
 if ($editDiv)
 	$p->a($editDiv);
