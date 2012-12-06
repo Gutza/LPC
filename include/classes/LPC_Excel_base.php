@@ -147,6 +147,19 @@ class LPC_Excel_base
 		$this->excel->getActiveSheet()->getStyle($this->coord_L2E($coord))->getNumberFormat()->setFormatCode($format);
 	}
 
+	public function getNumberFormat($coord)
+	{
+		return $this->excel->getActiveSheet()->getStyle($this->coord_L2E($coord))->getNumberFormat()->getFormatCode();
+	}
+
+	public function getFormattedCell($coord)
+	{
+		return PHPExcel_Style_NumberFormat::toFormattedString(
+			$this->getCell($coord),
+			$this->getNumberFormat($coord)
+		);
+	}
+
 	public function setFontSize($coord,$size)
 	{
 		$this->excel->getActiveSheet()->getStyle($this->coord_L2E($coord))->getFont()->setSize($size);
