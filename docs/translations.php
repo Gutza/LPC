@@ -808,6 +808,24 @@ It is recommended that you do not overwrite this translation just in order to cu
         ),
       ),
     ),
+    'lpcFlushPrivsConfirm' => 
+    array (
+      'comment' => 'The message shown when successfully flushing privileges.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Done, all privileges have been successfully flushed.',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Succes, cache-ul de privilegii a fost resetat.',
+        ),
+      ),
+    ),
     'lpcListFilterBooleanHelp' => 
     array (
       'comment' => 'The help message shown for boolean filters.',
@@ -1367,6 +1385,24 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         array (
           'language' => '2',
           'translation' => 'Descarcă',
+        ),
+      ),
+    ),
+    'scaffoldingDropLink' => 
+    array (
+      'comment' => 'The scaffolding label for dropping links. Takes two parameters: the dependency name and the object class+id.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Detach link {0} from {1}',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Detaşează legătura {0} cu {1}',
         ),
       ),
     ),
