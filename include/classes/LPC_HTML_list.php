@@ -146,7 +146,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 		$paginator=new LPC_HTML_node("DIV");
 		$paginator->setAttr('id','list_paginator_'.$this->id);
 		$paginator->setAttr('class',$this->paginatorClass);
-		$paginator->a(__L("Page:")." ");
+		$paginator->a(__L("lpcListPageLabel")." ");
 
 		$pages=array();
 		for($page=1;$page<=min($this->paginatorEndsPages,$pageCount);$page++)

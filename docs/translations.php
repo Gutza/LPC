@@ -848,6 +848,24 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         ),
       ),
     ),
+    'lpcListPageLabel' => 
+    array (
+      'comment' => 'The "Page" label at the bottom of lists.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Page:',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Pagina:',
+        ),
+      ),
+    ),
     'lpcRemoveFilterIcon' => 
     array (
       'comment' => 'The alternate text for the "remove filter" icon used in the LPC_HTML_list_filter class.',
