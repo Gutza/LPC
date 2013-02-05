@@ -1676,5 +1676,59 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         ),
       ),
     ),
+    'scaffoldingTitleCreateObject' => 
+    array (
+      'comment' => 'Scaffolding: the title of the page where you create an object. Takes one parameter, the name of the class.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Scaffolding: {0} (create)',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Eşafodaj: {0} (creează)',
+        ),
+      ),
+    ),
+    'scaffoldingTitleObjectEdit' => 
+    array (
+      'comment' => 'The title of the scaffolding page where you modify a specific object. Takes a single parameter: the object identifier.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Scaffolding: {0}',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Eşafodaj: {0}',
+        ),
+      ),
+    ),
+    'scaffoldingTitleObjectList' => 
+    array (
+      'comment' => 'The title of the scaffolding page showing a list of objects in a certain class. Takes one parameter, the formal class name.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Scaffolding: {0} (list)',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Eşafodaj: {0} (lista)',
+        ),
+      ),
+    ),
   ),
 );
