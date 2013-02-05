@@ -69,6 +69,11 @@ if ($id && !$obj->probe()) {
 	return;
 }
 
+if ($id)
+	$p->st(__L('scaffoldingTitleObjectEdit', getFormalName($class)." #".$id));
+else
+	$p->st(__L('scaffoldingTitleCreateObject', getFormalName($class)));
+
 if (
 	isset($_POST['LPC_scaffolding_submit_button']) ||
 	isset($_POST['LPC_scaffolding_submit_plus'])

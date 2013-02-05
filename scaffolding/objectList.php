@@ -24,6 +24,8 @@ if (!validClassName($class) || !validateClassRights($class)) {
 	return;
 }
 
+$p->st(_LS('scaffoldingTitleObjectList', getFormalName($class)));
+
 $editDiv=false;
 $obj=new $class();
 if ($obj->hasScaffoldingRight('W')) {
