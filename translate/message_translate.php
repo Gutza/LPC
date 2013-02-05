@@ -35,6 +35,11 @@ else {
 }
 
 $ref=new LPC_I18n_reference($msgKey);
+if (isset($_POST['delete'])) {
+	$ref->delete();
+	header("Location: message_select.php");
+	exit;
+}
 $target_lang=new LPC_Language($_SESSION['LPC_target_lang']);
 $reference_lang=new LPC_Language($_SESSION['LPC_reference_lang']);
 
@@ -111,6 +116,7 @@ $t->a(new LPC_HTML_form_row(array(
 )));
 $t->a(new LPC_HTML_form_row(array(
 	'label'=>'&nbsp;',
-	'input'=>"<input type='submit' name='submit' value='Translate'>"
+	'input'=>"<input type='submit' name='submit' value='Translate'> ".
+		"<input type='submit' name='delete' value='Delete' onClick=\"return confirm('Are you sure you want to PERMANENTLY delete this message and all its translations?')\">",
 )));
 $form->addSK();
