@@ -3,6 +3,7 @@
 class LPC_HTML_radioPair extends LPC_HTML_node
 {
 	var $compact=true;
+	private $radioID;
 
 	/**
 	* Constructor.
@@ -14,7 +15,7 @@ class LPC_HTML_radioPair extends LPC_HTML_node
 	*/
 	function __construct($name,$label,$value,$checked=false)
 	{
-		$id='LPC'.self::getUID();
+		$this->radioID='LPC'.self::getUID();
 		$checkedH='';
 		if (is_bool($checked)) {
 			if ($checked)
@@ -24,9 +25,14 @@ class LPC_HTML_radioPair extends LPC_HTML_node
 				$checkedH=' checked';
 		}
 		$this->a(
-			"<input type='radio' name='$name' value=\"".htmlspecialchars($value)."\" id='".$id."'".$checkedH.">".
+			"<input type='radio' name='$name' value=\"".htmlspecialchars($value)."\" id='".$this->radioID."'".$checkedH.">".
 			"&nbsp;".
-			"<label for='".$id."'>".$label."</label>"
+			"<label for='".$this->radioID."'>".$label."</label>"
 		);
+	}
+
+	function getRadioID()
+	{
+		return $this->radioID;
 	}
 }
