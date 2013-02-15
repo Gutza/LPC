@@ -808,6 +808,24 @@ It is recommended that you do not overwrite this translation just in order to cu
         ),
       ),
     ),
+    'lpcFlushPrivsConfirm' => 
+    array (
+      'comment' => 'The message shown when successfully flushing privileges.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Done, all privileges have been successfully flushed.',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Succes, cache-ul de privilegii a fost resetat.',
+        ),
+      ),
+    ),
     'lpcListFilterBooleanHelp' => 
     array (
       'comment' => 'The help message shown for boolean filters.',
@@ -1370,6 +1388,24 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         ),
       ),
     ),
+    'scaffoldingDropLink' => 
+    array (
+      'comment' => 'The scaffolding label for dropping links. Takes two parameters: the dependency name and the object class+id.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Detach link {0} from {1}',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Detaşează legătura {0} cu {1}',
+        ),
+      ),
+    ),
     'scaffoldingEditAction' => 
     array (
       'comment' => 'The label associated with object editing in the scaffolding object list.',
@@ -1637,6 +1673,60 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         array (
           'language' => '2',
           'translation' => 'LPC: eşafodaj',
+        ),
+      ),
+    ),
+    'scaffoldingTitleCreateObject' => 
+    array (
+      'comment' => 'Scaffolding: the title of the page where you create an object. Takes one parameter, the name of the class.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Scaffolding: {0} (create)',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Eşafodaj: {0} (creează)',
+        ),
+      ),
+    ),
+    'scaffoldingTitleObjectEdit' => 
+    array (
+      'comment' => 'The title of the scaffolding page where you modify a specific object. Takes a single parameter: the object identifier.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Scaffolding: {0}',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Eşafodaj: {0}',
+        ),
+      ),
+    ),
+    'scaffoldingTitleObjectList' => 
+    array (
+      'comment' => 'The title of the scaffolding page showing a list of objects in a certain class. Takes one parameter, the formal class name.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Scaffolding: {0} (list)',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Eşafodaj: {0} (lista)',
         ),
       ),
     ),

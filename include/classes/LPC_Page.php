@@ -17,6 +17,7 @@ class LPC_Page extends LPC_HTML_document
 	var $loadAvgFile="/proc/loadavg"; // used in the footer
 	var $cpuinfoFile="/proc/cpuinfo"; // used in the footer
 	var $noFooter=false; // set to true if you don't want the footer
+	const PAGE_TITLE_ENTRY='LPC_page_title';
 
 	private static $currentInstance=NULL;
 
@@ -78,7 +79,7 @@ class LPC_Page extends LPC_HTML_document
 	{
 		if (!is_null($title))
 			$this->title=$title;
-		$this->a("<h1>".$this->title."</h1>");
+		$this->a("<h1>".$this->title."</h1>", self::PAGE_TITLE_ENTRY);
 		return $this;
 	}
 

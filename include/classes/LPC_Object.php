@@ -3848,7 +3848,11 @@ fclose($fp);
 		$td->a("[<a href='objectEdit.php?c=".get_class($this)."&amp;id=".$id."&amp;rt=".rawurlencode($_SERVER['REQUEST_URI'])."'>"._LS('scaffoldingEditAction')."</a>]");
 		$td->a("&bull;");
 		if ($this->_scaffoldingMeta["remoteObject"]) {
-			$td->a("[<a href='dropLink.php?c=".get_class($this)."&amp;id=".$id."&amp;rd=".$this->_scaffoldingMeta["dependency"]."&amp;rc=".get_class($this->_scaffoldingMeta["remoteObject"])."&amp;rid=".$this->_scaffoldingMeta["remoteObject"]->id."&amp;rt=".rawurlencode($_SERVER['REQUEST_URI'])."'>"._LS("scaffoldingDropLink", $this->_scaffoldingMeta["dependency"], get_class($this->_scaffoldingMeta["remoteObject"])."#".$this->_scaffoldingMeta["remoteObject"]->id)."</a>]");
+			$td->a(
+				"[<a href='dropLink.php?c=".get_class($this)."&amp;id=".$id."&amp;rd=".$this->_scaffoldingMeta["dependency"]."&amp;rc=".get_class($this->_scaffoldingMeta["remoteObject"])."&amp;rid=".$this->_scaffoldingMeta["remoteObject"]->id."&amp;rt=".rawurlencode($_SERVER['REQUEST_URI'])."'>".
+				_LS("scaffoldingDropLink", "&laquo;".$this->_scaffoldingMeta["dependency"]."&raquo;", get_class($this->_scaffoldingMeta["remoteObject"])."#".$this->_scaffoldingMeta["remoteObject"]->id).
+				"</a>]"
+			);
 			$td->a("&bull;");
 		}
 		$td->a("[<a href='#' onClick=\"if (!confirm('".addslashes(_LS('scaffoldingDeleteConfirm'))."')) return false; location.href='objectDelete.php?c=".get_class($this)."&amp;id=".$id."&amp;k=".session_id()."'; return false\">"._LS('scaffoldingDeleteAction')."</a>]");
