@@ -95,7 +95,7 @@ if (
 		header("Location: ".$url);
 		exit;
 	} catch (Exception $e) {
-		$p->a(new LPC_HTML_error(_LH('scaffoldingSaveError',$e->getMessage())));
+		$p->a(new LPC_HTML_error(_LH('scaffoldingSaveError', iconv("UTF-8", "UTF-8", $e->getMessage()))));
 	}
 }
 
