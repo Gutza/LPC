@@ -4107,43 +4107,6 @@ fclose($fp);
 			$_FILES['file']['tmp_name'][$key],
 			$_FILES['file']['name'][$key]
 		);
-
-		// TODO: Obsolete code
-		if (!$this->isValidFile($key))
-			return;
-
-		$meta=$this->dataStructure['files'][$key];
-		foreach($meta as $type=>$attr) {
-			switch($type) {
-				case 'content':
-					$this->setAttr($attr,file_get_contents($_FILES['file']['tmp_name'][$key]));
-					break;
-				case 'mime':
-					$fname=$_FILES['file']['name'][$key];
-					$tname=tempnam(sys_get_temp_dir(),'LPC_scaff_');
-					$tfname=$tname.$fname;
-					copy($_FILES['file']['tmp_name'][$key],$tfname);
-
-					$finfo = finfo_open(FILEINFO_MIME_TYPE);
-					$mime=finfo_file($finfo, $tfname);
-					finfo_close($finfo);
-
-					$this->setAttr($attr,$mime);
-
-					unlink($tname);
-					unlink($tfname);
-
-					break;
-				case 'name':
-					$this->setAttr($attr,$_FILES['file']['name'][$key]);
-					break;
-				case 'date':
-					$this->setAttr($attr,time());
-					break;
-				default:
-					throw new RuntimeException("Unknown file entry type (\"".$type."\") for file key \"".$key."\"");
-			}
-		}
 	}
 	// }}}
 	// {{{ processScaffoldingFiles()
