@@ -2,7 +2,8 @@
 
 /**
 * This class generates a unique token for the specified field in the specified class, populates it and saves the object.
-* Race conditions are avoided. Tokens are guaranteed to only contain alphanumeric characters, plus "-" and "_" for base64.
+* Race conditions are avoided as long as this runs on a single server.
+* Tokens are guaranteed to only contain alphanumeric characters, plus "-" and "_" for base64.
 *
 * Note: This SAVES the object, so make sure you account for that in your code's logic.
 * Bogdan, 2011-02
