@@ -32,3 +32,15 @@ if (
 	LPC_Url::get_full_script()!=$usr->processTokenBaseURL()
 )
 	LPC_User::getCurrent();
+
+function LPC_prefill(&$array, $values)
+{
+	$count=0;
+	foreach($values as $key=>$value) {
+		if (array_key_exists($key, $array))
+			continue;
+		$array[$key]=$value;
+		$count++;
+	}
+	return $count;
+}
