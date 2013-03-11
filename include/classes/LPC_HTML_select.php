@@ -41,15 +41,21 @@ class LPC_HTML_select extends LPC_HTML_widget
 
 	function addOption($label,$value=NULL,$selected=false)
 	{
+		$o=$this->generateOption($label, $value);
+		$this->a($o);
+
+		if ($selected)
+			$this->selected=$value;
+	}
+
+	function generateOption($label, $value=NULL)
+	{
 		$o=new LPC_HTML_node('option');
 		if ($value===NULL)
 			$value=$label;
 		$o->setAttr('value',$value);
 		$o->content=$label;
-		$this->a($o);
-
-		if ($selected)
-			$this->selected=$value;
+		return $o;
 	}
 
 	function removeOption($value)

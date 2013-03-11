@@ -13,6 +13,7 @@ class LPC_DB
 
 	private function __construct()
 	{
+		// Singleton
 	}
 
 	public static function registerKey($key,$data)
@@ -37,7 +38,7 @@ class LPC_DB
 		return self::getGenericConnection($key);
 	}
 
-	private function getMongoConnection($key)
+	private static function getMongoConnection($key)
 	{
 		$cd=&self::$dbStruct[$key]['data'];
 
@@ -51,7 +52,7 @@ class LPC_DB
 		return self::$dbStruct[$key]['connection']=$mongo->selectDB($cd['database']);
 	}
 
-	private function getGenericConnection($key)
+	private static function getGenericConnection($key)
 	{
 		$cd=&self::$dbStruct[$key]['data']; // connection data
 		if (!function_exists("adonewconnection"))
@@ -80,4 +81,8 @@ class LPC_DB
 		self::$dbStruct[$key]['connection']=NULL;
 	}
 
+	public static function getDatabaseName($key)
+	{
+		return self::$dbStruct[$key]['data']['database'];
+	}
 }

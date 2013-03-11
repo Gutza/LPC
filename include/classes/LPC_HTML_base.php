@@ -44,10 +44,10 @@ abstract class LPC_HTML_base implements iLPC_HTML
 			$this->content->updateOwner($od);
 	}
 
-	public function append($element,$key=NULL)
+	private function prepareForAppend($element)
 	{
 		if (is_string($element) && !strlen(trim($element)))
-			return null;
+			return false;
 		if (!is_array($this->content))
 			$this->content=array($this->content);
 		if (is_object($element)) {
@@ -57,6 +57,14 @@ abstract class LPC_HTML_base implements iLPC_HTML
 			else
 				$element->updateOwner($this->ownerDocument);
 		}
+		return true;
+	}
+
+	public function append($element,$key=NULL)
+	{
+		if (!$this->prepareForAppend($element))
+			return $this;
+
 		if ($key===NULL)
 			$this->content[]=$element;
 		else
@@ -69,18 +77,22 @@ abstract class LPC_HTML_base implements iLPC_HTML
 		return $this->append($element,$key);
 	}
 
-	public function prepend($element,$key=0)
+	public function prepend($element, $key=NULL)
 	{
-		if (!is_numeric($key) && isset($this->content[$key])) {
-			// array_merge wouldn't behave the way intended here
-			$this->content[$key]=$element;
+		if (!$this->prepareForAppend($element))
 			return $this;
-		}
-		$this->content=array_merge(array($key=>$element),$this->content);
+
+		if ($key===NULL)
+			array_unshift($this->content, $element);
+		elseif (array_key_exists($key, $this->content))
+			$this->content[$key]=$element;
+		else
+			$this->content=array_merge(array($key=>$element), $this->content);
+
 		return $this;
 	}
 
-	public function p($element,$key=0)
+	public function p($element,$key=NULL)
 	{
 		return $this->prepend($element,$key);
 	}

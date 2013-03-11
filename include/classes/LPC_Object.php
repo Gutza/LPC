@@ -3647,11 +3647,19 @@ fclose($fp);
 	* Returns a LPC_HTML_list object which is the list of
 	* objects in the database.
 	*
+	* @param array $query an optional filtering array
+	* @param object $remoteObject the remote object related to this one via $dependency
+	* @param string $dependency the dependency that links this object to $remoteObject
+	*
 	* @return object LPC_HTML_list object
 	*/
-	public function getScaffoldingList($query=NULL)
+	public function getScaffoldingList($query=NULL, $remoteObject=NULL, $dependency=NULL)
 	{
 		$l=$this->getBaseList($query);
+		$this->_scaffoldingMeta=array(
+			"remoteObject"=>$remoteObject,
+			"dependency"=>$dependency,
+		);
 		$l->onProcessHeaderCell=array($this,'onScaffoldingHeaderCell');
 		$l->onProcessHeaderRow=array($this,'onScaffoldingHeaderRow');
 		$l->onProcessBodyCell=array($this,'onScaffoldingBodyCell');
@@ -3904,6 +3912,14 @@ fclose($fp);
 		$row->a($td);
 		$td->a("[<a href='objectEdit.php?c=".get_class($this)."&amp;id=".$id."&amp;rt=".rawurlencode($_SERVER['REQUEST_URI'])."'>"._LS('scaffoldingEditAction')."</a>]");
 		$td->a("&bull;");
+		if ($this->_scaffoldingMeta["remoteObject"]) {
+			$td->a(
+				"[<a href='dropLink.php?c=".get_class($this)."&amp;id=".$id."&amp;rd=".$this->_scaffoldingMeta["dependency"]."&amp;rc=".get_class($this->_scaffoldingMeta["remoteObject"])."&amp;rid=".$this->_scaffoldingMeta["remoteObject"]->id."&amp;rt=".rawurlencode($_SERVER['REQUEST_URI'])."'>".
+				_LS("scaffoldingDropLink", "&laquo;".$this->_scaffoldingMeta["dependency"]."&raquo;", get_class($this->_scaffoldingMeta["remoteObject"])."#".$this->_scaffoldingMeta["remoteObject"]->id).
+				"</a>]"
+			);
+			$td->a("&bull;");
+		}
 		$td->a("[<a href='#' onClick=\"if (!confirm('".addslashes(_LS('scaffoldingDeleteConfirm'))."')) return false; location.href='objectDelete.php?c=".get_class($this)."&amp;id=".$id."&amp;k=".session_id()."'; return false\">"._LS('scaffoldingDeleteAction')."</a>]");
 		foreach($this->dataStructure['depend'] as $depName=>$depData) {
 			$td->a("&bull;");
