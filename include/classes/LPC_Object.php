@@ -1204,6 +1204,71 @@ abstract class LPC_Object implements Serializable
 		return true;
 	}
 	// }}}
+	// {{{ setFile()
+	function setFile($fileKey, $filePath, $origFileName=NULL, $fileName=NULL)
+	{
+		if (!$this->isValidFile($fileKey))
+			return;
+
+		if (!is_file($filePath) || !is_readable($filePath))
+			throw new RuntimeException("File doesn't exist or isn't readable [".$filePath."]");
+
+		if (is_null($origFileName))
+			$origFileName = pathinfo($filePath,  PATHINFO_BASENAME);
+
+		if (is_null($fileName))
+			$fileName = $origFileName;
+
+		$meta=&$this->dataStructure['files'][$fileKey];
+		foreach($meta as $type=>$attr) {
+			switch($type) {
+				case 'content':
+					$this->setAttr($attr, file_get_contents($filePath));
+					break;
+				case 'mime':
+					$tname=tempnam(sys_get_temp_dir(),'LPC_scaff_');
+					$tfname=$tname.$origFileName;
+					symlink($filePath, $tfname);
+					$finfo = new finfo(FILEINFO_MIME_TYPE);
+					$this->setAttr($attr, $finfo->file($tfname));
+					unlink($tfname);
+					break;
+				case 'name':
+					$this->setAttr($attr, $fileName);
+					break;
+				case 'date':
+					$this->setAttr($attr, time());
+					break;
+				default:
+					throw new RuntimeException("Unknown file entry type (\"".$type."\") for file key \"".$fileKey."\")");
+			}
+		}
+	}
+	// }}}
+	// {{{ setFileFromPOST()
+	function setFileFromPOST($fileKey, $POSTKey=NULL, $fileName=NULL)
+	{
+		if (is_null($POSTKey))
+			$POSTKey=$fileKey;
+
+echo "<font color='red'>[".$POSTKey." -- ".$_FILES[$POSTKey]['tmp_name']."]</font>";
+
+		if (empty($_FILES[$POSTKey]['tmp_name']))
+			return false;
+
+		if (is_null($fileName))
+			$fileName=$_FILES[$POSTKey]['name'];
+
+echo "<hr>".$fileKey." -- ".$_FILES[$POSTKey]['tmp_name']." -- ".$_FILES[$POSTKey]['name']." -- ".$fileName."<hr>";
+
+		return $this->setFile(
+			$fileKey,
+			$_FILES[$POSTKey]['tmp_name'],
+			$_FILES[$POSTKey]['name'],
+			$fileName
+		);
+	}
+	// }}}
 	// {{{ instantiate()
 	// **TODO** -- rethink all of this madness
 	// -- it's only called without the second parameter or with a string as the second parameter; the first is either an ID or an array; that's probably all the functionality we ever need, anyway
@@ -1395,15 +1460,15 @@ abstract class LPC_Object implements Serializable
 	// {{{ isValidFile()
 	/**
 	* Checks whether this object contains any valid file entries
-	* named $fileName
+	* named $fileKey
 	* @teturn boolean true if the file exists and is valid, false otherwise
 	*/
-	function isValidFile($fileName)
+	function isValidFile($fileKey)
 	{
 		if (
 			empty($this->dataStructure['files']) ||
-			empty($this->dataStructure['files'][$fileName]) ||
-			empty($this->dataStructure['files'][$fileName]['content'])
+			empty($this->dataStructure['files'][$fileKey]) ||
+			empty($this->dataStructure['files'][$fileKey]['content'])
 		)
 			return false;
 
@@ -1412,23 +1477,23 @@ abstract class LPC_Object implements Serializable
 	// }}}
 	// {{{ isPopulatedFile()
 	/**
-	* Checks whether this object's file entry named $fileName
+	* Checks whether this object's file entry named $fileKey
 	* has been filled in with data.
 	* @return mixed false if invalid, the length of the file content otherwise
 	*/
-	function isPopulatedFile($fileName)
+	function isPopulatedFile($fileKey)
 	{
-		if (!$this->isValidFile($fileName))
+		if (!$this->isValidFile($fileKey))
 			return false;
-		return strlen($this->getAttr($this->dataStructure['files'][$fileName]['content']));
+		return strlen($this->getAttr($this->dataStructure['files'][$fileKey]['content']));
 	}
 	// }}}
 	// {{{ deleteFile()
-	function deleteFile($fileName)
+	function deleteFile($fileKey)
 	{
-		if (!$this->isPopulatedFile($fileName))
+		if (!$this->isPopulatedFile($fileKey))
 			return;
-		$meta=$this->dataStructure['files'][$fileName];
+		$meta=$this->dataStructure['files'][$fileKey];
 		foreach($meta as $type=>$attr)
 			switch($type) {
 				case 'content':
@@ -4019,10 +4084,16 @@ fclose($fp);
 	// {{{ processScaffoldingFile()
 	protected function processScaffoldingFile($key)
 	{
-		if (
-			empty($this->dataStructure['files']) ||
-			empty($this->dataStructure['files'][$key])
-		)
+		// We can't use setFileFromPOST because we use keys in the file name, and
+		// that's not currently supported.
+		return $this->setFile(
+			$key,
+			$_FILES['file']['tmp_name'][$key],
+			$_FILES['file']['name'][$key]
+		);
+
+		// TODO: Obsolete code
+		if (!$this->isValidFile($key))
 			return;
 
 		$meta=$this->dataStructure['files'][$key];
