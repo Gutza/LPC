@@ -1251,15 +1251,11 @@ abstract class LPC_Object implements Serializable
 		if (is_null($POSTKey))
 			$POSTKey=$fileKey;
 
-echo "<font color='red'>[".$POSTKey." -- ".$_FILES[$POSTKey]['tmp_name']."]</font>";
-
 		if (empty($_FILES[$POSTKey]['tmp_name']))
 			return false;
 
 		if (is_null($fileName))
 			$fileName=$_FILES[$POSTKey]['name'];
-
-echo "<hr>".$fileKey." -- ".$_FILES[$POSTKey]['tmp_name']." -- ".$_FILES[$POSTKey]['name']." -- ".$fileName."<hr>";
 
 		return $this->setFile(
 			$fileKey,
