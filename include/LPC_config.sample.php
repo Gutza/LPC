@@ -137,7 +137,7 @@ define("LPC_LOGGER_DB_KEY", "LPC_Log");
 define('LPC_language_type','POSIX');
 
 // Identify your language class, if you want to override some methods
-define('LPC_language_class', 'CB_Language');
+define('LPC_language_class', '');
 
 // Identify your user class, if you want to use native authentication
 define('LPC_user_class','');
