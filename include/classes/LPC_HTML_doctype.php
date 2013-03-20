@@ -6,6 +6,7 @@ abstract class LPC_HTML_doctype
 	const type_HTML2=0x10;
 	const type_HTML3=0x20;
 	const type_HTML4=0x40;
+	const type_HTML5=0x100;
 	const type_XHTML1=0x80;
 
 	const mode_Strict=1;
@@ -22,6 +23,8 @@ abstract class LPC_HTML_doctype
 	const HTML4T=0x42; // type_HTML4 + mode_Transitional
 	// HTML 4.01 Frameset
 	const HTML4F=0x44; // type_HTML4 + mode_Frameset
+	// HTML 5
+	const HTML5=0x100; // type_HTML5
 	// XHTML 1.0 Strict
 	const XHTML1S=0x81; // type_XHTML1 + mode_Strict
 	// XHTML 1.0 Transitional
@@ -35,6 +38,7 @@ abstract class LPC_HTML_doctype
 		self::HTML4S=>'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
 		self::HTML4T=>'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
 		self::HTML4F=>'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">',
+		self::HTML5=>'<!DOCTYPE html>',
 		self::XHTML1S=>'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
 		self::XHTML1T=>'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
 		self::XHTML1F=>'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'
