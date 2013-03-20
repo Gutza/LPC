@@ -453,8 +453,10 @@ abstract class LPC_Object implements Serializable
 				throw new RangeException("Failed retrieving LAST INSERT ID!");
 		}
 
-		foreach($this->dataStructure['fields'] as $attName=>$dataEntry)
+		foreach($this->dataStructure['fields'] as $attName=>$dataEntry) {
 			$this->attr_flags[$attName]['modified']=false;
+			$this->attr_flags[$attName]['loaded']=true;
+		}
 
 		$this->modified=false;
 
@@ -500,6 +502,9 @@ abstract class LPC_Object implements Serializable
 			$this->attr_flags[$id_fld],
 			$this->dataStructure['fields'][$id_fld]
 		);
+
+		$this->id=$id;
+
 		return $result;
 	}
 	// }}}
@@ -1208,7 +1213,7 @@ abstract class LPC_Object implements Serializable
 	function setFile($fileKey, $filePath, $origFileName=NULL, $fileName=NULL)
 	{
 		if (!$this->isValidFile($fileKey))
-			return;
+			return false;
 
 		if (!is_file($filePath) || !is_readable($filePath))
 			throw new RuntimeException("File doesn't exist or isn't readable [".$filePath."]");
@@ -1243,6 +1248,7 @@ abstract class LPC_Object implements Serializable
 					throw new RuntimeException("Unknown file entry type (\"".$type."\") for file key \"".$fileKey."\")");
 			}
 		}
+		return true;
 	}
 	// }}}
 	// {{{ setFileFromPOST()
