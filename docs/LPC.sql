@@ -102,7 +102,7 @@ CREATE TABLE `LPC_language` (
   KEY `locale_POSIX` (`locale_POSIX`),
   KEY `translated` (`translated`,`name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-INSERT INTO `LPC_language` VALUES (1,'English (US)',1,'en_US.UTF-8');
+INSERT INTO `LPC_language` VALUES (1,'English (US)',1,'en_US.UTF-8'), (2,'Română',1,'en_US.UTF-8');
 
 --
 -- Table structure for table `LPC_i18n_message`
