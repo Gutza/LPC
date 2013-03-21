@@ -23,7 +23,7 @@ class LPCI_Menu extends LPC_Menu
 			),
 			'application'=>array(
 				'label'=>'Back to application',
-				'url'=>LPC_url,
+				'url'=>LPC_project_url,
 			),
 		);
 	}
