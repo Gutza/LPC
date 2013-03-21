@@ -2,6 +2,7 @@
 
 /**
 * URL utils
+* *** THIS CLASS IS DEPRECATED, PLEASE USE LPC_URI INSTEAD! ***
 */
 class LPC_Url
 {

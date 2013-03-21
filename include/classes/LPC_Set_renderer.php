@@ -29,14 +29,14 @@ class LPC_Set_renderer
 // }}}
 // {{{ OVERRIDABLE METHODS
 	// {{{ preProcessGenericAtom()
-	// This can be overriden by descendants
+	// This can be overridden by descendants
 	function &preProcessGenericAtom(&$atom,&$parent,$atom_key)
 	{
 		return $atom;
 	}
 	// }}}
 	// {{{ preShouldInclude()
-	// This can be overriden by descendants
+	// This can be overridden by descendants
 	function preShouldInclude($atomName)
 	{
 		return false;

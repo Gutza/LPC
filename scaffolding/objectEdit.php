@@ -87,12 +87,12 @@ if (
 			$link->createLink($rd,$obj);
 		}
 
-		$url=$_SERVER['REQUEST_URI'];
+		$uri = new LPC_URI();
 		if (isset($_POST['LPC_scaffolding_submit_button']) && !isset($_GET['id']))
-			$url=LPC_Url::add_get_var($url,'id',$obj->id);
+			$uri = $uri->setVar('id', $obj->id);
 		elseif (isset($_POST['LPC_scaffolding_submit_plus']) && isset($_GET['id']))
-			$url=LPC_Url::remove_get_var($url,'id');
-		header("Location: ".$url);
+			$uri = $uri->delVar('id');
+		header("Location: ".$uri->toString());
 		exit;
 	} catch (Exception $e) {
 		$p->a(new LPC_HTML_error(_LH('scaffoldingSaveError', iconv("UTF-8", "UTF-8", $e->getMessage()))));

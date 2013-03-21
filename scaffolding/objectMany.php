@@ -22,17 +22,17 @@ if (!validClassName($class) || !validateClassRights($class)) {
 	return;
 }
 
+$uri = new LPC_URI();
+
 $rObj=new $_GET['rc']($_GET['rid']);
 if (isset($_GET['caid'])) {
 	$rObj->createLink($_GET['rd'],$_GET['caid']);
-	$url=LPC_Url::remove_get_var($_SERVER['REQUEST_URI'],'caid');
-	header("Location: ".$url);
+	header("Location: ".$uri->delVar('caid')->toString());
 	exit;
 }
 if (isset($_GET['crid'])) {
 	$rObj->dropLink($_GET['rd'],$_GET['crid']);
-	$url=LPC_Url::remove_get_var($_SERVER['REQUEST_URI'],'crid');
-	header("Location: ".$url);
+	header("Location: ".$uri->delVar('crid')->toString());
 	exit;
 }
 
@@ -59,15 +59,15 @@ function rhr($row)
 
 function rbr($row,&$rowData)
 {
-	global $obj, $rObj;
+	global $obj, $rObj, $uri;
 	$td=new LPC_HTML_node('td');
 	$row->a($td);
 	$cid=$rowData[$obj->dataStructure['id_field']];
 	if ($rObj->createLink($_GET['rd'],$cid,1)) {
-		$url=LPC_Url::add_get_var($_SERVER['REQUEST_URI'],'crid',$cid);
+		$url = $uri->setVar('crid', $cid)->toString();
 		$td->a("[<a href='".$url."'>"._LS('scaffoldingRemoveThis')."</a>]");
 	} else {
-		$url=LPC_Url::add_get_var($_SERVER['REQUEST_URI'],'caid',$cid);
+		$url = $uri->setVar('caid', $cid)->toString();
 		$td->a("[<a href='".$url."'>"._LS('scaffoldingAddThis')."</a>]");
 	}
 	return true;
