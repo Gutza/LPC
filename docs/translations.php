@@ -826,6 +826,24 @@ It is recommended that you do not overwrite this translation just in order to cu
         ),
       ),
     ),
+    'lpcListEmptyMessage' => 
+    array (
+      'comment' => 'The message shown instead of a list when it contains no elements.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'This list is empty.',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Această listă este goală.',
+        ),
+      ),
+    ),
     'lpcListFilterBooleanHelp' => 
     array (
       'comment' => 'The help message shown for boolean filters.',
@@ -881,6 +899,24 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         array (
           'language' => '2',
           'translation' => 'Pagina:',
+        ),
+      ),
+    ),
+    'lpcListSuggestRemoveFilters' => 
+    array (
+      'comment' => 'The message shown empty in LPC lists with filters applied, suggesting to remove the filters.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'You can try eliminating the filters.',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Puteți încerca să eliminați filtrele.',
         ),
       ),
     ),
