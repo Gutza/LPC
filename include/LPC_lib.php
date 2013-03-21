@@ -2,8 +2,10 @@
 
 define("LPC_start_time",microtime(true));
 
-if (isset($_SERVER['REQUEST_METHOD']))
+if (isset($_SERVER['REQUEST_METHOD'])) {
+	session_name('LPC_'.substr(sha1(__FILE__), 0, 5));
 	session_start();
+}
 
 if (!isset($_SESSION['LPC']))
 	$_SESSION['LPC']=array();
