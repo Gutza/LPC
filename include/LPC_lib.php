@@ -3,7 +3,10 @@
 define("LPC_start_time",microtime(true));
 
 if (isset($_SERVER['REQUEST_METHOD'])) {
-	session_name('LPC_'.substr(sha1(__FILE__), 0, 10));
+	$sess_hash=sha1(__FILE__);
+	session_name('LPC_'.substr($sess_hash, 0, 5+hexdec(substr($sess_hash, -1))));
+	unset($sess_hash);
+
 	session_start();
 }
 
