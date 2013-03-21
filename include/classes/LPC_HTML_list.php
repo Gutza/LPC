@@ -6,6 +6,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 	public $tableClass="default";
 	public $paginatorClass="list_paginator";
 	public $sql=array();
+	public $sqlParams=false;
 	public $queryObject=NULL;
 	public $hiddenFields=array();
 	public $id='1';
@@ -50,8 +51,6 @@ class LPC_HTML_list extends LPC_HTML_widget
 	public $orderPresets=array();
 
 	public $legalSortKeys=array();
-	public $msgEmptyList="This list is empty.";
-	public $msgEditFilters="You might want to edit your filters:";
 
 	/**
 	* This will be a LPC_HTML_fragment in which you're supposed to append
@@ -86,7 +85,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 			throw new RuntimeException("The query must be an array formatted for LPC_Query_Builder. (property sql)");
 
 		$sql=$this->processSQL();
-		$rs=$this->queryObject->query($sql);
+		$rs=$this->queryObject->query($sql, $this->sqlParams);
 		if ($rs->EOF)
 			return $this->prepareEmpty();
 
@@ -108,7 +107,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 
 	function prepareEmpty()
 	{
-		$this->a($this->msgEmptyList);
+		$this->a(__L('lpcListEmptyMessage'));
 		if (!$this->filters->content)
 			return;
 
@@ -123,7 +122,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 		if (!$anyFilter)
 			return;
 
-		$this->a($this->msgEditFilters);
+		$this->a(__L("lpcListSuggestRemoveFilters"));
 		foreach($this->filters->content as $key=>$filter) {
 			if (!strlen($filter->getCurrentValue()))
 				continue;
@@ -408,7 +407,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 		$sql=$this->processFilters($sql);
 		$sql['select']=array('1');
 		unset($sql['order']);
-		$rs=$this->queryObject->query($sql);
+		$rs=$this->queryObject->query($sql, $this->sqlParams);
 		$this->totalEntries=$rs->recordCount();
 		return $this->totalEntries;
 	}
