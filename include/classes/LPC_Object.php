@@ -675,7 +675,7 @@ abstract class LPC_Object implements Serializable
 	/**
 	 * This method returns an instantiated object based on the value of the specified attribute.
 	 * The attribute MUST contain an object specifier of the form "<object class>#<object id>"
-	 * (e.g. "DMO_Instance#311").
+	 * (e.g. "LPC_Language#1").
 	 *
 	 * @param string $attName the name of the attribute to retrieve and use
 	 * @return mixed the instantiated object on success, NULL if object not available or false on error.
@@ -686,10 +686,19 @@ abstract class LPC_Object implements Serializable
 		if (!$att_val || is_numeric($att_val))
 			return NULL;
 
-		if (!preg_match("/^([a-zA-Z_0-9]+)#([0-9]+)$/",$att_val,$matches))
+		if (!preg_match("/^([a-zA-Z_0-9]+)#(.+)$/",$att_val,$matches))
 			return NULL;
 
 		return new $matches[1]($matches[2]);
+	}
+	// }}}
+	// {{{ getFlexId()
+	function getFlexId()
+	{
+		if (!$this->id)
+			throw new RuntimeException("Called getFlexId() on an object with no ID set!");
+
+		return get_class($this)."#".$this->id;
 	}
 	// }}}
 	// {{{ getLinks()
