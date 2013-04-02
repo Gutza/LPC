@@ -89,9 +89,9 @@ if (
 
 		$uri = new LPC_URI();
 		if (isset($_POST['LPC_scaffolding_submit_button']) && !isset($_GET['id']))
-			$uri = $uri->setVar('id', $obj->id);
+			$uri->setVar('id', $obj->id);
 		elseif (isset($_POST['LPC_scaffolding_submit_plus']) && isset($_GET['id']))
-			$uri = $uri->delVar('id');
+			$uri->delVar('id');
 		header("Location: ".$uri->toString());
 		exit;
 	} catch (Exception $e) {

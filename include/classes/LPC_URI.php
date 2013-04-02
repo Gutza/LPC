@@ -39,44 +39,43 @@ class LPC_URI implements iLPC_HTML
 	* @param string $name the name of the variable
 	* @param string $nalue the value of the variable
 	* @param string $uri the URI to add/replace the variable in
-	* @return object the new URI object
+	* @return object this URI object, after applying the changes
 	*/
 	public function setVar($name, $value)
 	{
-		@parse_str($this->uriParts['url_parts']['query'], $query);
-		$query[$name] = $value;
+		if (empty($this->uriParts['url_parts']['query']))
+			$this->uriParts['url_parts']['query']=array();
+		$this->uriParts['url_parts']['query'][$name] = $value;
 
-		return new LPC_URI($this->uriParts['url_base']."?".http_build_query($query));
+		return $this;
 	}
 
 	/**
 	* Remove a variable from the query part of the URI.
 	*
-	* If the variable exists, it is removed. If it doesn't exist,
+	* If the variable exists, it is removed. Otherwise,
 	* this object is returned unchanged.
 	*
 	* @param string $name the variable name to remove
-	* @return object the resulting URI object
+	* @return object this URI object, after applying the changes
 	*/
 	public function delVar($name)
 	{
-		@parse_str($this->uriParts['url_parts']['query'],$query);
-
-		if (!isset($query[$name]))
+		if (!isset($this->uriParts['url_parts']['query'][$name]))
 			return $this;
 
-		unset($query[$name]);
-
-		$URLquery=http_build_query($query);
-		if (strlen($URLquery))
-			$URLquery="?".$URLquery;
-
-		return new LPC_URI($this->uriParts['url_base'].$URLquery);
+		unset($this->uriParts['url_parts']['query'][$name]);
+		return $this;
 	}
 
-	public function toString()
+	public function toString($escapedAmps=false)
 	{
-		return $this->uriParts['url_base']."?".$this->uriParts['url_parts']['query'];
+		if ($escapedAmps)
+			$amp="&amp;";
+		else
+			$amp=ini_get("arg_separator.output");
+
+		return $this->uriParts['url_base']."?".http_build_query($this->uriParts['url_parts']['query'], '', $amp);
 	}
 
 	public function render()
@@ -102,6 +101,17 @@ class LPC_URI implements iLPC_HTML
 	public function getFullPath()
 	{
 		return $this->uriParts['url_base'];
+	}
+
+	/**
+	* Returns a clone of this object. Unfortunately we can't use "clone"
+	* because it's a reserved keyword in PHP, but that's all this does.
+	*
+	* @return object a clone of this object
+	*/
+	public function dupe()
+	{
+		return clone $this;
 	}
 
 	/**
@@ -135,6 +145,9 @@ class LPC_URI implements iLPC_HTML
 			}
 			$ub.=$up['host'];
 		};
+		@parse_str($up['query'], $query);
+		$up['query'] = $query;
+
 		$ub.=$up['path'];
 
 		$this->uriParts = array(
