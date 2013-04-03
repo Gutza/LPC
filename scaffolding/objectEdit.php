@@ -87,7 +87,7 @@ if (
 			$link->createLink($rd,$obj);
 		}
 
-		$uri = new LPC_URI();
+		$uri = LPC_URI::getCurrent();
 		if (isset($_POST['LPC_scaffolding_submit_button']) && !isset($_GET['id']))
 			$uri->setVar('id', $obj->id);
 		elseif (isset($_POST['LPC_scaffolding_submit_plus']) && isset($_GET['id']))

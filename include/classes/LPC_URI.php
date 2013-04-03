@@ -8,6 +8,7 @@ class LPC_URI implements iLPC_HTML
 {
 	protected $uriString=NULL;
 	protected $uriParts=NULL;
+	private static $currentInstance=NULL;
 
 	/**
 	* Constructor. If no URI is provided, it uses the current URL.
@@ -17,6 +18,19 @@ class LPC_URI implements iLPC_HTML
 	public function __construct($uri=NULL)
 	{
 		$this->loadUri($uri);
+	}
+
+	/**
+	* Returns a copy of the current URI
+	*
+	* @return object a LPC_URI instance representing the current URI
+	*/
+	public static function getCurrent()
+	{
+		if (empty(self::$currentInstance))
+			self::$currentInstance = new LPC_URI();
+
+		return self::$currentInstance->dupe();
 	}
 
 	/**
