@@ -139,6 +139,10 @@ class LPC_HTML_node extends LPC_HTML_base
 			foreach($this->attributes as $key=>$attribute) {
 				if ($attribute===null)
 					continue;
+				if ($attribute===true) {
+					$result.=' '.$key;
+					continue;
+				}
 				if (is_string($attribute) || is_numeric($attribute)) {
 					$result.=' '.$key.'="'.htmlspecialchars($attribute).'"';
 					continue;
