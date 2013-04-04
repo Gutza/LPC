@@ -65,6 +65,18 @@ class LPC_URI implements iLPC_HTML
 	}
 
 	/**
+	* Executes {@link setVar()} for each of the pairs in the
+	* associative array passed as $vars
+	*/
+	public function setVars($vars)
+	{
+		foreach($vars as $name => $value)
+			$this->setVar($name, $value);
+
+		return $this;
+	}
+
+	/**
 	* Remove a variable from the query part of the URI.
 	*
 	* If the variable exists, it is removed. Otherwise,
@@ -79,6 +91,18 @@ class LPC_URI implements iLPC_HTML
 			return $this;
 
 		unset($this->uriParts['url_parts']['query'][$name]);
+		return $this;
+	}
+
+	/**
+	* Executes {@link delVar} for each of the names in the
+	* indexed array passed as $names
+	*/
+	public function delVars($names)
+	{
+		foreach($names as $name)
+			$this->delVar($name);
+
 		return $this;
 	}
 
