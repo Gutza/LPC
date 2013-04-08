@@ -211,8 +211,11 @@ class LPC_HTML_node extends LPC_HTML_base
 		return $result;
 	}
 
-	public function setAttr($key,$value=NULL)
+	public function setAttr($key, $value=NULL, $inhibitID=false)
 	{
+		if ($key=='id' && !$inhibitID)
+			return $this->setID($value);
+
 		$this->attributes[$key]=$value;
 		return $this;
 	}
@@ -241,7 +244,7 @@ class LPC_HTML_node extends LPC_HTML_base
 	public function setID($id)
 	{
 		$this->id=$id;
-		$this->setAttr('id',$id);
+		$this->setAttr('id', $id, true);
 		return $this;
 	}
 }
