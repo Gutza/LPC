@@ -39,21 +39,21 @@ class LPC_HTML_select extends LPC_HTML_widget
 		$this->fromKey($array,$key);
 	}
 
-	function addOption($label,$value=NULL,$selected=false)
+	function addOption($label, $value=NULL, $selected=false, $attrs=array())
 	{
-		$o=$this->generateOption($label, $value);
-		$this->a($o);
+		$this->a($this->generateOption($label, $value, $attrs));
 
 		if ($selected)
 			$this->selected=$value;
 	}
 
-	function generateOption($label, $value=NULL)
+	function generateOption($label, $value=NULL, $attrs=array())
 	{
 		$o=new LPC_HTML_node('option');
 		if ($value===NULL)
 			$value=$label;
-		$o->setAttr('value',$value);
+		$attrs['value']=$value;
+		$o->setAttrs($attrs);
 		$o->content=$label;
 		return $o;
 	}
