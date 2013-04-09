@@ -79,17 +79,26 @@ class LPC_HTML_node extends LPC_HTML_base
 	*/
 	public function determineTagEnd()
 	{
-		if (!$this->doctype || !($this->doctype & LPC_HTML_doctype::type_HTML4))
+		if (!$this->doctype || !(
+			$this->doctype & (LPC_HTML_doctype::type_HTML4 | LPC_HTML_doctype::type_HTML5))
+		)
 			// I have no doctype, or it's not HTML4
 			return $this->endTagAllowed;
 
+		if ($this->doctype & LPC_HTML_doctype::type_HTML4)
+			$spec=&LPC_HTML_doctype::$HTML4_spec;
+		elseif ($this->doctype & LPC_HTML_doctype::type_HTML5)
+			$spec=&LPC_HTML_doctype::$HTML5_spec;
+		else
+			throw new RuntimeException("This should never happen");
+
 		$nn=strtoupper($this->nodeName);
-		if (!isset(LPC_HTML_doctype::$HTML4_spec[$nn]))
+		if (!isset($spec[$nn]))
 			// All is well, except this node name doesn't exist
 			return $this->endTagAllowed;
 
-		$this->endTagAllowed=LPC_HTML_doctype::$HTML4_spec[$nn]['end']!='F';
-		return $this->endTagAllowed && LPC_HTML_doctype::$HTML4_spec[$nn]['end']=='O';
+		$this->endTagAllowed=$spec[$nn]['end']!='F';
+		return $this->endTagAllowed && $spec[$nn]['end']=='O';
 	}
 
 	private function _classesFromAttr()

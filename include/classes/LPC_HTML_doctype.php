@@ -775,4 +775,136 @@ abstract class LPC_HTML_doctype
 			'dtd' => '',
 		),
 	);
+
+	// http://www.w3.org/html/wg/drafts/html/master/single-page.html#void-elements
+	static $HTML5_spec=array (
+		'AREA' =>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'BASE'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'BR'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'COL'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'EMBED'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'HR'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'IMG'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'INPUT'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'KEYGEN'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'LINK'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'MENUITEM'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'META'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'PARAM'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'SOURCE'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'TRACK'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+		'WBR'=>
+		array(
+			'start' => '',
+			'end' => 'F',
+			'empty' => 'E',
+			'deprecated' => '',
+			'dtd' => '',
+		),
+	);
 }
