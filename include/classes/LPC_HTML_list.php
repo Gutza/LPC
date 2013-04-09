@@ -89,10 +89,8 @@ class LPC_HTML_list extends LPC_HTML_widget
 		if ($rs->EOF)
 			return $this->prepareEmpty();
 
-		$this->setAttr('id','list_'.$this->id);
 		$this->table=new LPC_HTML_node('table');
-		$this->table->setAttr('class',$this->tableClass);
-		$this->table->setAttr('id','list_table_'.$this->id);
+		$this->table->setAttr('class', $this->tableClass);
 		$this->a($this->table,'table');
 
 		$keys=array_filter(array_keys($rs->fields),"is_string");
