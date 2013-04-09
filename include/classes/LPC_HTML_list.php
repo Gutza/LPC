@@ -265,10 +265,10 @@ class LPC_HTML_list extends LPC_HTML_widget
 
 		$row=new LPC_HTML_node("TR");
 		foreach($keys as $key) {
-			if (in_array($key,$this->hiddenFields))
+			if (in_array($key, $this->hiddenFields))
 				continue;
 			$cell=new LPC_HTML_node("TH");
-			$cell->setAttr('style','vertical-align: top');
+			$cell->setAttr('style', 'vertical-align: top');
 			$cell->compact=true;
 
 			$newOrder=0;
@@ -276,38 +276,46 @@ class LPC_HTML_list extends LPC_HTML_widget
 
 			if ($sortInfo['sort']==$key) {
 				$icon=new LPC_HTML_node("IMG");
-				$icon->setAttr('style','margin-bottom:-3px;');
+				$icon->setAttr('style', 'margin-bottom:-3px;');
 				if ($sortInfo['order']) {
-					$icon->setAttr('src',LPC_ICON_UP_ENABLED);
+					$icon->setAttr('src', LPC_ICON_UP_ENABLED);
 				} else {
-					$icon->setAttr('src',LPC_ICON_DOWN_ENABLED);
+					$icon->setAttr('src', LPC_ICON_DOWN_ENABLED);
 					$newOrder=1;
 				}
 			}
+
 			if (isset($this->labelMapping[$key]))
 				$labelText=$this->labelMapping[$key];
 			else
 				$labelText=$key;
-			if (in_array($key,$this->legalSortKeys)) {
-				$url=LPC_Url::add_GET_var($_SERVER['REQUEST_URI'],$sortParam,$key);
-				$url=LPC_Url::add_GET_var($url,$orderParam,$newOrder);
+
+			if (in_array($key, $this->legalSortKeys)) {
 				$label=new LPC_HTML_node("A");
-				$label->setAttr('href',$url);
-				$label->content=$labelText;
-			} else {
+				$label->setAttr('href',
+					LPC_URI::getCurrent()->setVars(array(
+						$sortParam => $key,
+						$orderParam => $newOrder,
+					))
+				);
+			} else
 				$label=new LPC_HTML_node("SPAN");
-				$label->content=$labelText;
-			}
-			$cell->a($label,'label');
+
+			$label->content=$labelText;
+			$cell->a($label, 'label');
+
 			if ($icon) {
 				$cell->a(" ");
-				$cell->a($icon,'sortIcon');
+				$cell->a($icon, 'sortIcon');
 			}
+
 			if (isset($this->filters->content[$key]))
 				$cell->a($this->filters->content[$key]);
-			if ($this->onProcessHeaderCell($key,$cell))
+
+			if ($this->onProcessHeaderCell($key, $cell))
 				$row->a($cell);
 		}
+
 		if ($this->onProcessHeaderRow($row))
 			$this->table->a($row);
 	}
