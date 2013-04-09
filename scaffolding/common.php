@@ -4,10 +4,10 @@ $u=LPC_User::getCurrent();
 
 if (isset($_GET['langID'])) {
 	$lang=new LPC_Language();
-	$lang->fromKey($_GET,'langID');
+	$lang->fromKey($_GET, 'langID');
 	if ($lang->id) {
 		LPC_Language::setCurrent($lang);
-		header("Location: ".LPC_Url::remove_get_var($_SERVER['REQUEST_URI'],'langID'));
+		header("Location: ".LPC_URI::getCurrent()->delVar('langID')->toString());
 		exit;
 	}
 }
