@@ -106,6 +106,17 @@ class LPC_URI implements iLPC_HTML
 		return $this;
 	}
 
+	/**
+	* Retrieve the value of query parameter $name.
+	* If not present, it returns NULL
+	*/
+	public function getVar($name)
+	{
+		if (!isset($this->uriParts['url_parts']['query'][$name]))
+			return NULL;
+		return $this->uriParts['url_parts']['query'][$name];
+	}
+
 	public function toString($escapedAmps=false)
 	{
 		if ($escapedAmps)
