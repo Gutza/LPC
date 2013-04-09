@@ -2,7 +2,7 @@
 
 class LPC_HTML_script extends LPC_HTML_node
 {
-	public $nodeName="SCRIPT";
+	public $nodeName="script";
 	public $shortTag=false;
 
 	public function __construct($src=NULL,$type="text/javascript")

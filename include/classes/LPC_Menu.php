@@ -2,7 +2,7 @@
 
 abstract class LPC_Menu extends LPC_HTML_widget
 {
-	var $nodeName="DIV";
+	var $nodeName="div";
 	var $attributes=array("class"=>"sf-menu-container");
 
 	var $structure=array();

@@ -3,7 +3,7 @@
 class LPC_HTML_node extends LPC_HTML_base
 {
 	public $attributes=array();
-	public $nodeName="DIV"; // Just an example, you're supposed to override it; plus, it's a reasonable default
+	public $nodeName="div"; // Just an example, you're supposed to override it; plus, it's a reasonable default
 	public $shortTag=true; // If tag is empty, it will be closed with <foo />
 
 	public $doctype=0;
@@ -15,16 +15,18 @@ class LPC_HTML_node extends LPC_HTML_base
 
 	public $classes=array();
 
-	public function __construct($nodeName=NULL,$shortTag=NULL)
+	public function __construct($nodeName=NULL, $shortTag=NULL)
 	{
 		if ($nodeName!==NULL)
-			$this->nodeName=strtoupper($nodeName);
+			$this->nodeName=$nodeName;
 		if ($shortTag!==NULL)
 			$this->shortTag=(bool) $shortTag;
 	}
 
 	public function render()
 	{
+		$this->nodeName=strtolower($this->nodeName);
+
 		parent::render();
 
 		$result="";
@@ -92,7 +94,7 @@ class LPC_HTML_node extends LPC_HTML_base
 		else
 			throw new RuntimeException("This should never happen");
 
-		$nn=strtoupper($this->nodeName);
+		$nn=&$this->nodeName;
 		if (!isset($spec[$nn]))
 			// All is well, except this node name doesn't exist
 			return $this->endTagAllowed;
@@ -143,7 +145,7 @@ class LPC_HTML_node extends LPC_HTML_base
 	{
 		$this->_processClasses();
 
-		$result="<".strtolower($this->nodeName);
+		$result="<".$this->nodeName;
 		if ($this->attributes) {
 			foreach($this->attributes as $key=>$attribute) {
 				if ($attribute===null)
@@ -184,7 +186,7 @@ class LPC_HTML_node extends LPC_HTML_base
 
 	public function renderTagEnd()
 	{
-		return $this->output("</".strtolower($this->nodeName).">",self::tagEnd);
+		return $this->output("</".$this->nodeName.">",self::tagEnd);
 	}
 
 	public function output($html,$tagType=self::tagBody)

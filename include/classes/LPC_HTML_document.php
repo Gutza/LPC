@@ -5,7 +5,7 @@ class LPC_HTML_document extends LPC_HTML_node
 
 	public $doctype;
 
-	public $nodeName="HTML";
+	public $nodeName="html";
 
 	public $body;
 	public $head;

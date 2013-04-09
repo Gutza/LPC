@@ -2,7 +2,7 @@
 
 class LPC_HTML_list extends LPC_HTML_widget
 {
-	public $nodeName="DIV";
+	public $nodeName="div";
 	public $tableClass="default";
 	public $paginatorClass="list_paginator";
 	public $sql=array();

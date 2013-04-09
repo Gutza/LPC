@@ -46,7 +46,7 @@ abstract class LPC_HTML_doctype
 
 	// Element index from http://www.w3.org/TR/html401/index/elements.html
 	static $HTML4_spec=array (
-		'A' => 
+		'a' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -54,7 +54,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'ABBR' => 
+		'abbr' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -62,7 +62,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'ACRONYM' => 
+		'acronym' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -70,7 +70,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'ADDRESS' => 
+		'address' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -78,7 +78,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'APPLET' => 
+		'applet' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -86,7 +86,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => 'D',
 			'dtd' => 'L',
 		),
-		'AREA' => 
+		'area' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -94,7 +94,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'B' => 
+		'b' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -102,7 +102,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'BASE' => 
+		'base' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -110,7 +110,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'BASEFONT' => 
+		'basefont' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -118,7 +118,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => 'D',
 			'dtd' => 'L',
 		),
-		'BDO' => 
+		'bdo' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -126,7 +126,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'BIG' => 
+		'big' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -134,7 +134,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'BLOCKQUOTE' => 
+		'blockquote' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -142,7 +142,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'BODY' => 
+		'body' => 
 		array (
 			'start' => 'O',
 			'end' => 'O',
@@ -150,7 +150,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'BR' => 
+		'br' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -158,7 +158,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'BUTTON' => 
+		'button' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -166,7 +166,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'CAPTION' => 
+		'caption' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -174,7 +174,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'CENTER' => 
+		'center' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -182,7 +182,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => 'D',
 			'dtd' => 'L',
 		),
-		'CITE' => 
+		'cite' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -190,7 +190,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'CODE' => 
+		'code' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -198,7 +198,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'COL' => 
+		'col' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -206,7 +206,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'COLGROUP' => 
+		'colgroup' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -214,7 +214,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'DD' => 
+		'dd' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -222,7 +222,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'DEL' => 
+		'del' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -230,7 +230,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'DFN' => 
+		'dfn' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -238,7 +238,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'DIR' => 
+		'dir' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -246,7 +246,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => 'D',
 			'dtd' => 'L',
 		),
-		'DIV' => 
+		'div' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -254,7 +254,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'DL' => 
+		'dl' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -262,7 +262,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'DT' => 
+		'dt' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -270,7 +270,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'EM' => 
+		'em' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -278,7 +278,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'FIELDSET' => 
+		'fieldset' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -286,7 +286,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'FONT' => 
+		'font' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -294,7 +294,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => 'D',
 			'dtd' => 'L',
 		),
-		'FORM' => 
+		'form' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -302,7 +302,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'FRAME' => 
+		'frame' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -310,7 +310,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => 'F',
 		),
-		'FRAMESET' => 
+		'frameset' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -318,7 +318,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => 'F',
 		),
-		'H1' => 
+		'h1' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -326,7 +326,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'H2' => 
+		'h2' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -334,7 +334,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'H3' => 
+		'h3' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -342,7 +342,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'H4' => 
+		'h4' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -350,7 +350,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'H5' => 
+		'h5' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -358,7 +358,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'H6' => 
+		'h6' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -366,7 +366,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'HEAD' => 
+		'head' => 
 		array (
 			'start' => 'O',
 			'end' => 'O',
@@ -374,7 +374,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'HR' => 
+		'hr' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -382,7 +382,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'HTML' => 
+		'html' => 
 		array (
 			'start' => 'O',
 			'end' => 'O',
@@ -390,7 +390,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'I' => 
+		'i' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -398,7 +398,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'IFRAME' => 
+		'iframe' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -406,7 +406,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => 'L',
 		),
-		'IMG' => 
+		'img' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -414,7 +414,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'INPUT' => 
+		'input' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -422,7 +422,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'INS' => 
+		'ins' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -430,7 +430,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'ISINDEX' => 
+		'isindex' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -438,7 +438,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => 'D',
 			'dtd' => 'L',
 		),
-		'KBD' => 
+		'kbd' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -446,7 +446,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'LABEL' => 
+		'label' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -454,7 +454,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'LEGEND' => 
+		'legend' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -462,7 +462,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'LI' => 
+		'li' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -470,7 +470,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'LINK' => 
+		'link' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -478,7 +478,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'MAP' => 
+		'map' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -486,7 +486,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'MENU' => 
+		'menu' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -494,7 +494,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => 'D',
 			'dtd' => 'L',
 		),
-		'META' => 
+		'meta' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -502,7 +502,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'NOFRAMES' => 
+		'noframes' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -510,7 +510,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => 'F',
 		),
-		'NOSCRIPT' => 
+		'noscript' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -518,7 +518,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'OBJECT' => 
+		'object' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -526,7 +526,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'OL' => 
+		'ol' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -534,7 +534,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'OPTGROUP' => 
+		'optgroup' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -542,7 +542,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'OPTION' => 
+		'option' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -550,7 +550,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'P' => 
+		'p' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -558,7 +558,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'PARAM' => 
+		'param' => 
 		array (
 			'start' => '',
 			'end' => 'F',
@@ -566,7 +566,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'PRE' => 
+		'pre' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -574,7 +574,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'Q' => 
+		'q' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -582,7 +582,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'S' => 
+		's' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -590,7 +590,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => 'D',
 			'dtd' => 'L',
 		),
-		'SAMP' => 
+		'samp' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -598,7 +598,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'SCRIPT' => 
+		'script' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -606,7 +606,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'SELECT' => 
+		'select' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -614,7 +614,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'SMALL' => 
+		'small' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -622,7 +622,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'SPAN' => 
+		'span' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -630,7 +630,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'STRIKE' => 
+		'strike' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -638,7 +638,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => 'D',
 			'dtd' => 'L',
 		),
-		'STRONG' => 
+		'strong' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -646,7 +646,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'STYLE' => 
+		'style' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -654,7 +654,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'SUB' => 
+		'sub' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -662,7 +662,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'SUP' => 
+		'sup' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -670,7 +670,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'TABLE' => 
+		'table' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -678,7 +678,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'TBODY' => 
+		'tbody' => 
 		array (
 			'start' => 'O',
 			'end' => 'O',
@@ -686,7 +686,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'TD' => 
+		'td' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -694,7 +694,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'TEXTAREA' => 
+		'textarea' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -702,7 +702,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'TFOOT' => 
+		'tfoot' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -710,7 +710,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'TH' => 
+		'th' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -718,7 +718,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'THEAD' => 
+		'thead' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -726,7 +726,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'TITLE' => 
+		'title' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -734,7 +734,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'TR' => 
+		'tr' => 
 		array (
 			'start' => '',
 			'end' => 'O',
@@ -742,7 +742,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'TT' => 
+		'tt' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -750,7 +750,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'U' => 
+		'u' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -758,7 +758,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => 'D',
 			'dtd' => 'L',
 		),
-		'UL' => 
+		'ul' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -766,7 +766,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'VAR' => 
+		'var' => 
 		array (
 			'start' => '',
 			'end' => '',
@@ -778,7 +778,7 @@ abstract class LPC_HTML_doctype
 
 	// http://www.w3.org/html/wg/drafts/html/master/single-page.html#void-elements
 	static $HTML5_spec=array (
-		'AREA' =>
+		'area' =>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -786,7 +786,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'BASE'=>
+		'base'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -794,7 +794,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'BR'=>
+		'br'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -802,7 +802,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'COL'=>
+		'col'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -810,7 +810,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'EMBED'=>
+		'embed'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -818,7 +818,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'HR'=>
+		'hr'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -826,7 +826,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'IMG'=>
+		'img'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -834,7 +834,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'INPUT'=>
+		'input'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -842,7 +842,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'KEYGEN'=>
+		'keygen'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -850,7 +850,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'LINK'=>
+		'link'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -858,7 +858,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'MENUITEM'=>
+		'menuitem'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -866,7 +866,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'META'=>
+		'meta'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -874,7 +874,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'PARAM'=>
+		'param'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -882,7 +882,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'SOURCE'=>
+		'source'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -890,7 +890,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'TRACK'=>
+		'track'=>
 		array(
 			'start' => '',
 			'end' => 'F',
@@ -898,7 +898,7 @@ abstract class LPC_HTML_doctype
 			'deprecated' => '',
 			'dtd' => '',
 		),
-		'WBR'=>
+		'wbr'=>
 		array(
 			'start' => '',
 			'end' => 'F',

@@ -3,7 +3,7 @@
 class LPC_HTML_meta extends LPC_HTML_node
 {
 
-	public $nodeName='META';
+	public $nodeName='meta';
 	//public $shortTag=true; // Inherited true, this is just a reminder
 
 	function __construct($attributes,$content)

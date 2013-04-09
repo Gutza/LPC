@@ -2,7 +2,7 @@
 
 class LPC_HTML_link extends LPC_HTML_node
 {
-	public $nodeName='LINK';
+	public $nodeName='link';
 	//public $shortTag=true; inherited true
 
 	public function __construct($rel,$type,$href)
