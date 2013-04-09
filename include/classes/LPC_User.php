@@ -803,7 +803,7 @@ EOJS;
 			$body,
 			"From: ".$this->token_email_name." <".$this->token_email_email.">\r\n".
 			"Reply-To: ".$this->token_email_name." <".$this->token_email_email.">\r\n".
-			"X-Mailer: LPC Token manager",
+			"X-Mailer: LPC Token manager\r\nContent-type: text/plain; charset=utf-8",
 			"-f".$this->token_email_email
 		))
 			return true;
