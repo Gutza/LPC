@@ -88,7 +88,7 @@ abstract class LPC_HTML_list_filter extends LPC_HTML_widget
 		$tr->a($td, 'filterControls');
 		$td->a("<input type='image' src='".LPC_ICON_MAGNIFIER."' alt=\""._LS('lpcFilterIcon')."\">");
 		if (strlen($default))
-			$td->a("<a href='".LPC_Url::remove_get_var($_SERVER['REQUEST_URI'],$this->GET_key)."'><img src='".LPC_ICON_ERASER."' alt=\""._LS('lpcRemoveFilterIcon')."\"></a>");
+			$td->a("<a href='".LPC_URI::getCurrent()->delVar($this->GET_key)->toString()."'><img src='".LPC_ICON_ERASER."' alt=\""._LS('lpcRemoveFilterIcon')."\"></a>");
 
 		if (isset($this->helpKey)) {
 			$td->a("<a href='#' onClick='alert(".self::JS_translation_var.".".$this->helpKey."); return false;'><img src='".LPC_ICON_INFO."'></a>");

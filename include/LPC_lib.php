@@ -33,8 +33,8 @@ if (
 	isset($_SERVER['REMOTE_ADDR']) && // not for CLI
 	!LPC_User::getCurrent(true) &&
 	($usr=LPC_User::newUser()) && // lazy instantiation
-	LPC_Url::get_script()!=$usr->recoverPasswordURL() &&
-	LPC_Url::get_full_script()!=$usr->processTokenBaseURL()
+	LPC_URI::getCurrent()->getPath() != $usr->recoverPasswordURL() &&
+	LPC_URI::getCurrent()->getFullPath() != $usr->processTokenBaseURL()
 )
 	LPC_User::getCurrent();
 
