@@ -3,9 +3,8 @@
 define("LPC_start_time",microtime(true));
 
 if (isset($_SERVER['REQUEST_METHOD'])) {
-	$sess_hash=sha1(__FILE__);
-	session_name('LPC_'.substr($sess_hash, 0, 5+hexdec(substr($sess_hash, -1))));
-	unset($sess_hash);
+	require "LPC_session_naming.php";
+	LPC_set_session_name();
 
 	session_start();
 }
