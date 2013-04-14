@@ -77,7 +77,7 @@ div.scaffold-type {
 	font-size: 80%;
 }
 
-div.error_message, div.confirmation_message {
+div.error_message, div.confirmation_message, div.warning_message {
 	border: 1px solid red;
 	color: red;
 	font-weight: bold;
@@ -90,6 +90,12 @@ div.confirmation_message {
 	border-color: #050;
 	background-color: #f0fff0;
 	color: #050;
+}
+
+div.warning_message {
+	border-color: #540;
+	background-color: #fffaf0;
+	color: #540;
 }
 
 div.LPC_translated_message_list {
