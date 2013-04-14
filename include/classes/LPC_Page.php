@@ -26,7 +26,7 @@ class LPC_Page extends LPC_HTML_document
 		parent::__construct();
 
 		$this->content['head']->content['icon']=new LPC_HTML_link('icon','image/vnd.microsoft.icon',LPC_url."/favicon.ico");
-		$this->content['head']->content['LPC base CSS']=new LPC_HTML_link('stylesheet','text/css',LPC_css."/LPC_base.css");
+		$this->content['head']->content['LPC base CSS']=new LPC_HTML_link('stylesheet','text/css',LPC_css."/LPC_base.css?2013-04");
 		$this->content['head']->content['LPC CSS']=new LPC_HTML_link('stylesheet','text/css',LPC_css."/LPC_default.css");
 		$this->content['head']->content['content-type']=new LPC_HTML_meta(array('http-equiv'=>'Content-type'),'text/html;charset=UTF-8');
 	}
