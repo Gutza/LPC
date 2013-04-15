@@ -96,8 +96,9 @@ class LPC_HTML_node extends LPC_HTML_base
 
 		$nn=&$this->nodeName;
 		if (!isset($spec[$nn]))
-			// All is well, except this node name doesn't exist
-			return $this->endTagAllowed;
+			// All is well, except this node name is unknown.
+			// To be on the safe side, DON'T allow short tags.
+			return false;
 
 		$this->endTagAllowed=$spec[$nn]['end']!='F';
 		return $this->endTagAllowed && $spec[$nn]['end']=='O';
