@@ -4206,6 +4206,15 @@ fclose($fp);
 		return LPC_Scaffolding_default::getDefault($this::$i18n_class,$attName,$this->i18n_langID);
 	}
 	// }}}
+	// {{{ getScaffoldingDetailsHeader()
+	function getScaffoldingDetailsHeader()
+	{
+		$objLink = $this->getLinkH();
+		if (!$objLink)
+			return "";
+		return "[".$objLink."]";
+	}
+	// }}}
 // }}}
 // {{{ I18N-RELATED METHODS
 	// {{{ initializeI18nObject()

@@ -69,6 +69,8 @@ if ($id && !$obj->probe()) {
 	return;
 }
 
+$p->a($obj->getScaffoldingDetailsHeader());
+
 if ($id)
 	$p->st(__L('scaffoldingTitleObjectEdit', getFormalName($class)." #".$id));
 else
