@@ -120,7 +120,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 		if (!$anyFilter)
 			return;
 
-		$this->a(__L("lpcListSuggestRemoveFilters"));
+		$this->a(" ".__L("lpcListSuggestRemoveFilters"));
 		foreach($this->filters->content as $key=>$filter) {
 			if (!strlen($filter->getCurrentValue()))
 				continue;
@@ -140,7 +140,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 		if (!$this->entriesPerPage || $elemCount<=$this->entriesPerPage)
 			return null;
 		$pageCount=ceil($elemCount/$this->entriesPerPage);
-		$paginator=new LPC_HTML_node("DIV");
+		$paginator=new LPC_HTML_node("div");
 		$paginator->setAttr('id','list_paginator_'.$this->id);
 		$paginator->setAttr('class',$this->paginatorClass);
 		$paginator->a(__L("lpcListPageLabel")." ");
@@ -261,11 +261,11 @@ class LPC_HTML_list extends LPC_HTML_widget
 		$orderParam=$this->getParam('o');
 		$filterBase=$this->getParam('f');
 
-		$row=new LPC_HTML_node("TR");
+		$row=new LPC_HTML_node("tr");
 		foreach($keys as $key) {
 			if (in_array($key, $this->hiddenFields))
 				continue;
-			$cell=new LPC_HTML_node("TH");
+			$cell=new LPC_HTML_node("th");
 			$cell->setAttr('style', 'vertical-align: top');
 			$cell->compact=true;
 
@@ -273,7 +273,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 			$icon=NULL;
 
 			if ($sortInfo['sort']==$key) {
-				$icon=new LPC_HTML_node("IMG");
+				$icon=new LPC_HTML_node("img");
 				$icon->setAttr('style', 'margin-bottom:-3px;');
 				if ($sortInfo['order']) {
 					$icon->setAttr('src', LPC_ICON_UP_ENABLED);
@@ -289,7 +289,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 				$labelText=$key;
 
 			if (in_array($key, $this->legalSortKeys)) {
-				$label=new LPC_HTML_node("A");
+				$label=new LPC_HTML_node("a");
 				$label->setAttr('href',
 					LPC_URI::getCurrent()->setVars(array(
 						$sortParam => $key,
@@ -297,7 +297,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 					))
 				);
 			} else
-				$label=new LPC_HTML_node("SPAN");
+				$label=new LPC_HTML_node("span");
 
 			$label->content=$labelText;
 			$cell->a($label, 'label');
@@ -362,11 +362,11 @@ class LPC_HTML_list extends LPC_HTML_widget
 
 	function populateRow($keys,$rowData)
 	{
-		$row=new LPC_HTML_node("TR");
+		$row=new LPC_HTML_node("tr");
 		foreach($keys as $key) {
 			if (in_array($key,$this->hiddenFields))
 				continue;
-			$cell=new LPC_HTML_node("TD",false);
+			$cell=new LPC_HTML_node("td", false);
 			$cell->compact=true;
 			$cell->content=htmlspecialchars($rowData[$key]);
 			if ($this->onProcessBodyCell($key,$cell,$rowData))
