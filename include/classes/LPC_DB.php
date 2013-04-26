@@ -85,4 +85,9 @@ class LPC_DB
 	{
 		return self::$dbStruct[$key]['data']['database'];
 	}
+
+	public static function listAvailableKeys()
+	{
+		return array_keys(self::$dbStruct);
+	}
 }
