@@ -1,6 +1,6 @@
 <?php
 
-define("LPC_SkipAuthentication",true);
+define("LPC_SkipAuthentication", true);
 
 require_once dirname(dirname(__FILE__))."/include/LPC_lib.php";
 
@@ -273,5 +273,8 @@ class LPC_Class_Generator
 		echo "* path is an optional parameter specifying where the classes should be written.\n";
 		echo "  If left blank, the default path is used:\n";
 		echo "  ".LPC_classes."\n";
+		echo "\n";
+		echo "Available database keys:\n";
+		echo "* ".implode("\n* ", LPC_DB::listAvailableKeys())."\n";
 	}
 }
