@@ -27,7 +27,6 @@ $p->a($cancelDiv);
 $l=$obj->getBaseList();
 $l->onProcessHeaderRow='rhr';
 $l->onProcessBodyRow='rbr';
-$l->onProcessBodyCell='rbc';
 
 $p->a($l);
 
@@ -51,8 +50,3 @@ function rbr($row,&$rowData)
 	return true;
 }
 
-function rbc($key,$cell,&$rowData)
-{
-	$cell->content=htmlspecialchars($cell->content);
-	return true;
-}
