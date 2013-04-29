@@ -653,18 +653,18 @@ abstract class LPC_Object implements Serializable
 	 * this method returns an instantiated object representing the respective
 	 * attribute.
 	 * @param string $att_name the attribute associated with the object to return
-	 * @return object the instantiated object representing the attribute or false on error
+	 * @return object the instantiated object representing the attribute or NULL is none is available
 	 */
 	function getObject($attName)
 	{
-		$obj_type=$this->dataStructure['fields'][$attName]['link_class'];
-		if (!$obj_type) {
-			if ($flex=$this->getFlexObject($attName))
-				return $flex;
+		$obj_type = false;
+		if (isset($this->dataStructure['fields'][$attName]['link_class']))
+			$obj_type = $this->dataStructure['fields'][$attName]['link_class'];
 
-			throw new InvalidArgumentException("Link $attName not available in attribute list!");
-		}
-		$obj_id=$this->getAttr($attName);
+		if (!$obj_type)
+			return $this->getFlexObject($attName);
+
+		$obj_id = $this->getAttr($attName);
 		if (!$obj_id)
 			return NULL;
 
@@ -2057,8 +2057,6 @@ abstract class LPC_Object implements Serializable
 
 			if (!isset($fields[$attName]['flags']))
 				$fields[$attName]['flags']=array();
-			if (!isset($fields[$attName]['link_class']))
-				$fields[$attName]['link_class']="";
 			foreach($allFlags as $flag1)
 				if (!isset($fields[$attName]['flags'][$flag1]))
 					$fields[$attName]['flags'][$flag1]=false;
