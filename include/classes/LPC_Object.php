@@ -2057,7 +2057,8 @@ abstract class LPC_Object implements Serializable
 
 			if (!isset($fields[$attName]['flags']))
 				$fields[$attName]['flags']=array();
-
+			if (!isset($fields[$attName]['link_class']))
+				$fields[$attName]['link_class']="";
 			foreach($allFlags as $flag1)
 				if (!isset($fields[$attName]['flags'][$flag1]))
 					$fields[$attName]['flags'][$flag1]=false;
