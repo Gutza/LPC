@@ -230,5 +230,27 @@ class LPC_URI implements iLPC_HTML
 		$current=$protocol."://".$_SERVER['SERVER_NAME'].$port.$_SERVER['REQUEST_URI'];
 		return $current;
 	}
+
+	/**
+	* Removes everything except A-Za-z0-9 from a string, and replaces all different characters with minus signs.
+	* Minus signs are not duplicated, and they are never left at the beginning or the end of the string.
+	*/
+	public static function onlySafe($str)
+	{
+		$newString = $newerString = ereg_replace("[^A-Za-z0-9]", "-", $str);
+
+		do {
+			$newString = $newerString;
+			$newerString = str_replace("--", "-", $newString);
+		} while ($newerString != $newString);
+
+		$result = $newerString;
+		while(substr($result, 0, 1) == '-')
+			$result = substr($result, 1);
+		while(substr($result, -1) == '-')
+			$result = substr($result, 0, -1);
+
+		return $result;
+	}
 }
 
