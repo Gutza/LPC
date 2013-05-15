@@ -126,6 +126,7 @@ $form=new LPC_HTML_form($_SERVER['REQUEST_URI'],'post',true);
 $p->a($form);
 $form->addSK();
 $t=new LPC_HTML_table();
+$t->addClass('two-column-60');
 $t->compact=false;
 $form->a($t);
 

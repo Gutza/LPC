@@ -58,6 +58,10 @@ table.two-column td {
 	width: 50%;
 }
 
+table.two-column-60 td {
+	width: 60%;
+}
+
 table.numeric td, td.numeric, th.numeric {
 	text-align: right;
 }
