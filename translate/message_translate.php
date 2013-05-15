@@ -35,6 +35,11 @@ else {
 }
 
 $ref=new LPC_I18n_reference($msgKey);
+if (!$ref->probe()) {
+	$p->a("<div>&larr; <a href='message_select.php'>Back to the message list</a></div>");
+	$p->a(new LPC_HTML_error("This reference message was not found in the database: [".htmlspecialchars($msgKey)."]"));
+	return;
+}
 if (isset($_POST['delete'])) {
 	$ref->delete();
 	header("Location: message_select.php");
