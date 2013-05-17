@@ -1496,6 +1496,24 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         ),
       ),
     ),
+    'scaffoldingErrorNeedId' => 
+    array (
+      'comment' => 'A generic error message shown in the scaffolding section when an ID is expected but missing.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'The object ID is missing!',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Lipseşte ID-ul obiectului!',
+        ),
+      ),
+    ),
     'scaffoldingFileDesc' => 
     array (
       'comment' => 'The description shown for LPC files.',
