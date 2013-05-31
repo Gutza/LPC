@@ -94,6 +94,7 @@ $form=new LPC_HTML_form();
 $form->a("<input type='hidden' name='m' value=\"".$msg->getAttrF('message_key')."\">");
 $p->a($form);
 $t=new LPC_HTML_table();
+$t->addClass('two-column-60');
 $form->a($t);
 
 $t->a(new LPC_HTML_form_row(array(
@@ -102,11 +103,12 @@ $t->a(new LPC_HTML_form_row(array(
 )));
 $t->a(new LPC_HTML_form_row(array(
 	'label'=>'Message in reference language ('.$reference_lang->getAttrH('name').')',
-	'input'=>nl2br($ref_trans->getAttrH('translation')),
+	'input'=>"<tt>".nl2br($ref_trans->getAttrH('translation'))."</tt>",
 )));
 $t->a(new LPC_HTML_form_row(array(
 	'label'=>'Translation to target language ('.$target_lang->getAttrH('name').')',
-	'input'=>"<textarea name='translation' rows='5' style='width:100%'>".$msg->getAttrH("translation")."</textarea>"
+	'input'=>"<textarea name='translation' rows='5' style='width:100%'>".$msg->getAttrH("translation")."</textarea>",
+	'explain'=>"If any parameters are specified in the code, they are formatted here as {0}, {1} etc in the most basic form. If you need more complex stuff, see <a href='http://www.php.net/manual/en/messageformatter.formatmessage.php#refsect1-messageformatter.formatmessage-examples'>the documentation</a>.",
 )));
 $t->a(new LPC_HTML_form_row(array(
 	'label'=>'Comment',
