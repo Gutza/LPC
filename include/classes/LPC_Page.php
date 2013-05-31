@@ -104,7 +104,7 @@ class LPC_Page extends LPC_HTML_document
 	{
 	}
 
-	function renderFooter()
+	protected function renderFooter()
 	{
 		$result=array();
 
