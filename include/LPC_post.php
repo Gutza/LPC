@@ -11,5 +11,5 @@ if (LPC_GUI) {
 			$content=ob_get_clean().$content;
 		$p->a($content);
 	}
-	$p->show();
+	$p->show(true);
 }
