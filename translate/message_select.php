@@ -68,6 +68,7 @@ $mkFilter=new LPC_HTML_list_filter_string();
 $mkFilter->SQL_key="r.message_key";
 $l->filters->a($mkFilter,'message_key');
 $p->a($l);
+$p->show();
 
 function rbc($key,$cell,&$rowData)
 {

@@ -38,7 +38,9 @@ $ref=new LPC_I18n_reference($msgKey);
 if (!$ref->probe()) {
 	$p->a("<div>&larr; <a href='message_select.php'>Back to the message list</a></div>");
 	$p->a(new LPC_HTML_error("This reference message was not found in the database: [".htmlspecialchars($msgKey)."]"));
+	$p->show();
 	return;
+	$p->show();
 }
 if (isset($_POST['delete'])) {
 	$ref->delete();
@@ -125,3 +127,4 @@ $t->a(new LPC_HTML_form_row(array(
 		"<input type='submit' name='delete' value='Delete' onClick=\"return confirm('Are you sure you want to PERMANENTLY delete this message and all its translations?')\">",
 )));
 $form->addSK();
+$p->show();
