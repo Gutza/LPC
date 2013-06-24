@@ -104,7 +104,7 @@ class LPC_Page extends LPC_HTML_document
 	{
 	}
 
-	function renderFooter()
+	protected function renderFooter()
 	{
 		$result=array();
 
@@ -113,7 +113,7 @@ class LPC_Page extends LPC_HTML_document
 
 		$copy=new LPC_HTML_node("DIV");
 		$copy->setAttr('class','copyright');
-		$copy->content="Powered by <a href='http://www.moongate.ro/'>LPC</a> &mdash; Version 1.0 alpha";
+		$copy->content="Powered by <b>LPC</b> v".LPC_version." by <a href='http://www.moongate.eu/'>Moongate</a>";
 		$result[]=$copy;
 
 		if (!strlen(LPC_user_class) || !LPC_User::getCurrent(true))

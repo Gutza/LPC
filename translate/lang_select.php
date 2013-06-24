@@ -47,3 +47,5 @@ $t->a(new LPC_HTML_form_row(array(
 	'label'=>'&nbsp;',
 	'input'=>"<input type='submit' name='submit' value='Select languages'>"
 )));
+$p->show();
+

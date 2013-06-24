@@ -1,6 +1,7 @@
 <?php
 
 define("LPC_start_time",microtime(true));
+define("LPC_version", "1.0.0");
 
 if (isset($_SERVER['REQUEST_METHOD'])) {
 	require "LPC_session_naming.php";

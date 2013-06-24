@@ -17,10 +17,19 @@ abstract class LPC_HTML_base implements iLPC_HTML
 	public static $uid_counter=0;
 
 	protected $arrayKey;
+	protected $shown = false;
 
-	public function show()
+	public function show($once = false)
 	{
+		if ($once && $this->shown)
+			return;
 		echo $this->render();
+		$this->shown=true;
+	}
+
+	public function wasShown()
+	{
+		return $this->shown;
 	}
 
 	/**

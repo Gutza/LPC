@@ -19,7 +19,8 @@ if (isset($_GET['deleteAll']) && $_GET['deleteAll']) {
 	$obsolete=get_obsolete();
 }
 if (!$obsolete) {
-	$p->a("<p>There are no obsolete message keys.</p>");
+	$p->a(new LPC_HTML_confirm("There are no obsolete message keys."));
+	$p->show();
 	return;
 }
 
@@ -39,6 +40,8 @@ foreach($obsolete as $obso) {
 	$entry->a("<a href='?delete=".rawurlencode($obso)."'><img src='".LPC_ICON_ERASER."' alt='Delete'></a>");
 	$entry->a(htmlspecialchars($obso));
 }
+
+$p->show();
 
 function find_message($message_key)
 {

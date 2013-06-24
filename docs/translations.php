@@ -920,6 +920,42 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         ),
       ),
     ),
+    'lpcLogoutAlready' => 
+    array (
+      'comment' => 'The error message shown when you want to log out, but you aren\'t logged in at all.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'You were already logged out.',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Eraţi deja un utilizator neautentificat.',
+        ),
+      ),
+    ),
+    'lpcLogoutConfirm' => 
+    array (
+      'comment' => 'The message confirming you have been successfully logged out.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'You have been successfully logged out.',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Aţi părăsit sesiunea de lucru cu succes.',
+        ),
+      ),
+    ),
     'lpcRemoveFilterIcon' => 
     array (
       'comment' => 'The alternate text for the "remove filter" icon used in the LPC_HTML_list_filter class.',

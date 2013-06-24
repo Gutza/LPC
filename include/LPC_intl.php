@@ -6,6 +6,9 @@ function __L($message)
 }
 
 /**
+*
+* *** THIS IS DEPRECATED ***
+*
 * Translate a string that will end up as a stand-alone HTML string.
 * This is actually a call to _LS(), but it may be used to display
 * a link to the message itself for translators.

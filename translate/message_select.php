@@ -22,7 +22,8 @@ if (empty($_SESSION['LPC_display_message_translations'])) {
 $p->a(
 	"<p>".
 		"[<a href='message_check.php'>Check all message keys</a>] &bull; ".
-		"[<a href='?msgDisplay=$newMsgDisplayStatus'>$newMsgDisplayLabel</a>]".
+		"[<a href='?msgDisplay=$newMsgDisplayStatus'>$newMsgDisplayLabel</a>] &bull; ".
+		"[<a href='lang_select.php'>Change language</a>]".
 	"</p>"
 );
 
@@ -68,6 +69,7 @@ $mkFilter=new LPC_HTML_list_filter_string();
 $mkFilter->SQL_key="r.message_key";
 $l->filters->a($mkFilter,'message_key');
 $p->a($l);
+$p->show();
 
 function rbc($key,$cell,&$rowData)
 {
