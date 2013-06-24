@@ -5,6 +5,7 @@ class LPC_Language extends LPC_Base
 	private static $currentInstance=NULL;
 	private static $defaultInstance=NULL;
 	private $locale;
+	private static $langStack=array();
 
 	function registerDataStructure()
 	{
@@ -26,14 +27,26 @@ class LPC_Language extends LPC_Base
 		);
 	}
 
-	public static function setCurrent($object=NULL)
+	public static function pushCurrent($object=NULL)
+	{
+		array_push(self::$langStack, self::getCurrent());
+		self::setCurrent($object, true);
+	}
+
+	public static function popCurrent()
+	{
+		self::setCurrent(array_pop(self::$langStack), true);
+	}
+
+	public static function setCurrent($object=NULL, $temporary=false)
 	{
 		if (!isset($object) || !$object->id) {
 			unset(self::$currentInstance, $_SESSION['LPC']['current_language_id']);
 			return true;
 		}
 		self::$currentInstance=$object;
-		$_SESSION['LPC']['current_language_id']=$object->id;
+		if (!$temporary)
+			$_SESSION['LPC']['current_language_id']=$object->id;
 		return true;
 	}
 
