@@ -4211,7 +4211,7 @@ fclose($fp);
 		$objLink = $this->getLinkH();
 		if (!$objLink)
 			return "";
-		return "[".$objLink."]";
+		return "<h2>".$objLink."</h2>";
 	}
 	// }}}
 // }}}
