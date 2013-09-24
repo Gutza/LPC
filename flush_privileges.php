@@ -2,6 +2,7 @@
 
 $u=LPC_User::getCurrent();
 $p=LPC_Page::getCurrent();
+
 if (!$u->isHyperuser()) {
 	$p->a(new LPC_HTML_error(__L("genericErrorRights")));
 	return;

@@ -905,7 +905,10 @@ EOJS;
 	{
 		if (!$this->isHyperuser())
 			return false;
+		self::logout();
+		
 		self::setCurrent($user);
+		$user->onLogin();
 		return true;
 	}
 }
