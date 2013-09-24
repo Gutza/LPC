@@ -14,6 +14,8 @@ class LPC_HTML_document extends LPC_HTML_node
 	public $title_default='LPC Project';
 	public $title_format='LPC &ndash; %s';
 
+	protected $page_title_key = 'LPC_page_title';
+
 	// Render mode constants
 	const RM_NONE = "none"; // don't show anything
 	const RM_HTML = "HTML"; // full rendering (default)
@@ -133,6 +135,14 @@ class LPC_HTML_document extends LPC_HTML_node
 		echo "<pre>";
 		echo htmlspecialchars($text);
 		echo "</pre>";
+	}
+
+	public function st($title=NULL)
+	{
+		if (!is_null($title))
+			$this->title=$title;
+		$this->a("<h1>".$this->title."</h1>", $this->page_title_key);
+		return $this;
 	}
 
 }
