@@ -2,9 +2,11 @@
 
 require "common.php";
 
+$sub_key = "subtitle";
+
 $p=LPC_Page::getCurrent();
-$p->title=_LS('scaffoldingTitle');
-$p->st();
+$p->st(_LS('scaffoldingTitle'));
+$p->a("&nbsp;", $sub_key); // Placeholder
 
 $p->head->a(new LPC_HTML_script(LPC_js."/jquery.js"));
 $p->head->a(new LPC_HTML_script(LPC_js."/LPC_scaffolding.js"));
@@ -69,7 +71,7 @@ if ($id && !$obj->probe()) {
 	return;
 }
 
-$p->a($obj->getScaffoldingDetailsHeader());
+$p->a($obj->getScaffoldingDetailsHeader(), $sub_key);
 
 if ($id)
 	$p->st(__L('scaffoldingTitleObjectEdit', getFormalName($class)." #".$id));
