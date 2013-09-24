@@ -6,7 +6,7 @@ $sub_key = "subtitle";
 
 $p=LPC_Page::getCurrent();
 $p->st(_LS('scaffoldingTitle'));
-$p->a("&nbsp;", $sub_key); // Placeholder
+$p->a(array(), $sub_key); // Placeholder
 
 $p->head->a(new LPC_HTML_script(LPC_js."/jquery.js"));
 $p->head->a(new LPC_HTML_script(LPC_js."/LPC_scaffolding.js"));
