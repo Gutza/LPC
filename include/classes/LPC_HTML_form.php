@@ -6,10 +6,11 @@ class LPC_HTML_form extends LPC_HTML_node
 
 	function __construct($action=false,$method='post',$files=false)
 	{
-		if ($action===false)
-			$action=$_SERVER['PHP_SELF'];
-		$this->setAttr('action',$action);
-		$this->setAttr('method',$method);
+		if ($action===false) 
+			$action=LPC_URI::getCurrentURI();
+
+		$this->setAttr('action', $action);
+		$this->setAttr('method', $method);
 		if ($files)
 			$this->setAttr('enctype','multipart/form-data');
 		else
@@ -35,5 +36,11 @@ class LPC_HTML_form extends LPC_HTML_node
 			return;
 		echo _LH('genericErrorSessionKey');
 		exit;
+	}
+
+	function switchSSL($enable)
+	{
+		$uri = new LPC_URI($this->getAttr('action'));
+		$this->setAttr('action', $uri->switchSSL($enable));
 	}
 }

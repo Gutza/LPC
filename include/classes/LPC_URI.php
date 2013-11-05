@@ -57,9 +57,9 @@ class LPC_URI implements iLPC_HTML
 	*/
 	public function setVar($name, $value)
 	{
-		if (empty($this->uriParts['url_parts']['query']))
-			$this->uriParts['url_parts']['query']=array();
-		$this->uriParts['url_parts']['query'][$name] = $value;
+		if (empty($this->uriParts['query']))
+			$this->uriParts['query']=array();
+		$this->uriParts['query'][$name] = $value;
 
 		return $this;
 	}
@@ -87,10 +87,10 @@ class LPC_URI implements iLPC_HTML
 	*/
 	public function delVar($name)
 	{
-		if (!isset($this->uriParts['url_parts']['query'][$name]))
+		if (!isset($this->uriParts['query'][$name]))
 			return $this;
 
-		unset($this->uriParts['url_parts']['query'][$name]);
+		unset($this->uriParts['query'][$name]);
 		return $this;
 	}
 
@@ -112,9 +112,9 @@ class LPC_URI implements iLPC_HTML
 	*/
 	public function getVar($name)
 	{
-		if (!isset($this->uriParts['url_parts']['query'][$name]))
+		if (!isset($this->uriParts['query'][$name]))
 			return NULL;
-		return $this->uriParts['url_parts']['query'][$name];
+		return $this->uriParts['query'][$name];
 	}
 
 	public function toString($escapedAmps=false)
@@ -124,7 +124,11 @@ class LPC_URI implements iLPC_HTML
 		else
 			$amp=ini_get("arg_separator.output");
 
-		return $this->uriParts['url_base']."?".http_build_query($this->uriParts['url_parts']['query'], '', $amp);
+		$base = $this->getUrlBase();
+		if (empty($this->uriParts['query']))
+			return $base;
+
+		return $base."?".http_build_query($this->uriParts['query'], '', $amp);
 	}
 
 	public function render()
@@ -139,7 +143,7 @@ class LPC_URI implements iLPC_HTML
 	*/
 	public function getPath()
 	{
-		return $this->uriParts['url_parts']['path'];
+		return $this->uriParts['path'];
 	}
 
 	/**
@@ -149,7 +153,22 @@ class LPC_URI implements iLPC_HTML
 	*/
 	public function getFullPath()
 	{
-		return $this->uriParts['url_base'];
+		return $this->getUrlBase();
+	}
+
+	/**
+	* Returns the URL base path (scheme + host + port + path)
+	*
+	* @return string the URL base path
+	*/
+	protected function getUrlBase()
+	{
+		return
+			$this->uriParts["scheme"].
+			$this->uriParts["user_pass"].
+			$this->uriParts["host"].
+			$this->uriParts["path"]
+		;
 	}
 
 	/**
@@ -177,32 +196,39 @@ class LPC_URI implements iLPC_HTML
 		$this->uriString=$uri;
 
 		$up=parse_url($this->uriString); // URL parts
-		$ub=''; // URL base
-		if (isset($up['host'])) {
-			if (isset($up['scheme'])) {
-				$ub.=$up['scheme'];
-			} else {
-				$ub.="http";
-			}
-			$ub.="://";
-			if (isset($up['user'])) {
-				$ub.=$up['user'];
-				if (isset($up['pass'])) {
-					$ub.=":".$up['pass'];
-				}
-				$ub.='@';
-			}
-			$ub.=$up['host'];
-		};
-		@parse_str($up['query'], $query);
-		$up['query'] = $query;
-
-		$ub.=$up['path'];
-
-		$this->uriParts = array(
-			'url_parts'=>$up,
-			'url_base'=>$ub
+		$tup=array( // temporary URI parts
+			"scheme" => "",
+			"user_path" => "",
+			"host" => "",
+			"port" => "",
+			"path" => "",
+			"query" => array(),
 		);
+		if (isset($up['host'])) {
+			if (isset($up['scheme']))
+				$tup["scheme"] = $up['scheme'];
+			else
+				$tup["scheme"] = "http";
+			$tup["scheme"] .= "://"; // we want this here (see getUrlBase())
+
+			if (isset($up['user'])) {
+				$tup["user_path"] = $up['user'];
+				if (isset($up['pass'])) {
+					$$tup["user_path"] .= ":".$up['pass'];
+				}
+				$tup["user_path"] .= '@';
+			}
+			$tup["host"] = $up['host'];
+
+			if (isset($up['port']))
+				$tup["port"] = ":".$up['port'];
+		}
+		@parse_str($up['query'], $query);
+		$tup['query'] = $query;
+
+		$tup["path"] = $up['path'];
+
+		$this->uriParts = $tup;
 	}
 
 	// Adapted from http://dev.kanngard.net/Permalinks/ID_20050507183447.html
@@ -251,6 +277,40 @@ class LPC_URI implements iLPC_HTML
 			$result = substr($result, 0, -1);
 
 		return $result;
+	}
+
+	/**
+	* Switch SSL on (https) or off (http) for this URI.
+	* Throws exceptions if you try to use it on an URI with no scheme set,
+	* or on URIs that use any schemes other than http ot https
+	*/
+	public function switchSSL($enable)
+	{
+		$isSSL = $this->isSSL();
+		if ($enable == $isSSL)
+			return $this;
+
+		if ($enable)
+			$this->uriParts['scheme'] = "https://";
+		else
+			$this->uriParts['scheme'] = "http://";
+
+		return $this;
+	}
+
+	public function isSSL()
+	{
+		static $isSSL = NULL;
+		if (NULL !== $isSSL)
+			return $isSSL;
+
+		if (empty($this->uriParts['scheme']))
+			throw new RuntimeException("Can't determine SSL for URIs without a scheme (".$this->toString().")");
+
+		if (!in_array($this->uriParts['scheme'], array("http://", "https://")))
+			throw new RuntimeException("Unknown scheme for SSL (".$this->uriParts['scheme'].")");
+
+		return $isSSL = ("https://" == $this->uriParts['scheme']);
 	}
 }
 
