@@ -34,7 +34,7 @@ class LPC_HTML_node extends LPC_HTML_base
 		if (isset($this->id))
 			$this->setAttr('id',$this->id);
 
-		if (!$this->doctype)
+		if (!$this->doctype && !empty($this->ownerDocument))
 			$this->doctype=$this->ownerDocument->doctype;
 
 		$short=$this->shortTag && !$this->content && $this->determineTagEnd();
