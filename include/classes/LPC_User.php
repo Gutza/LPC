@@ -58,9 +58,21 @@ abstract class LPC_User extends LPC_Base
 			return true;
 		}
 
+		if (!is_a($object, "LPC_User"))
+			throw new RuntimeException(
+				"You can only assign LPC_User objects or descendants as the current user [".
+				gettype($object)."]"
+			);
+
 		self::$currentInstance=$object;
 		$_SESSION['LPC']['current_user_id']=$object->id;
 		return true;
+	}
+
+	public static function login($user)
+	{
+		self::setCurrent($user);
+		$user->onLogin();
 	}
 
 	public static function logout()
@@ -99,8 +111,7 @@ abstract class LPC_User extends LPC_Base
 		// Last chance: has user has just logged in?
 		$user=self::newUser();
 		if ($u=$user->validatePOST()) {
-			self::setCurrent($u);
-			$u->onLogin();
+			self::login($u);
 			return $u;
 		}
 
