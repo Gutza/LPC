@@ -37,3 +37,23 @@ function LPC_scaffolding_pick(id)
 	myInput[0].value=id;
 	return LPC_scaffolding_cancelPick();
 }
+
+function LPC_scaffolding_handleTinyMCEshowHide(cb, ta_id)
+{
+	if (!cb.checked) {
+		tinymce.editors[ta_id].hide();
+		$('#'+ta_id).focus();
+		return;
+	}
+
+	var shownAttr = "tinyMCE";
+	var shownValue = "shown";
+
+	if (shownValue == cb.getAttribute(shownAttr)) {
+		tinymce.editors[ta_id].show();
+		return;
+	}
+
+	tinymce.init({selector: '#'+ta_id, entity_encoding: 'raw'});
+	cb.setAttribute(shownAttr, shownValue);
+}

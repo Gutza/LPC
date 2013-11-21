@@ -1820,5 +1820,23 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         ),
       ),
     ),
+    'scaffoldingUseHtmlEditor' => 
+    array (
+      'comment' => 'This is the label for the checkbox showing or hiding the HTML editor in the LPC scaffolding.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Use the HTML editor',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Folosiți editorul HTML',
+        ),
+      ),
+    ),
   ),
 );

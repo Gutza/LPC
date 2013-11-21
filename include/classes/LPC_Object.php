@@ -4024,7 +4024,34 @@ fclose($fp);
 				break;
 			case 'longtext':
 			case 'html':
-				$input="<textarea name='attr[$attName]' rows='5' style='width:100%'>".$this->getAttrH($attName)."</textarea>";
+				// HTML + longtext
+				$input = new LPC_HTML_fragment();
+				$ta = new LPC_HTML_node('textarea');
+				$input->a($ta);
+				$ta->setAttrs(array(
+					'name' => "attr[$attName]",
+					'style' => 'width: 100%; height: 150px',
+				));
+				$ta->a($this->getAttrH($attName));
+				if ('longtext' == $type)
+					break;
+
+				// HTML only
+				$ta->setUID();
+				LPC_Page::getCurrent()->head->a(new LPC_HTML_script("//tinymce.cachefly.net/4.0/tinymce.min.js"), "TinyMCE");
+				$div = new LPC_HTML_node();
+				$input->a($div);
+				$cb = new LPC_HTML_node('input');
+				$div->a($cb);
+				$cb->setUID();
+				$cb->setAttrs(array(
+					'type' => 'checkbox',
+					'onChange' => 'LPC_scaffolding_handleTinyMCEshowHide(this, \''.$ta->id.'\')',
+				));
+				$label = new LPC_HTML_node("label");
+				$div->a($label);
+				$label->setAttr("for", $cb->id);
+				$label->a(" ".__L('scaffoldingUseHtmlEditor'));
 				break;
 			case 'boolean':
 				if ($this->getAttr($attName)) {
