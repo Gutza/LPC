@@ -4120,14 +4120,31 @@ fclose($fp);
 		foreach($_POST['attr'] as $attName=>$attValue) {
 			if (is_array($attValue))
 				$attValue=implode(",",$attValue);
+
+			$dsf = &$this->dataStructure['fields'];
+			if (empty($dsf[$attName])) {
+				$this->initI18n();
+				$dsf = &$this->i18n_object->dataStructure['fields'];
+				if (empty($dsf[$attName]))
+					continue;
+			}
+
 			$type="";
-			if (isset($this->dataStructure['fields'][$attName]['type']))
-				$type=$this->dataStructure['fields'][$attName]['type'];
+			if (isset($dsf[$attName]['type']))
+				$type=$dsf[$attName]['type'];
+
 			switch($type) {
 				case 'datetime':
 				case 'date':
 					if ($attValue)
 						$attValue=strtotime($attValue);
+					break;
+				case 'html':
+					// pear channel-discover htmlpurifier.org
+					// pear install hp/HTMLPurifier
+					require_once "HTMLPurifier.auto.php";
+					$purifier = new HTMLPurifier();
+					$attValue = $purifier->purify($attValue);
 					break;
 			}
 			$this->setAttr($attName,$attValue);
