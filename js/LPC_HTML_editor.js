@@ -14,6 +14,12 @@ function LPC_HTML_editor_handleShowHide(cb, ta_id)
 		return;
 	}
 
-	tinymce.init({selector: '#'+ta_id, entity_encoding: 'raw'});
+	tinymce.init({
+		selector: '#'+ta_id,
+		entity_encoding: 'raw',
+		forced_root_block : false,
+		force_br_newlines : true,
+		force_p_newlines : false
+	});
 	cb.setAttribute(shownAttr, shownValue);
 }
