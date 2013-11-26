@@ -4025,33 +4025,18 @@ fclose($fp);
 			case 'longtext':
 			case 'html':
 				// HTML + longtext
-				$input = new LPC_HTML_fragment();
-				$ta = new LPC_HTML_node('textarea');
-				$input->a($ta);
-				$ta->setAttrs(array(
+				$input = new LPC_HTML_node('textarea');
+				$input->setAttrs(array(
 					'name' => "attr[$attName]",
 					'style' => 'width: 100%; height: 150px',
 				));
-				$ta->a($this->getAttrH($attName));
+				$input->a($this->getAttrH($attName));
 				if ('longtext' == $type)
 					break;
 
 				// HTML only
-				$ta->setUID();
-				LPC_Page::getCurrent()->head->a(new LPC_HTML_script("//tinymce.cachefly.net/4.0/tinymce.min.js"), "TinyMCE");
-				$div = new LPC_HTML_node();
-				$input->a($div);
-				$cb = new LPC_HTML_node('input');
-				$div->a($cb);
-				$cb->setUID();
-				$cb->setAttrs(array(
-					'type' => 'checkbox',
-					'onChange' => 'LPC_scaffolding_handleTinyMCEshowHide(this, \''.$ta->id.'\')',
-				));
-				$label = new LPC_HTML_node("label");
-				$div->a($label);
-				$label->setAttr("for", $cb->id);
-				$label->a(" ".__L('scaffoldingUseHtmlEditor'));
+				$input = new LPC_HTML_html_editor($input);
+
 				break;
 			case 'boolean':
 				if ($this->getAttr($attName)) {
@@ -4117,38 +4102,44 @@ fclose($fp);
 	// {{{ processScaffoldingAttributes()
 	protected function processScaffoldingAttributes()
 	{
-		foreach($_POST['attr'] as $attName=>$attValue) {
-			if (is_array($attValue))
-				$attValue=implode(",",$attValue);
+		foreach($_POST['attr'] as $attName=>$attValue)
+			$this->processScaffoldingAttribute($attName, $attValue);
+	}
+	// }}}
+	// {{{ processScaffoldingAttribute()
+	protected function processScaffoldingAttribute($attName, $attValue)
+	{
+		if (is_array($attValue))
+			$attValue=implode(",",$attValue);
 
-			$dsf = &$this->dataStructure['fields'];
-			if (empty($dsf[$attName])) {
-				$this->initI18n();
-				$dsf = &$this->i18n_object->dataStructure['fields'];
-				if (empty($dsf[$attName]))
-					continue;
-			}
-
-			$type="";
-			if (isset($dsf[$attName]['type']))
-				$type=$dsf[$attName]['type'];
-
-			switch($type) {
-				case 'datetime':
-				case 'date':
-					if ($attValue)
-						$attValue=strtotime($attValue);
-					break;
-				case 'html':
-					// pear channel-discover htmlpurifier.org
-					// pear install hp/HTMLPurifier
-					require_once "HTMLPurifier.auto.php";
-					$purifier = new HTMLPurifier();
-					$attValue = $purifier->purify($attValue);
-					break;
-			}
-			$this->setAttr($attName,$attValue);
+		$dsf = &$this->dataStructure['fields'];
+		if (empty($dsf[$attName])) {
+			$this->initI18n();
+			$dsf = &$this->i18n_object->dataStructure['fields'];
+			if (empty($dsf[$attName]))
+				// This attribute isn't defined anywhere!
+				continue;
 		}
+
+		$type="";
+		if (isset($dsf[$attName]['type']))
+			$type=$dsf[$attName]['type'];
+
+		switch($type) {
+			case 'datetime':
+			case 'date':
+				if ($attValue)
+					$attValue=strtotime($attValue);
+				break;
+			case 'html':
+				// pear channel-discover htmlpurifier.org
+				// pear install hp/HTMLPurifier
+				require_once "HTMLPurifier.auto.php";
+				$purifier = new HTMLPurifier();
+				$attValue = $purifier->purify($attValue);
+				break;
+		}
+		$this->setAttr($attName,$attValue);
 	}
 	// }}}
 	// {{{ processScaffoldingFile()
