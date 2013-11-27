@@ -4035,7 +4035,8 @@ fclose($fp);
 					break;
 
 				// HTML only
-				$input = new LPC_HTML_html_editor($input);
+				$input->setAttr('style', $input->getAttr('style')."; min-width: 600px; height: 250px");
+				$input = new LPC_HTML_html_editor($input, true);
 
 				break;
 			case 'boolean':

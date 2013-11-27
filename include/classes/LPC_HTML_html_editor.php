@@ -3,10 +3,12 @@
 class LPC_HTML_html_editor extends LPC_HTML_fidget
 {
 	var $textarea = NULL;
+	var $init = false;
 
-	function __construct($textarea)
+	function __construct($textarea, $init = false)
 	{
 		$this->textarea = $textarea;
+		$this->init = $init;
 	}
 
 	function prepare()
@@ -28,11 +30,16 @@ class LPC_HTML_html_editor extends LPC_HTML_fidget
 		$checkbox->setUID();
 		$checkbox->setAttrs(array(
 			'type' => 'checkbox',
-			'onChange' => "LPC_HTML_editor_handleShowHide(this, '".$this->textarea->id."')",
+			'onChange' => "LPC_HTML_editor.showHideHandle(this, '".$this->textarea->id."')",
 		));
 		$label = new LPC_HTML_node("label");
 		$controlsDiv->a($label);
 		$label->setAttr("for", $checkbox->id);
 		$label->a(" ".__L('scaffoldingUseHtmlEditor'));
+		if ($this->init) {
+			$js = new LPC_HTML_script();
+			$js->a("$(document).ready(function() { LPC_HTML_editor.initAndShow($('#".$checkbox->id."').get(0), '".$this->textarea->id."'); });");
+			$this->a($js);
+		}
 	}
 }
