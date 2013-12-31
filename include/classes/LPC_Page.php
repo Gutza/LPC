@@ -17,12 +17,15 @@ class LPC_Page extends LPC_HTML_document
 	var $loadAvgFile="/proc/loadavg"; // used in the footer
 	var $cpuinfoFile="/proc/cpuinfo"; // used in the footer
 	var $noFooter=false; // set to true if you don't want the footer
+	public $jsContainer;
 
 	private static $currentInstance=NULL;
 
 	public function __construct()
 	{
 		parent::__construct();
+
+		$this->jsContainer = new LPC_HTML_fragment();
 
 		$this->content['head']->content['icon']=new LPC_HTML_link('icon','image/vnd.microsoft.icon',LPC_url."/favicon.ico");
 		$this->content['head']->content['LPC base CSS']=new LPC_HTML_link('stylesheet','text/css',LPC_css."/LPC_base.css?2013-04");
@@ -87,7 +90,8 @@ class LPC_Page extends LPC_HTML_document
 
 	function beforeRender()
 	{
-		$this->a($this->renderFooter());
+		$this->a($this->renderFooter(), "Footer (LPC_Page)");
+		$this->a($this->renderJS(), "JavaScript (LPC_Page)");
 		return true;
 	}
 
@@ -128,11 +132,21 @@ class LPC_Page extends LPC_HTML_document
 		return $result;
 	}
 
+	protected function renderJS()
+	{
+		return $this->jsContainer;
+	}
+
 	function renderMessageTranslations()
 	{
 		if (empty($_SESSION['LPC_display_message_translations']))
 			return NULL;
 
 		return new LPC_I18n_messageList();
+	}
+
+	public function addJS($node, $label=NULL)
+	{
+		$this->jsContainer->a($node, $label);
 	}
 }

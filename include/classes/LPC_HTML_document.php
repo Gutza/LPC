@@ -30,12 +30,15 @@ class LPC_HTML_document extends LPC_HTML_node
 	public function __construct()
 	{
 		$this->doctype=LPC_HTML_doctype::HTML4S;
-		$this->head=new LPC_HTML_node('HEAD');
+
+		$this->head=new LPC_HTML_node('head');
 		$this->head->ownerDocument=$this;
 		$this->head->parentNode=$this;
-		$this->body=new LPC_HTML_node('BODY');
+
+		$this->body=new LPC_HTML_node('body');
 		$this->body->ownerDocument=$this;
 		$this->body->parentNode=$this;
+
 		$this->content=array(
 			'head'=>&$this->head,
 			'body'=>&$this->body
