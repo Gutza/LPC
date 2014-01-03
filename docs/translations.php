@@ -52,7 +52,7 @@ return array (
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Nu aveţi permisiunile necesare pentru a efectua această operaţiune.',
+          'translation' => 'Nu aveți permisiunile necesare pentru a efectua această operațiune.',
         ),
       ),
     ),
@@ -70,7 +70,7 @@ return array (
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Eroare a cheiei de sesiune! Fie aţi încercat să continuaţi o sesiune mai veche sau, dacă veniţi aici de la o sursă externă (website, e-mail), cineva încearcă să se folosească în mod abuziv de drepturile dumneavoastră.',
+          'translation' => 'Eroare a cheii de sesiune! Fie ați încercat să continuați o sesiune mai veche sau, dacă veniți aici de la o sursă externă (website, e-mail), cineva încearcă să se folosească în mod abuziv de drepturile dumneavoastră.',
         ),
       ),
     ),
@@ -124,7 +124,7 @@ return array (
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Dacă există vreun utilizator înregistrat care foloseşte adresa e-mail pe care aţi indicat-o (<tt>{0}</tt>) atunci mesajul a fost trimis cu succes.',
+          'translation' => 'Dacă există vreun utilizator înregistrat care folosește adresa e-mail pe care ați indicat-o (<tt>{0}</tt>) atunci mesajul a fost trimis cu succes.',
         ),
       ),
     ),
@@ -142,7 +142,7 @@ return array (
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Felicitări, aproape aţi terminat procesul de înregistrare! Vă rugăm introduceţi parola pe care doriţi să o folosiţi în formularul de dedesubt.',
+          'translation' => 'Felicitări, aproape ați terminat procesul de înregistrare! Vă rugăm introduceți parola pe care doriți să o folosiți în formularul de dedesubt.',
         ),
       ),
     ),
@@ -214,7 +214,7 @@ return array (
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Parola a fost schimbată cu succes. Aţi fost deja autentificat ca {0}, iar în viitor vă puteţi autentifica cu parola pe care tocmai aţi introdus-o.',
+          'translation' => 'Parola a fost schimbată cu succes. Ați fost deja autentificat ca {0}, iar în viitor vă puteți autentifica cu parola pe care tocmai ați introdus-o.',
         ),
       ),
     ),
@@ -250,7 +250,7 @@ return array (
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Deja sunteţi autentificat!',
+          'translation' => 'Deja sunteți autentificat!',
         ),
       ),
     ),
@@ -268,7 +268,7 @@ return array (
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Vă rugăm asiguraţi-vă că scrieţi exact aceeaşi parolă de două ori!',
+          'translation' => 'Vă rugăm asigurați-vă că scrieți exact aceeași parolă de două ori!',
         ),
       ),
     ),
@@ -288,7 +288,7 @@ Be advised this is always related to an existing account, and properly identifie
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Mesajul e-mail de recuperare a parolei nu a putut fi trimis. Fie această adresă e-mail este invalidă (<tt>{0}</tt>), fie au apărut probleme temporare de conectivitate. Dacă parola este validă vă rugăm încercaţi din nou mai târziu.',
+          'translation' => 'Mesajul e-mail de recuperare a parolei nu a putut fi trimis. Fie această adresă e-mail este invalidă (<tt>{0}</tt>), fie au apărut probleme temporare de conectivitate. Dacă parola este validă vă rugăm încercați din nou mai târziu.',
         ),
       ),
     ),
@@ -306,7 +306,7 @@ Be advised this is always related to an existing account, and properly identifie
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Parola este prea scurtă! Vă rugăm asiguraţi-vă că parola pe care o alegeţi are cel puţin {0} caractere.',
+          'translation' => 'Parola este prea scurtă! Vă rugăm asigurați-vă că parola pe care o alegeți are cel puțin {0} caractere.',
         ),
       ),
     ),
@@ -324,7 +324,7 @@ Be advised this is always related to an existing account, and properly identifie
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Vă rugăm asiguraţi-vă că parola pe care o alegeţi conţine cel puţin o literă!',
+          'translation' => 'Vă rugăm asigurați-vă că parola pe care o alegeți conține cel puțin o literă!',
         ),
       ),
     ),
@@ -342,7 +342,7 @@ Be advised this is always related to an existing account, and properly identifie
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Vă rugăm asiguraţi-vă că parola pe care o alegeţi conţine cel puţin o cifră!',
+          'translation' => 'Vă rugăm asigurați-vă că parola pe care o alegeți conține cel puțin o cifră!',
         ),
       ),
     ),
@@ -360,7 +360,7 @@ Be advised this is always related to an existing account, and properly identifie
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Datele pe care încercaţi să le folosiţi sunt invalide. Fie au fost deja folosite pentru acces, sau cheia de acces a expirat, sau nu aţi copiat adresa în întregime din mesajul e-mail.',
+          'translation' => 'Datele pe care încercați să le folosiți sunt invalide. Fie au fost deja folosite pentru acces, sau cheia de acces a expirat, sau nu ați copiat adresa în întregime din mesajul e-mail.',
         ),
       ),
     ),
@@ -473,7 +473,7 @@ It is recommended that you do not overwrite this translation just in order to cu
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Confirmaţi parola',
+          'translation' => 'Confirmați parola',
         ),
       ),
     ),
@@ -491,7 +491,7 @@ It is recommended that you do not overwrite this translation just in order to cu
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Introduceţi din nou aceeaşi parolă pentru confirmare',
+          'translation' => 'Introduceți din nou aceeași parolă pentru confirmare',
         ),
       ),
     ),
@@ -509,7 +509,7 @@ It is recommended that you do not overwrite this translation just in order to cu
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Introduceţi noua parolă pe care doriţi să o utilizaţi',
+          'translation' => 'Introduceți noua parolă pe care doriți să o utilizați',
         ),
       ),
     ),
@@ -561,11 +561,11 @@ The {1} team',
           'language' => '2',
           'translation' => 'Doamnă/domnule {0},
 
-Cineva a solicitat recuperarea parolei pentru contul asociat adresei dumneavoastră e-mail ({4}). Indiferent dacă aţi solicitat recuperarea parolei sau nu, vă rugăm apăsaţi pe legătura de mai jos (dacă nu aţi solicitat recuperarea parolei veţi avea ocazia să indicaţi acest lucru).
+Cineva a solicitat recuperarea parolei pentru contul asociat adresei dumneavoastră e-mail ({4}). Indiferent dacă ați solicitat recuperarea parolei sau nu, vă rugăm apăsați pe legătura de mai jos (dacă nu ați solicitat recuperarea parolei veți avea ocazia să indicați acest lucru).
 
 {3}
 
-Vă mulţumim,
+Vă mulțumim,
 Echipa {1}',
         ),
       ),
@@ -659,8 +659,8 @@ It is recommended that you do not overwrite this translation just in order to cu
         1 => 
         array (
           'language' => '2',
-          'translation' => '<p>Vă rugăm completaţi formularul de dedesubt pentru a vă schimba parola.</p>
-<p>Dacă nu aţi solicitat schimbarea parolei, vă rugăm apăsaţi pe butonul &quot;<i>{0}</i>&quot; de la sfârşitul formularului (în acest caz nu este necesar să completaţi formularul).</p>',
+          'translation' => '<p>Vă rugăm completați formularul de dedesubt pentru a vă schimba parola.</p>
+<p>Dacă nu ați solicitat schimbarea parolei, vă rugăm apăsați pe butonul &quot;<i>{0}</i>&quot; de la sfârșitul formularului (în acest caz nu este necesar să completați formularul).</p>',
         ),
       ),
     ),
@@ -732,7 +732,7 @@ It is recommended that you do not overwrite this translation just in order to cu
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Parola trebuie să conţină cel puţin o literă.',
+          'translation' => 'Parola trebuie să conțină cel puțin o literă.',
         ),
       ),
     ),
@@ -750,7 +750,7 @@ It is recommended that you do not overwrite this translation just in order to cu
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Condiţii de validare a parolei',
+          'translation' => 'Condiții de validare a parolei',
         ),
       ),
     ),
@@ -768,7 +768,7 @@ It is recommended that you do not overwrite this translation just in order to cu
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Parola trebuie să conţină cel puţin {0} caractere.',
+          'translation' => 'Parola trebuie să conțină cel puțin {0} caractere.',
         ),
       ),
     ),
@@ -786,7 +786,7 @@ It is recommended that you do not overwrite this translation just in order to cu
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Parola trebuie să conţină cel puţin o cifră.',
+          'translation' => 'Parola trebuie să conțină cel puțin o cifră.',
         ),
       ),
     ),
@@ -858,7 +858,7 @@ It is recommended that you do not overwrite this translation just in order to cu
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Vor fi afişate numai înregistrările care conţin în acest câmp valoarea pe care o selectaţi. Dacă selectaţi ambele câmpuri vor fi afişate toate înregistrările (la fel şi dacă debifaţi ambele câmpuri).',
+          'translation' => 'Vor fi afișate numai înregistrările care conțin în acest câmp valoarea pe care o selectați. Dacă selectați ambele câmpuri vor fi afișate toate înregistrările (la fel și dacă debifați ambele câmpuri).',
         ),
       ),
     ),
@@ -878,9 +878,9 @@ The value you specify will be used as such.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Vor fi afişate numai înregistrările care conţin în acest câmp valoarea pe care o introduceţi.
+          'translation' => 'Vor fi afișate numai înregistrările care conțin în acest câmp valoarea pe care o introduceți.
 
-Valoarea pe care o introduceţi va fi folosită ca atare.',
+Valoarea pe care o introduceți va fi folosită ca atare.',
         ),
       ),
     ),
@@ -934,7 +934,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Eraţi deja un utilizator neautentificat.',
+          'translation' => 'Erați deja un utilizator neautentificat.',
         ),
       ),
     ),
@@ -952,7 +952,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Aţi părăsit sesiunea de lucru cu succes.',
+          'translation' => 'Ați părăsit sesiunea de lucru cu succes.',
         ),
       ),
     ),
@@ -1024,7 +1024,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'ID-ul utilizatorului pe care doriţi să-l investigaţi:',
+          'translation' => 'ID-ul utilizatorului pe care doriți să-l investigați:',
         ),
       ),
     ),
@@ -1132,7 +1132,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Acţiuni',
+          'translation' => 'Acțiuni',
         ),
       ),
     ),
@@ -1276,7 +1276,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Trimite şi ataşează din nou',
+          'translation' => 'Trimite și atașează din nou',
         ),
       ),
     ),
@@ -1294,7 +1294,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Renunţă la alegerea obiectului',
+          'translation' => 'Renunță la alegerea obiectului',
         ),
       ),
     ),
@@ -1312,7 +1312,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Folosiţi lista de dedesubt pentru a indica ce coloane doriţi să afişaţi pentru acest obiect. Puteţi modifica această listă oricând. Aceasta este o preferinţă personală de-a dumneavoastră; modificările pe care le faceţi aici nu vor afecta alţi utilizatori.',
+          'translation' => 'Folosiți lista de dedesubt pentru a indica ce coloane doriți să afișați pentru acest obiect. Puteți modifica această listă oricând. Aceasta este o preferință personală de-a dumneavoastră; modificările pe care le faceți aici nu vor afecta alți utilizatori.',
         ),
       ),
     ),
@@ -1330,7 +1330,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Afişează sau ascunde coloane',
+          'translation' => 'Afișează sau ascunde coloane',
         ),
       ),
     ),
@@ -1366,7 +1366,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Ataşează {0}',
+          'translation' => 'Atașează {0}',
         ),
       ),
     ),
@@ -1402,7 +1402,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Şterge',
+          'translation' => 'Șterge',
         ),
       ),
     ),
@@ -1420,7 +1420,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Sigur doriţi să ştergeţi acest obiect?',
+          'translation' => 'Sigur doriți să ștergeți acest obiect?',
         ),
       ),
     ),
@@ -1438,7 +1438,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Şterge acest fişier',
+          'translation' => 'Șterge acest fișier',
         ),
       ),
     ),
@@ -1474,7 +1474,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Detaşează legătura {0} cu {1}',
+          'translation' => 'Detașează legătura {0} cu {1}',
         ),
       ),
     ),
@@ -1528,7 +1528,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Parametri incompleţi! (lipseşte numele clasei)',
+          'translation' => 'Parametri incompleți! (lipsește numele clasei)',
         ),
       ),
     ),
@@ -1546,7 +1546,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Lipseşte ID-ul obiectului!',
+          'translation' => 'Lipsește ID-ul obiectului!',
         ),
       ),
     ),
@@ -1564,7 +1564,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Fişier LPC',
+          'translation' => 'Fișier LPC',
         ),
       ),
     ),
@@ -1582,7 +1582,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Secţiune localizată în română',
+          'translation' => 'Secțiune localizată în română',
         ),
       ),
     ),
@@ -1618,7 +1618,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Vă rugăm alegeţi unul dintre tipurile de obiecte de mai jos:',
+          'translation' => 'Vă rugăm alegeți unul dintre tipurile de obiecte de mai jos:',
         ),
       ),
     ),
@@ -1636,7 +1636,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Selectaţi acest obiect',
+          'translation' => 'Selectați acest obiect',
         ),
       ),
     ),
@@ -1726,7 +1726,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Alegeţi un alt tip de obiect',
+          'translation' => 'Alegeți un alt tip de obiect',
         ),
       ),
     ),
@@ -1744,7 +1744,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Alegeţi o altă înregistrare',
+          'translation' => 'Alegeți o altă înregistrare',
         ),
       ),
     ),
@@ -1762,7 +1762,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'LPC: eşafodaj',
+          'translation' => 'LPC: eșafodaj',
         ),
       ),
     ),
@@ -1780,7 +1780,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Eşafodaj: {0} (creează)',
+          'translation' => 'Eșafodaj: {0} (creează)',
         ),
       ),
     ),
@@ -1798,7 +1798,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Eşafodaj: {0}',
+          'translation' => 'Eșafodaj: {0}',
         ),
       ),
     ),
@@ -1816,7 +1816,7 @@ Valoarea pe care o introduceţi va fi folosită ca atare.',
         1 => 
         array (
           'language' => '2',
-          'translation' => 'Eşafodaj: {0} (lista)',
+          'translation' => 'Eșafodaj: {0} (lista)',
         ),
       ),
     ),
