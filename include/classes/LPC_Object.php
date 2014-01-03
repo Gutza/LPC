@@ -4085,12 +4085,12 @@ fclose($fp);
 			$attDesc=_LS($this::$scaffoldingDesc[$attName]['name']);
 		else
 			$attDesc=$attName;
-		if (isset($this::$scaffoldingDesc[$attName]['desc']) && empty($options['NO_LPC_DESC']))
-			$attDesc.="<div style='font-weight:normal; font-size:80%'>"._LS($this::$scaffoldingDesc[$attName]['desc'])."</div>";
 		if (empty($options['NO_SQL_DESC'])) {
 			$rs=$this->query("DESCRIBE ".$this->getTableName()." ".$this->getFieldName($attName,true));
-			$attDesc.="<div style='font-weight:normal; font-size:80%; opacity: 0.5'><tt>".htmlspecialchars($rs->fields['Type'])."</tt></div>";
+			$attDesc = "<span title=\"".htmlspecialchars($rs->fields['Type'])."\">".$attDesc."</span>";
 		}
+		if (isset($this::$scaffoldingDesc[$attName]['desc']) && empty($options['NO_LPC_DESC']))
+			$attDesc.="<div style='font-weight:normal; font-size:80%'>"._LS($this::$scaffoldingDesc[$attName]['desc'])."</div>";
 
 		$row=new LPC_HTML_form_row(array(
 			'label'=>$attDesc,

@@ -58,8 +58,12 @@ table.two-column td {
 	width: 50%;
 }
 
-table.two-column-60 td {
-	width: 60%;
+table.two-column-60 th {
+	width: 40%;
+}
+
+table.two-column-80 th {
+	width: 20%;
 }
 
 table.numeric td, td.numeric, th.numeric {
