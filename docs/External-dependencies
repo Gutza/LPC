@@ -1,0 +1,6 @@
+HTML Purifier (required for HTML editing)
+=========================================
+pear channel-discover htmlpurifier.org
+pear install hp/HTMLPurifier
+
+
