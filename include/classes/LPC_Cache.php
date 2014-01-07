@@ -22,19 +22,19 @@ class LPC_Cache
 
 	private function __construct() {}
 
-	public function getGenericType()
+	public static function getGenericType()
 	{
 		self::getCurrent();
 		return self::$type;
 	}
 
-	public function getSpeed()
+	public static function getSpeed()
 	{
 		self::getCurrent();
 		return self::$speed;
 	}
 
-	public function getCurrent()
+	public static function getCurrent()
 	{
 		if (isset(self::$current))
 			return self::$current;
@@ -42,7 +42,7 @@ class LPC_Cache
 		return self::$current;
 	}
 
-	private function buildCache()
+	private static function buildCache()
 	{
 		if (!defined('LPC_CACHE_TYPE'))
 			throw new RuntimeException("You need to define constant LPC_CACHE_TYPE in order to use the LPC cache functionality.");
@@ -61,7 +61,7 @@ class LPC_Cache
 		throw new InvalidArgumentException("Unknown cache type: ".LPC_CACHE_TYPE);
 	}
 
-	private function build_cache_memcache()
+	private static function build_cache_memcache()
 	{
 		if (!defined('LPC_CACHE_MC_HOST'))
 			throw new InvalidArgumentException("Memcache caches need a host (constant LPC_CACHE_MC_HOST is undefined).");
@@ -72,25 +72,25 @@ class LPC_Cache
 		return new LPC_Cache_memcache(LPC_CACHE_MC_HOST,LPC_CACHE_MC_PORT);
 	}
 
-	private function build_cache_session()
+	private static function build_cache_session()
 	{
 		self::$type=self::GENERIC_TYPE_SESSION;
 		return new LPC_Cache_session();
 	}
 
-	private function build_cache_database()
+	private static function build_cache_database()
 	{
 		self::$type=self::GENERIC_TYPE_GLOBAL;
 		return new LPC_Cache_database();
 	}
 
-	private function build_cache_none()
+	private static function build_cache_none()
 	{
 		self::$type=self::GENERIC_TYPE_FAKE;
 		return new LPC_Cache_none();
 	}
 
-	private function build_cache_apc()
+	private static function build_cache_apc()
 	{
 		self::$type=self::GENERIC_TYPE_GLOBAL;
 		self::$speed=self::SPEED_FAST;

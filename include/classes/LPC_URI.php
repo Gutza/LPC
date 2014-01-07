@@ -163,9 +163,13 @@ class LPC_URI implements iLPC_HTML
 	*/
 	protected function getUrlBase()
 	{
+		$up = "";
+		if (isset($this->uriParts["user_pass"]))
+			$up = $this->uriParts["user_pass"];
+
 		return
 			$this->uriParts["scheme"].
-			$this->uriParts["user_pass"].
+			$up.
 			$this->uriParts["host"].
 			$this->uriParts["path"]
 		;

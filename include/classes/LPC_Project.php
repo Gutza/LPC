@@ -79,7 +79,7 @@ abstract class LPC_Project extends LPC_Base
 	{
 	}
 
-	public function getProjectClass($info=false)
+	public static function getProjectClass($info=false)
 	{
 		if (!defined("LPC_project_class") || !strlen(LPC_project_class)) {
 			if ($info)

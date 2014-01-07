@@ -156,7 +156,7 @@ abstract class LPC_User extends LPC_Base
 		return new $class($id);
 	}
 
-	public function getUserClass()
+	public static function getUserClass()
 	{
 		if (!self::configuredForUsers())
 			throw new RuntimeException("Please define constant LPC_user_class if you want to use users.");

@@ -61,7 +61,7 @@ class LPC_Page extends LPC_HTML_document
 		return self::$currentInstance;
 	}
 
-	public function getPageClass()
+	public static function getPageClass()
 	{
 		if (defined("LPC_page_class"))
 			return LPC_page_class;
@@ -88,14 +88,14 @@ class LPC_Page extends LPC_HTML_document
 	}
 	// }}}
 
-	function beforeRender()
+	function beforeRender($indent)
 	{
 		$this->a($this->renderFooter(), "Footer (LPC_Page)");
 		$this->a($this->renderJS(), "JavaScript (LPC_Page)");
 		return true;
 	}
 
-	function onRender()
+	function onRender($indent)
 	{
 	}
 

@@ -35,7 +35,7 @@ class LPC_I18n_messageFormatter extends MessageFormatter
 		);
 	}
 
-	function getTranslation($messageKey)
+	static function getTranslation($messageKey)
 	{
 		if ($translation=self::translationFromCache($messageKey))
 			return $translation;
@@ -55,7 +55,7 @@ class LPC_I18n_messageFormatter extends MessageFormatter
 
 		if ($entries) {
 			$translation=$entries[0]->getAttr('translation');
-			$this->translationToCache($messageKey,$translation);
+			self::translationToCache($messageKey,$translation);
 			return $translation;
 		}
 
@@ -64,7 +64,7 @@ class LPC_I18n_messageFormatter extends MessageFormatter
 		return "[[".$messageKey."]]";
 	}
 
-	function checkCache()
+	static function checkCache()
 	{
 		if (isset(self::$cache_enabled))
 			return self::$cache_enabled;
@@ -72,7 +72,7 @@ class LPC_I18n_messageFormatter extends MessageFormatter
 		return self::$cache_enabled;
 	}
 
-	function translationFromCache($messageKey)
+	static function translationFromCache($messageKey)
 	{
 		if (!self::checkCache())
 			return false;
@@ -81,7 +81,7 @@ class LPC_I18n_messageFormatter extends MessageFormatter
 		return $cache->getG(self::getCacheKey($messageKey));
 	}
 
-	function translationToCache($messageKey,$translation)
+	static function translationToCache($messageKey,$translation)
 	{
 		if (!self::checkCache())
 			return;
@@ -90,7 +90,7 @@ class LPC_I18n_messageFormatter extends MessageFormatter
 		return $cache->setG(self::getCacheKey($messageKey),$translation);
 	}
 
-	function clearTranslationCache($messageKey,$langID)
+	static function clearTranslationCache($messageKey,$langID)
 	{
 		if (!self::checkCache())
 			return;
@@ -99,14 +99,14 @@ class LPC_I18n_messageFormatter extends MessageFormatter
 		return $cache->deleteG(self::getCacheKey($messageKey,$langID));
 	}
 
-	function getCacheKey($messageKey,$langID=0)
+	static function getCacheKey($messageKey,$langID=0)
 	{
 		if (!$langID)
 			$langID=LPC_Language::getCurrent()->id;
 		return "LPC.i18n.".$langID."-".$messageKey;
 	}
 
-	function checkReference($messageKey)
+	static function checkReference($messageKey)
 	{
 		if (in_array($messageKey,self::$known_references))
 			return;

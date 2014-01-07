@@ -92,7 +92,7 @@ class LPC_Language extends LPC_Base
 		return new $class($id);
 	}
 
-	protected function getLanguageClass()
+	protected static function getLanguageClass()
 	{
 		if (defined("LPC_language_class"))
 			return LPC_language_class;
@@ -114,7 +114,7 @@ class LPC_Language extends LPC_Base
 		return $this->locale;
 	}
 
-	public function strftime($format, $timestamp=NULL)
+	public static function strftime($format, $timestamp=NULL)
 	{
 		if ($timestamp===NULL)
 			$timestamp=time();
