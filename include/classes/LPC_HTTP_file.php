@@ -179,6 +179,9 @@ class LPC_HTTP_file
 	*/
 	protected function cacheControl()
 	{
+		if ($this->date && $this->cacheMaxAge)
+			return LPC_Browser_cache::comboCache($this->date, $this->cacheMaxAge);
+
 		if ($this->date)
 			return LPC_Browser_cache::dateCache($this->date);
 

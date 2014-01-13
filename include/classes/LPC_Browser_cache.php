@@ -20,9 +20,11 @@ class LPC_Browser_cache
 	static function dateCache($date)
 	{
 		// Set last-modified header
-		header("Last-Modified: ".gmdate("D, d M Y H:i:s", $date)." GMT");
+		header("Last-Modified: ".self::HTTP_date($date));
+
 		// Make sure caching is turned on
 		header('Cache-Control: must-revalidate');
+
 		// UNSET expiration date and pragma
 		header('Expires:');
 		header('Pragma:');
@@ -46,12 +48,24 @@ class LPC_Browser_cache
 	*/
 	function ageCache($maxAge)
 	{
-		header("Cache-Control: max-age=".$maxAge);
+		header("Expires: ".self::HTTP_date(time() + $maxAge));
+		header("Cache-control: max-age=".$maxAge);
 
-		// UNSET expiration date and pragma
-		header('Expires:');
+		// UNSET pragma
 		header('Pragma:');
 
 		return false;
+	}
+
+	function comboCache($date, $maxAge)
+	{
+		$dateResult = self::dateCache($date);
+		self::ageCache($maxAge);
+		return $dateResult;
+	}
+
+	function HTTP_date($date)
+	{
+		return gmdate("D, d M Y H:i:s", $date)." GMT";
 	}
 }
