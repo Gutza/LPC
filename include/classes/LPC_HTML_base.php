@@ -38,7 +38,7 @@ abstract class LPC_HTML_base implements iLPC_HTML
 	public function render()
 	{
 		// If parent is compact, so am I
-		$this->compact=$this->compact || $this->compactParent;
+		$this->compact = $this->compact || $this->compactParent;
 	}
 
 	public function updateOwner($od)
@@ -125,16 +125,21 @@ abstract class LPC_HTML_base implements iLPC_HTML
 			$this->prepareContent($atom);
 	}
 
+	public static function isEmptyContent($item)
+	{
+		return empty($item) && !is_numeric($item);
+	}
+
 	public function renderContent()
 	{
-		if ($this->ownerDocument==$this)
+		if ($this->ownerDocument == $this)
 			$this->prepareContent($this->content);
 		return $this->renderItem($this->content);
 	}
 
 	public function renderItem($item,$arrayKey=NULL)
 	{
-		if (empty($item) && !is_numeric($item))
+		if (self::isEmptyContent($item))
 			return "";
 		if (is_string($item) || is_numeric($item))
 			return $this->outputString($item);
@@ -182,5 +187,10 @@ abstract class LPC_HTML_base implements iLPC_HTML
 	public function getUID()
 	{
 		return self::$uid_counter++;
+	}
+
+	public function clear()
+	{
+		$this->content = array();
 	}
 }

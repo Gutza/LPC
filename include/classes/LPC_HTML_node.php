@@ -17,31 +17,32 @@ class LPC_HTML_node extends LPC_HTML_base
 
 	public function __construct($nodeName=NULL, $shortTag=NULL)
 	{
-		if ($nodeName!==NULL)
-			$this->nodeName=$nodeName;
-		if ($shortTag!==NULL)
-			$this->shortTag=(bool) $shortTag;
+		if (!is_null($nodeName))
+			$this->nodeName = $nodeName;
+
+		if (!is_null($shortTag))
+			$this->shortTag = (bool) $shortTag;
 	}
 
 	public function render()
 	{
-		$this->nodeName=strtolower($this->nodeName);
+		$this->nodeName = strtolower($this->nodeName);
 
 		parent::render();
 
-		$result="";
-
 		if (isset($this->id))
-			$this->setAttr('id',$this->id);
+			$this->setAttr('id', $this->id);
 
 		if (!$this->doctype && !empty($this->ownerDocument))
-			$this->doctype=$this->ownerDocument->doctype;
+			$this->doctype = $this->ownerDocument->doctype;
 
-		$short=$this->shortTag && !$this->content && $this->determineTagEnd();
-		$result.=$this->renderTagStart($short);
+		$emptyContent = self::isEmptyContent($this->content);
+
+		$short = $this->shortTag && $emptyContent && $this->determineTagEnd();
+		$result = $this->renderTagStart($short);
 		if ($short)
 			return $this->debugify($result);
-		if (!$this->content && !is_numeric($this->content)) {
+		if ($emptyContent) {
 			if ($this->endTagAllowed)
 				return $this->debugify(rtrim($result).ltrim($this->renderTagEnd()));
 			else
@@ -182,12 +183,12 @@ class LPC_HTML_node extends LPC_HTML_base
 			$tagType+=self::tagEnd;
 		}
 		$result.=">";
-		return $this->output($result,$tagType);
+		return $this->output($result, $tagType);
 	}
 
 	public function renderTagEnd()
 	{
-		return $this->output("</".$this->nodeName.">",self::tagEnd);
+		return $this->output("</".$this->nodeName.">", self::tagEnd);
 	}
 
 	public function output($html,$tagType=self::tagBody)
