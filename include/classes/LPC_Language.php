@@ -114,7 +114,7 @@ class LPC_Language extends LPC_Base
 		return $this->locale;
 	}
 
-	public static function strftime($format, $timestamp=NULL)
+	public function strftime($format, $timestamp=NULL)
 	{
 		if ($timestamp===NULL)
 			$timestamp=time();
