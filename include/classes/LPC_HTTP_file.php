@@ -125,10 +125,12 @@ class LPC_HTTP_file
 	*/
 	public function show()
 	{
+		if ($this->cacheControl())
+			return;
+
 		$this->headerContentType();
 		$this->headerContentDisposition();
 		$this->headerContentLength();
-		$this->cacheControl();
 		$this->otherHeaders();
 		$this->servePayload();
 	}
