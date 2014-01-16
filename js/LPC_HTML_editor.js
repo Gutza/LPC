@@ -24,6 +24,7 @@ var LPC_HTML_editor = {
 			forced_root_block : false,
 			force_br_newlines : true,
 			force_p_newlines : false,
+			convert_urls: false,
 			width: 600,
 			height: 200
 		});
