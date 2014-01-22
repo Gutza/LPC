@@ -20,6 +20,24 @@ return array (
   ),
   'messages' => 
   array (
+    'genericErrorAuth' => 
+    array (
+      'comment' => 'A generic message stating that authentication is required to continue. Make sure it\'s gender neutral.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'You have to authenticate in order to continue.',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Trebuie să vă autentificați pentru a continua.',
+        ),
+      ),
+    ),
     'genericErrorMissingObject' => 
     array (
       'comment' => 'A generic error message shown when the user is trying to access an object that wasn\'t found in the database. Takes two parameters, the class name and the object ID.',
