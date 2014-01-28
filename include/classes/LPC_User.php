@@ -40,6 +40,9 @@ abstract class LPC_User extends LPC_Base
 	const PE_KEY='perm_exp'; // Permission expiration: the date when the cache expired
 	const P_KEY='perms'; // Cache key which stores the permissions
 
+	// Seconds; gets refreshed on each call to getCurrent that uses the session
+	protected static $session_life = 1800;
+
 	function onDelete($id)
 	{
 		$this->query("
@@ -64,8 +67,9 @@ abstract class LPC_User extends LPC_Base
 				gettype($object)."]"
 			);
 
-		self::$currentInstance=$object;
-		$_SESSION['LPC']['current_user_id']=$object->id;
+		self::$currentInstance = $object;
+		$_SESSION['LPC']['current_user_id'] = $object->id;
+		$_SESSION['LPC']['current_user_last_seen'] = time();
 		return true;
 	}
 
@@ -97,12 +101,9 @@ abstract class LPC_User extends LPC_Base
 			return self::$currentInstance;
 
 		// Do we know the user from the session?
-		if (isset($_SESSION['LPC']['current_user_id'])) {
-			$u=self::newUser($_SESSION['LPC']['current_user_id']);
-			if ($u->probe()) {
-				self::setCurrent($u);
-				return $u;
-			}
+		if ($u = self::getCurrentFromSession()) {
+			self::setCurrent($u);
+			return $u;
 		}
 
 		if ($info && !self::configuredForUsers())
@@ -122,6 +123,28 @@ abstract class LPC_User extends LPC_Base
 
 		$user->showLoginForm();
 		exit;
+	}
+
+	/**
+	* Checks if there is a current user stored in the session; returns the user
+	* if the session is valid and hasn't expired, and false otherwise.
+	*/
+	protected static function getCurrentFromSession()
+	{
+		if (empty($_SESSION['LPC']['current_user_id']))
+			return false;
+
+		$u=self::newUser($_SESSION['LPC']['current_user_id']);
+		if (!$u->probe())
+			return false;
+
+		$ctime = time();
+		if (self::$session_life < $ctime - $_SESSION['LPC']['current_user_last_seen'])
+			return false;
+
+		$_SESSION['LPC']['current_user_last_seen'] = $ctime;
+
+		return $u;
 	}
 
 	/**
