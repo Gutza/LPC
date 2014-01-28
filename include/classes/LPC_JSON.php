@@ -6,7 +6,7 @@
 */
 abstract class LPC_JSON
 {
-	public function encode($var,$purty=false)
+	public static function encode($var,$purty=false)
 	{
 		if (function_exists('json_encode')) {
 			$options=0;
@@ -21,7 +21,7 @@ abstract class LPC_JSON
 		return $json->encode($var);
 	}
 
-	public function decode($var)
+	public static function decode($var)
 	{
 		if (function_exists('json_decode'))
 			return json_decode($var,true);
