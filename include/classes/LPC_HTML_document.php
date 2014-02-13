@@ -27,6 +27,11 @@ class LPC_HTML_document extends LPC_HTML_node
 	public $gz_enable=true; // disable if you're processing it yourself
 	public $gz_thresh=10240; // 10 KiB
 
+	const ENV_HTML = 0;
+	const ENV_BOOTSTRAP = 1;
+
+	public $environment = self::ENV_HTML;
+
 	public function __construct()
 	{
 		$this->doctype=LPC_HTML_doctype::HTML4S;

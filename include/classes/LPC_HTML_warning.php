@@ -1,11 +1,9 @@
 <?php
 
-class LPC_HTML_warning extends LPC_HTML_node
+class LPC_HTML_warning extends LPC_HTML_message
 {
-	function __construct($message)
-	{
-		parent::__construct("div");
-		$this->setClass('warning_message');
-		$this->a($message);
-	}
+	protected $messageClass = array(
+		LPC_HTML_Document::ENV_HTML => "warning_message",
+		LPC_HTML_Document::ENV_BOOTSTRAP => "alert alert-warning",
+	);
 }

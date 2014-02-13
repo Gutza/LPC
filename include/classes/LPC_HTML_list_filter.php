@@ -86,12 +86,24 @@ abstract class LPC_HTML_list_filter extends LPC_HTML_widget
 		$td=new LPC_HTML_node('td');
 		$td->setAttr('class','table_filter');
 		$tr->a($td, 'filterControls');
-		$td->a("<input type='image' src='".LPC_ICON_MAGNIFIER."' alt=\""._LS('lpcFilterIcon')."\">");
+		$td->a(
+			"<button type='submit' style='border: none; background: none; padding: 0px'>".
+			$this->getIcon("search", _LS('lpcFilterIcon'))."
+			</button>"
+		);
 		if (strlen($default))
-			$td->a("<a href='".LPC_URI::getCurrent()->delVar($this->GET_key)->toString()."'><img src='".LPC_ICON_ERASER."' alt=\""._LS('lpcRemoveFilterIcon')."\"></a>");
+			$td->a(
+				"<a href='".LPC_URI::getCurrent()->delVar($this->GET_key)->toString()."'>".
+				$this->getIcon("remove", _LS('lpcRemoveFilterIcon')).
+				"</a>"
+			);
 
 		if (isset($this->helpKey)) {
-			$td->a("<a href='#' onClick='alert(".self::JS_translation_var.".".$this->helpKey."); return false;'><img src='".LPC_ICON_INFO."'></a>");
+			$td->a(
+				"<a href='#' onClick='alert(".self::JS_translation_var.".".$this->helpKey."); return false;'>".
+				$this->getIcon("info").
+				"</a>"
+			);
 			if (!isset($this->ownerDocument->content['head']->content['JS_help_'.$this->helpKey])) {
 				$js=new LPC_HTML_script();
 				$this->ownerDocument->content['head']->content['JS_help_'.$this->helpKey]=$js;
@@ -102,6 +114,55 @@ if (typeof ".self::JS_translation_var." == 'undefined')
 				");
 			}
 		}
+	}
+
+	protected function getIcon($type, $alt = "")
+	{
+		$env = $this->ownerDocument->environment;
+
+		if (LPC_HTML_document::ENV_HTML == $env)
+			return $this->getIconHTML($type, $alt);
+
+		if (LPC_HTML_document::ENV_BOOTSTRAP == $env)
+			return $this->getIconBootstrap($type);
+
+		throw new RuntimeException("Unknown environment!");
+	}
+
+	protected function getIconHTML($type, $alt = "")
+	{
+		switch($type) {
+			case "search":
+				$src = LPC_ICON_MAGNIFIER;
+				break;
+			case "remove":
+				$src = LPC_ICON_ERASER;
+				break;
+			case "info":
+				$src = LPC_ICON_INFO;
+				break;
+			default:
+				throw new RuntimeException("Unknown icon type: ".$type);
+		}
+		return "<img src=\"$src\" alt=\"$alt\">";
+	}
+
+	protected function getIconBootstrap($type)
+	{
+		switch($type) {
+			case "search":
+				$glyph = "glyphicon-search";
+				break;
+			case "remove":
+				$glyph = "glyphicon-remove";
+				break;
+			case "info":
+				$glyph = "glyphicon-info-sign";
+				break;
+			default:
+				throw new RuntimeException("Unknown icon type: ".$type);
+		}
+		return "<span class='glyphicon $glyph'></span>";
 	}
 
 	public function getCurrentValue()

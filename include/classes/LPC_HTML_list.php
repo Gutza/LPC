@@ -9,7 +9,6 @@ class LPC_HTML_list extends LPC_HTML_widget
 	public $sqlParams=false;
 	public $queryObject=NULL;
 	public $hiddenFields=array();
-	public $id='1';
 
 	public $paginatorEndsPages=7;
 	public $paginatorAroundPages=7;
@@ -61,15 +60,16 @@ class LPC_HTML_list extends LPC_HTML_widget
 
 	function __construct()
 	{
+		$this->setUID();
 		$this->processParameters();
-		$this->filters=new LPC_HTML_fragment();
+		$this->filters = new LPC_HTML_fragment();
 	}
 
 	function processParameters()
 	{
-		$page_param=$this->getParam('p');
+		$page_param = $this->getParam('p');
 		if (isset($_REQUEST[$page_param]))
-			$this->currentPage=$_REQUEST[$page_param];
+			$this->currentPage = $_REQUEST[$page_param];
 	}
 
 	function getParam($param)
@@ -92,6 +92,12 @@ class LPC_HTML_list extends LPC_HTML_widget
 		$this->table=new LPC_HTML_node('table');
 		$this->table->setAttr('class', $this->tableClass);
 		$this->a($this->table,'table');
+
+		$this->thead = new LPC_HTML_node("thead");
+		$this->table->a($this->thead, "thead");
+
+		$this->tbody = new LPC_HTML_node("tbody");
+		$this->table->a($this->tbody, "tbody");
 
 		$keys=array_filter(array_keys($rs->fields),"is_string");
 		$this->populateHeader($keys);
@@ -137,22 +143,32 @@ class LPC_HTML_list extends LPC_HTML_widget
 	function populatePaginating()
 	{
 		$elemCount=$this->getElementCount();
-		if (!$this->entriesPerPage || $elemCount<=$this->entriesPerPage)
+		if (!$this->entriesPerPage || $elemCount <= $this->entriesPerPage)
 			return null;
-		$pageCount=ceil($elemCount/$this->entriesPerPage);
+
+		$pageCount=ceil($elemCount / $this->entriesPerPage);
 		$paginator=new LPC_HTML_node("div");
-		$paginator->setAttr('id','list_paginator_'.$this->id);
-		$paginator->setAttr('class',$this->paginatorClass);
+		$paginator->setAttr('id', 'list_paginator_'.$this->id);
+		$paginator->setAttr('class', $this->paginatorClass);
 		$paginator->a(__L("lpcListPageLabel")." ");
 
 		$pages=array();
-		for($page=1;$page<=min($this->paginatorEndsPages,$pageCount);$page++)
+		$firstStart = 1;
+		$firstEnd = min($this->paginatorEndsPages, $pageCount);
+		for($page = $firstStart; $page <= $firstEnd; $page++)
+			$pages[] = $page;
+
+		$aroundStart = max($firstStart, $this->currentPage - $this->paginatorAroundPages);
+		$aroundEnd = min($pageCount, $this->currentPage + $this->paginatorAroundPages);
+		for($page = $aroundStart; $page<=$aroundEnd; $page++)
 			$pages[]=$page;
-		for($page=max(1,$this->currentPage-$this->paginatorAroundPages);$page<=min($pageCount,$this->currentPage+$this->paginatorAroundPages);$page++)
+
+		$lastStart = max(1,$pageCount-$this->paginatorEndsPages);
+		$lastEnd = $pageCount;
+
+		for($page = $lastStart; $page <= $lastEnd; $page++)
 			$pages[]=$page;
-		for($page=max(1,$pageCount-$this->paginatorEndsPages);$page<=$pageCount;$page++)
-			$pages[]=$page;
-		$pages=array_unique($pages);
+		$pages = array_unique($pages);
 
 		$lastPage=0;
 		foreach($pages as $page) {
@@ -273,14 +289,13 @@ class LPC_HTML_list extends LPC_HTML_widget
 			$icon=NULL;
 
 			if ($sortInfo['sort']==$key) {
-				$icon=new LPC_HTML_node("img");
-				$icon->setAttr('style', 'margin-bottom:-3px;');
-				if ($sortInfo['order']) {
-					$icon->setAttr('src', LPC_ICON_UP_ENABLED);
-				} else {
-					$icon->setAttr('src', LPC_ICON_DOWN_ENABLED);
+				if ($sortInfo['order'])
+					$order = "up";
+				else {
+					$order = "down";
 					$newOrder=1;
 				}
+				$icon = $this->getIcon($order);
 			}
 
 			if (isset($this->labelMapping[$key]))
@@ -315,7 +330,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 		}
 
 		if ($this->onProcessHeaderRow($row))
-			$this->table->a($row);
+			$this->thead->a($row);
 	}
 
 	function getSortInfo()
@@ -372,8 +387,9 @@ class LPC_HTML_list extends LPC_HTML_widget
 			if ($this->onProcessBodyCell($key,$cell,$rowData))
 				$row->a($cell);
 		}
+
 		if ($this->onProcessBodyRow($row,$rowData))
-			$this->table->a($row);
+			$this->tbody->a($row);
 	}
 
 	function onProcessHeaderCell($key,$cell)
@@ -415,6 +431,19 @@ class LPC_HTML_list extends LPC_HTML_widget
 		$rs=$this->queryObject->query($sql, $this->sqlParams);
 		$this->totalEntries=$rs->recordCount();
 		return $this->totalEntries;
+	}
+
+	function getIcon($order)
+	{
+		$icon = new LPC_HTML_node("img");
+		$icon->setAttr('style', 'margin-bottom:-3px;');
+
+		if ($order == "up")
+			$icon->setAttr("src", LPC_ICON_UP_ENABLED);
+		else
+			$icon->setAttr('src', LPC_ICON_DOWN_ENABLED);
+
+		return $icon;
 	}
 
 }

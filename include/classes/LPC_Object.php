@@ -3741,10 +3741,16 @@ fclose($fp);
 		);
 	}
 	// }}}
+	// {{{ getBaseListObject()
+	public function getBaseListObject()
+	{
+		return new LPC_HTML_list();
+	}
+	// }}}
 	// {{{ getBaseList()
 	public function getBaseList($filterQuery=NULL)
 	{
-		$l=new LPC_HTML_list();
+		$l = $this->getBaseListObject();
 		$l->queryObject=$this;
 		$query=array(
 			'select'=>array(),
@@ -3826,6 +3832,18 @@ fclose($fp);
 		return $l;
 	}
 	// }}}
+	// {{{ getScaffoldingFilterString()
+	function getScaffoldingFilterString()
+	{
+		return new LPC_HTML_list_filter_string();
+	}
+	// }}}
+	// {{{ getScaffoldingFilterBoolean()
+	function getScaffoldingFilterBoolean()
+	{
+		return new LPC_HTML_list_filter_boolean();
+	}
+	// }}}
 	// {{{ getScaffoldingFilters()
 	function getScaffoldingFilters($linkData)
 	{
@@ -3837,31 +3855,31 @@ fclose($fp);
 					// no filters for anonymous links
 					continue;
 				if (empty($linkData[$attName]['meta']['type'])) {
-					$filter=new LPC_HTML_list_filter_string();
-					$filter->SQL_key=$linkData[$attName]['SQL_key'];
-					$filter->input_size=10;
-					$filters->a($filter,$attName);
+					$filter = $this->getScaffoldingFilterString();
+					$filter->SQL_key = $linkData[$attName]['SQL_key'];
+					$filter->input_size = 10;
+					$filters->a($filter, $attName);
 				}
 				continue;
 			}
 			if (
 				empty($this->dataStructure['fields'][$attName]['type']) ||
-				$this->dataStructure['fields'][$attName]['base_type']=='text'
+				'text' == $this->dataStructure['fields'][$attName]['base_type']
 			) {
-				$filter=new LPC_HTML_list_filter_string();
-				$filter->input_size=10;
-				$filter->SQL_key=$this->getFieldName($attName);
-				$filters->a($filter,$attName);
-			} elseif ($this->dataStructure['fields'][$attName]['base_type']=='boolean') {
-				$filter=new LPC_HTML_list_filter_boolean();
-				$filter->SQL_key=$this->getFieldName($attName);
-				$filters->a($filter,$attName);
+				$filter = $this->getScaffoldingFilterString();
+				$filter->input_size = 10;
+				$filter->SQL_key = $this->getFieldName($attName);
+				$filters->a($filter, $attName);
+			} elseif ('boolean' == $this->dataStructure['fields'][$attName]['base_type']) {
+				$filter = $this->getScaffoldingFilterBoolean();
+				$filter->SQL_key = $this->getFieldName($attName);
+				$filters->a($filter, $attName);
 			}
 		}
 		if ($this::$i18n_class) {
-			$i18n_obj=new $this::$i18n_class();
-			$i18n_filters=$i18n_obj->getScaffoldingFilters();
-			$filters->content=array_merge($filters->content,$i18n_filters->content);
+			$i18n_obj = new $this::$i18n_class();
+			$i18n_filters = $i18n_obj->getScaffoldingFilters();
+			$filters->content = array_merge($filters->content, $i18n_filters->content);
 		}
 		return $filters;
 	}
