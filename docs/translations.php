@@ -1856,5 +1856,149 @@ Valoarea pe care o introduceți va fi folosită ca atare.',
         ),
       ),
     ),
+    'T568B_color_wire_1' => 
+    array (
+      'comment' => 'The color combination for the Cat5 wire attached to a 8P8C (RJ45) connector\'s pin #1 in the T568B standard.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'White/orange',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Alb/portocaliu',
+        ),
+      ),
+    ),
+    'T568B_color_wire_2' => 
+    array (
+      'comment' => 'The color combination for the Cat5 wire attached to a 8P8C (RJ45) connector\'s pin #2 in the T568B standard.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Orange',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Portocaliu',
+        ),
+      ),
+    ),
+    'T568B_color_wire_3' => 
+    array (
+      'comment' => 'The color combination for the Cat5 wire attached to a 8P8C (RJ45) connector\'s pin #3 in the T568B standard.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'White/green',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Alb/verde',
+        ),
+      ),
+    ),
+    'T568B_color_wire_4' => 
+    array (
+      'comment' => 'The color combination for the Cat5 wire attached to a 8P8C (RJ45) connector\'s pin #4 in the T568B standard.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Blue',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Albastru',
+        ),
+      ),
+    ),
+    'T568B_color_wire_5' => 
+    array (
+      'comment' => 'The color combination for the Cat5 wire attached to a 8P8C (RJ45) connector\'s pin #5 in the T568B standard.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'White/blue',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Alb/albastru',
+        ),
+      ),
+    ),
+    'T568B_color_wire_6' => 
+    array (
+      'comment' => 'The color combination for the Cat5 wire attached to a 8P8C (RJ45) connector\'s pin #6 in the T568B standard.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Green',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Verde',
+        ),
+      ),
+    ),
+    'T568B_color_wire_7' => 
+    array (
+      'comment' => 'The color combination for the Cat5 wire attached to a 8P8C (RJ45) connector\'s pin #7 in the T568B standard.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'White/brown',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Alb/maro',
+        ),
+      ),
+    ),
+    'T568B_color_wire_8' => 
+    array (
+      'comment' => 'The color combination for the Cat5 wire attached to a 8P8C (RJ45) connector\'s pin #8 in the T568B standard.',
+      'system' => '1',
+      'translations' => 
+      array (
+        0 => 
+        array (
+          'language' => '1',
+          'translation' => 'Brown',
+        ),
+        1 => 
+        array (
+          'language' => '2',
+          'translation' => 'Maro',
+        ),
+      ),
+    ),
   ),
 );
