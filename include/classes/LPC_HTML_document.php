@@ -68,6 +68,11 @@ class LPC_HTML_document extends LPC_HTML_node
 
 	public function render($indent=0)
 	{
+		$lang = LPC_Language::getCurrent();
+		$POSIX = $lang->getAttr("locale_POSIX");
+		if (strlen($POSIX) > 1) // at least 2
+			$this->setAttr("lang", substr($POSIX, 0, 2));
+
 		$this->prepareContent($this->content);
 		if ($this->doctype & LPC_HTML_doctype::type_XHTML1)
 			$this->setAttr("xmlns","http://www.w3.org/1999/xhtml");
