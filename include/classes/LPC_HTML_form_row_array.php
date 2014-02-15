@@ -15,7 +15,7 @@ class LPC_HTML_form_row_array extends LPC_HTML_widget
 
 	function prepare()
 	{
-		$this->setClass("row");
+		$this->addClass("row");
 		foreach($this->meta as $atom) {
 			$col = new LPC_HTML_node();
 			$col->setClass($this->colClass);
