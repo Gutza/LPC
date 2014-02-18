@@ -79,6 +79,11 @@ class LPC_HTML_list extends LPC_HTML_widget
 
 	function prepare()
 	{
+		if (LPC_HTML_Document::ENV_BOOTSTRAP == $this->ownerDocument->environment) {
+			$this->addClass("container");
+			$this->tableClass = "table table-hover";
+		}
+
 		if (!$this->queryObject)
 			throw new RuntimeException("Query object not specified! (property queryObject)");
 		if (!is_array($this->sql) || !count($this->sql))
@@ -435,6 +440,20 @@ class LPC_HTML_list extends LPC_HTML_widget
 
 	function getIcon($order)
 	{
+		$env = $this->ownerDocument->environment;
+
+		switch($env) {
+		case LPC_HTML_Document::ENV_HTML:
+			return $this->getIconHTML($order);
+		case LPC_HTML_Document::ENV_BOOTSTRAP:
+			return $this->getIconconBS($order);
+		default:
+			throw new RuntimeException("Unknown environment!");
+		}
+	}
+
+	function getIconHTML($order)
+	{
 		$icon = new LPC_HTML_node("img");
 		$icon->setAttr('style', 'margin-bottom:-3px;');
 
@@ -446,4 +465,15 @@ class LPC_HTML_list extends LPC_HTML_widget
 		return $icon;
 	}
 
+	function getIconconBS($order)
+	{
+		$icon = new LPC_HTML_node("span");
+		$icon->setClass("glyphicon")->setAttr("style", "margin-left: 3px");
+		if ($order == "up")
+			$icon->addClass("glyphicon-chevron-up");
+		else
+			$icon->addClass("glyphicon-chevron-down");
+
+		return $icon;
+	}
 }
