@@ -36,7 +36,7 @@ else {
 
 $ref=new LPC_I18n_reference($msgKey);
 if (!$ref->probe()) {
-	$p->a("<div>&larr; <a href='message_select.php'>Back to the message list</a></div>");
+	$p->a("<div class='container'>&larr; <a href='message_select.php'>Back to the message list</a></div>");
 	$p->a(new LPC_HTML_error("This reference message was not found in the database: [".htmlspecialchars($msgKey)."]"));
 	$p->show();
 	return;
@@ -77,7 +77,7 @@ $sql="
 $rs=$msg->query($sql);
 if (!$rs->EOF && $rs->fields[0]!=$msgKey)
 	$links[]="[<a href='?m=".rawurlencode($rs->fields[0])."'>Find an untranslated message</a>]";
-$p->a("<p>".implode(" &bull; ",$links)."</p>");
+$p->a("<p class='container'>".implode(" &bull; ",$links)."</p>");
 // Done links
 
 $ref_trans=new LPC_I18n_message();
