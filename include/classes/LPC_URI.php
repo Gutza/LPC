@@ -147,6 +147,17 @@ class LPC_URI implements iLPC_HTML
 	}
 
 	/**
+	* Sets the path part of the URI
+	*
+	* @return the current object
+	*/
+	public function setPath($path)
+	{
+		$this->uriParts['path'] = $path;
+		return $this;
+	}
+
+	/**
 	* Returns the scheme + host + port + path parts of the URI
 	*
 	* @return string the scheme + host + port + path parts of the URI
