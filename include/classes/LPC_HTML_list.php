@@ -23,6 +23,8 @@ class LPC_HTML_list extends LPC_HTML_widget
 	public $totalEntries=NULL;
 	public $totalPages=0;
 
+	public $emptyListMessageKey = "lpcListEmptyMessage";
+
 	/**
 	* An associative array which lists the header labels for each key
 	*/
@@ -116,7 +118,7 @@ class LPC_HTML_list extends LPC_HTML_widget
 
 	function prepareEmpty()
 	{
-		$this->a(__L('lpcListEmptyMessage'));
+		$this->a(__L($this->emptyListMessageKey));
 		if (!$this->filters->content)
 			return;
 
@@ -470,9 +472,9 @@ class LPC_HTML_list extends LPC_HTML_widget
 		$icon = new LPC_HTML_node("span");
 		$icon->setClass("glyphicon")->setAttr("style", "margin-left: 3px");
 		if ($order == "up")
-			$icon->addClass("glyphicon-chevron-up");
+			$icon->addClass("glyphicon-sort-by-attributes-alt");
 		else
-			$icon->addClass("glyphicon-chevron-down");
+			$icon->addClass("glyphicon-sort-by-attributes");
 
 		return $icon;
 	}
