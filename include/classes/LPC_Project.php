@@ -103,14 +103,14 @@ abstract class LPC_Project extends LPC_Base
 				return $p;
 			}
 		}
-		$projects=$this->search(NULL,NULL,$this->user_fields['name']);
-		if (!$projects) {
+		if (!$this->searchCount()) {
 			$p=new $class();
-			$p->setAttr($this->user_fields['name'],$this->default_project_name);
+			$p->setAttr($this->user_fields['name'], $this->default_project_name);
 			$p->save();
 			return $p;
 		}
 
+		$projects = $this->allCanUse();
 		if (count($projects)==1)
 			return $projects[0];
 
@@ -118,6 +118,20 @@ abstract class LPC_Project extends LPC_Base
 			return NULL;
 
 		$this->renderList($projects);
+	}
+
+	public function allCanUse($orderField = NULL)
+	{
+		if (is_null($orderField))
+			$orderField = $this->user_fields['name'];
+		$projects = $this->search(NULL, NULL, $orderField);
+		$result = array();
+		foreach($projects as $project) {
+			if (!$this->canUse($project))
+				continue;
+			$result[] = $project;
+		}
+		return $result;
 	}
 
 	public function canUse($projectID=0)
@@ -128,13 +142,9 @@ abstract class LPC_Project extends LPC_Base
 		return true;
 	}
 
-	public function renderList($projects)
+	protected function getListJS()
 	{
-		$p=LPC_Page::getCurrent();
-		$p->clear();
-
-		$p->title=$this->label_select_project;
-		$p->head->a(<<<EOJS
+		return <<<EOJS
 <script type='text/javascript'>
 	function setProject(projID)
 	{
@@ -144,14 +154,19 @@ abstract class LPC_Project extends LPC_Base
 		frm.submit();
 	}
 </script>
-EOJS
-		);
-		$p->st();
+EOJS;
+	}
+
+	public function renderList($projects)
+	{
+		$p=LPC_Page::getCurrent();
+		$p->clear();
+
+		$p->st($this->label_select_project);
+		$p->addJS($this->getListJS());
 		$p->a("<ul>");
 		$any_project=false;
 		foreach($projects as $project) {
-			if (!$project->canUse())
-				continue;
 			$any_project=true;
 			$p->a("<li><a href='#' onClick='setProject(".$project->id.")'>".$project->getAttrH($this->user_fields['name'])."</a></li>");
 		}
