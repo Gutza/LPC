@@ -53,7 +53,7 @@ abstract class LPC_HTML_base implements iLPC_HTML
 			$this->content->updateOwner($od);
 	}
 
-	private function prepareForAppend($element)
+	protected function prepareForAppend($element)
 	{
 		if (is_string($element) && !strlen(trim($element)))
 			return false;
@@ -161,7 +161,7 @@ abstract class LPC_HTML_base implements iLPC_HTML
 			$result=array();
 			foreach($item as $key=>$atom)
 				$result[]=$this->renderItem($atom,$key);
-			if (LPC_debug)
+			if (LPC_debug && !$this->compact)
 				$glue="\n";
 			else
 				$glue="";
@@ -175,8 +175,8 @@ abstract class LPC_HTML_base implements iLPC_HTML
 		if ($this->compact)
 			return $html;
 
-		$indent=str_repeat("\t",$this->indentCount+1);
-		return $indent.str_replace("\n","\n".$indent,$html)."\n";
+		$indent = str_repeat("\t", $this->indentCount+1);
+		return $indent.str_replace("\n", "\n".$indent, $html)."\n";
 	}
 
 	public function qstr($string)

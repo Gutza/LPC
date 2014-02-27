@@ -37,21 +37,23 @@ class LPC_HTML_node extends LPC_HTML_base
 			$this->doctype = $this->ownerDocument->doctype;
 
 		$emptyContent = self::isEmptyContent($this->content);
-
 		$short = $this->shortTag && $emptyContent && $this->determineTagEnd();
 		$result = $this->renderTagStart($short);
+
 		if ($short)
 			return $this->debugify($result);
+
 		if ($emptyContent) {
 			if ($this->endTagAllowed)
-				return $this->debugify(rtrim($result).ltrim($this->renderTagEnd()));
+				return $this->debugify(rtrim($result) . ltrim($this->renderTagEnd()));
 			else
 				return $this->debugify($result);
 		}
 
-		$result.=$this->renderContent();
+		$result .= $this->renderContent();
 		if ($this->endTagAllowed)
-			$result.=$this->renderTagEnd();
+			$result .= $this->renderTagEnd();
+
 		return $this->debugify($result);
 	}
 
@@ -70,9 +72,9 @@ class LPC_HTML_node extends LPC_HTML_base
 		}
 
 		return
-			$this->output("<!-- ".$commentTag." -->",self::tagStart+self::tagEnd).
+			$this->output("<!-- ".$commentTag." -->", self::tagStart + self::tagEnd).
 			$payload.
-			$this->output("<!-- /".$commentTag." -->",self::tagStart+self::tagEnd);
+			$this->output("<!-- /".$commentTag." -->", self::tagStart + self::tagEnd);
 	}
 
 	/**
@@ -194,7 +196,7 @@ class LPC_HTML_node extends LPC_HTML_base
 	public function output($html,$tagType=self::tagBody)
 	{
 		if ($tagType==self::tagBody)
-			return $this->renderString($html);
+			return $this->outputString($html);
 
 		$indent=str_repeat("\t",$this->indentCount);
 		if ($tagType & self::tagBody)
