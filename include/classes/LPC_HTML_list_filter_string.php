@@ -28,11 +28,21 @@ class LPC_HTML_list_filter_string extends LPC_HTML_list_filter
 	{
 		if (!isset($_REQUEST[$this->GET_key]) || !strlen($_REQUEST[$this->GET_key]))
 			return NULL;
-		$filterVal=$this->listObject->queryObject->db->qstr('%'.$_REQUEST[$this->GET_key].'%');
+
+		$userVal = $this->preprocess_value($_REQUEST[$this->GET_key]);
+
+		$filterVal=$this->listObject->queryObject->db->qstr('%'.$userVal.'%');
 		if (isset($this->SQL_key))
 			$key=$this->SQL_key;
 		else
 			$key=$this->list_key;
 		return $key." LIKE ".$filterVal;
+	}
+
+	// Override this if you need to preprocess the values entered by the user
+	// before injecting them into the SQL query.
+	function preprocess_value($val)
+	{
+		return $val;
 	}
 }
