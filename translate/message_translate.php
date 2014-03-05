@@ -103,12 +103,12 @@ $t->a(new LPC_HTML_form_row(array(
 )));
 $t->a(new LPC_HTML_form_row(array(
 	'label'=>'Message in reference language ('.$reference_lang->getAttrH('name').')',
-	'input'=>"<tt>".nl2br($ref_trans->getAttrH('translation'))."</tt>",
+	'input'=>"<div style='height: 300px; overflow: auto'><tt>".nl2br($ref_trans->getAttrH('translation'))."</tt></div>",
 )));
 $trans = new LPC_HTML_node('textarea');
 $trans->setAttrs(array(
 	'name' => 'translation',
-	'style' => 'width: 100%; height: 100px',
+	'style' => 'width: 100%; height: 300px',
 ));
 $trans->a($msg->getAttrH("translation"));
 $input = new LPC_HTML_html_editor($trans);
