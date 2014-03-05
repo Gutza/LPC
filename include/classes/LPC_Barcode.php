@@ -1,8 +1,7 @@
-<?
+<?php
 /**
 * LPC Barcode Class
-* Bogdan Stancescu <bogdan@lanifex.com>, November 2006
-* $Id: LPC_Barcode.php,v 1.4 2011/02/15 20:27:59 bogdan Exp $
+* Bogdan Stancescu <bogdan@moongate.ro>, November 2006
 * @package LPC
 */
 	
