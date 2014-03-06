@@ -2,10 +2,15 @@
 
 class LPC_HTML_form extends LPC_HTML_node
 {
-	var $nodeName='form';
+	var $nodeName = 'form';
+	var $action = "";
+	var $method = "";
+	var $enctype = "";
 
-	public function __construct($action=false,$method='post',$files=false)
+	public function __construct($action=false, $method='post', $files=false)
 	{
+		parent::__construct();
+
 		if ($action===false) 
 			$action=LPC_URI::getCurrentURI();
 
