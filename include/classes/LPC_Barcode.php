@@ -23,6 +23,8 @@ class LPC_Barcode
 	var $h_multiplier=1;
 	var $v_size=91;
 
+	var $specs128 = array();
+
 	/**
 	* Whether to include the text label with the code
 	*/
