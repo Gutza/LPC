@@ -15,7 +15,7 @@
 			"name": "Andrei Tinca",
 			"email": "andrei.tinca@gmail.com",
 			"role": "Angel"
-		},
+		}
 	],
 	"require": {
 		"php": ">=5.0.2",
