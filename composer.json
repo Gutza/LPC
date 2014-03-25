@@ -1,0 +1,27 @@
+{
+	"name": "moongate/LPC",
+	"type": "library",
+	"description": "ORM and more",
+	"keywords": [],
+	"homepage": "",
+	"license": "LGPL",
+	"authors": [
+		{
+			"name": "Bogdan Stancescu",
+			"email": "bogdan@moongate.ro",
+			"role": "Developer"
+		},
+		{
+			"name": "Andrei Tinca",
+			"email": "andrei.tinca@gmail.com",
+			"role": "Angel"
+		},
+	],
+	"require": {
+		"php": ">=5.0.2",
+		"adodb/adodb-php": "dev-master"
+	},
+	"autoload": {
+		"files": ["include/LPC_pre.php"]
+	}
+}
