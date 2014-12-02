@@ -127,7 +127,7 @@ abstract class LPC_Project extends LPC_Base
 		$projects = $this->search(NULL, NULL, $orderField);
 		$result = array();
 		foreach($projects as $project) {
-			if (!$this->canUse($project))
+			if (!$this->canUse($project->id))
 				continue;
 			$result[] = $project;
 		}
