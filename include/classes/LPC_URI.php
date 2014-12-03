@@ -241,7 +241,8 @@ class LPC_URI implements iLPC_HTML
 		@parse_str($up['query'], $query);
 		$tup['query'] = $query;
 
-		$tup["path"] = $up['path'];
+		if (isset($up['path']))
+			$tup["path"] = $up['path'];
 
 		$this->uriParts = $tup;
 	}
