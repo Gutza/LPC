@@ -142,7 +142,7 @@ class LPC_Group extends LPC_Base
 	* @param integer $id the group to use (or 0 for the current group)
 	* @return array an indexed array of IDs
 	*/
-	function getMemberUserIDs($project=0,$id=0)
+	function getMemberUserIDs($project=false, $id=0)
 	{
 		$groupID=$this->defaultID($id);
 		if ($project===false) {
@@ -176,16 +176,16 @@ class LPC_Group extends LPC_Base
 	/**
 	* Same as {@link getMemberUserIDs}(), but returns instantiated user objects.
 	*/
-	function getMemberUsers($project=0,$id=0)
+	function getMemberUsers($project=false, $id=0)
 	{
-		return $this->instantiate($this->getUserIDs($project,$id),LPC_User::getUserClass());
+		return $this->instantiate($this->getMemberUserIDs($project,$id),LPC_User::getUserClass());
 	}
 
 	/**
 	* Returns the IDs of the direct member groups in this group.
 	* Similar to {@link getMemberGroups()}, only this returns IDs.
 	*/
-	function getMemberGroupIDs($id=0,$project=0)
+	function getMemberGroupIDs($id=0, $project=false)
 	{
 		$group=$this->defaultObject($id);
 		if (!$group->id)
@@ -220,7 +220,7 @@ class LPC_Group extends LPC_Base
 	* Returns the direct member groups in this group.
 	* Similar to {@link getMemberGroupIDs()}, only this returns instantiated objects.
 	*/
-	function getMemberGroups($id=0,$project=0)
+	function getMemberGroups($id=0,$project=false)
 	{
 		return $this->instantiate($this->getMemberGroupIDs($id,$project));
 	}

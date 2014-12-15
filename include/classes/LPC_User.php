@@ -159,6 +159,8 @@ abstract class LPC_User extends LPC_Base
 	*/
 	protected function beforeLogout()
 	{
+		// Unset current project
+		LPC_Project::setCurrent();
 	}
 
 	/**
