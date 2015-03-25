@@ -4097,7 +4097,7 @@ fclose($fp);
 				}
 				break;
 			default:
-				$input="<input type='text' name='attr[$attName]' value=\"".$this->getAttrH($attName)."\" style='width:100%'>".$link;
+				$input="<input type='text' name='attr[$attName]' oninput=\"LPC_scaffolding_onTextInput(this)\" value=\"".$this->getAttrH($attName)."\" style='width:90%;'>".$link;
 		}
 		if (isset($this::$scaffoldingDesc[$attName]))
 			$attDesc=_LS($this::$scaffoldingDesc[$attName]['name']);

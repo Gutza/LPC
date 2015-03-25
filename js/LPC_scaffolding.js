@@ -38,3 +38,16 @@ function LPC_scaffolding_pick(id)
 	return LPC_scaffolding_cancelPick();
 }
 
+function LPC_scaffolding_onTextInput(el)
+{
+	var className = "len";
+
+	var $lenEl = $(el).parent().find("."+className);
+	if ($lenEl.size() == 0) {
+		var lenEl = document.createElement("span");
+		$(el).after(lenEl);
+		$lenEl = $(lenEl);
+		$lenEl.addClass(className).css("marginLeft", "5px").css("fontSize", "90%");
+	}
+	$lenEl.text(el.value.length);
+}
